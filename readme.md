@@ -2,6 +2,18 @@
 
 一个基于 `Gin + GORM + Redis + Elasticsearch` 的博客/社区后端项目，包含用户、文章、评论、消息、关注、聊天、站点配置等模块。
 
+## 0. 功能速览
+
+- 博客与社区一体化：文章、评论、收藏、消息、关注、私聊集中在同一套后端
+- 搜索能力完整：基于 `Elasticsearch` 提供文章全文搜索、高亮和多维排序
+- 高并发友好：浏览、点赞、收藏、评论计数先写 Redis，再由定时任务批量同步数据库
+- AI 已接入业务：支持站点 AI 助手，以及文章、评论、昵称等内容审核
+- 运营能力齐全：支持站点配置、SEO、轮播图、友情链接、推广位和日志管理
+
+功能文档：
+
+- [博客功能文档](docs/功能文档.md)
+
 
 > 注意：项目本体支持数据库读写分离，但**不原生支持数据库之间的数据同步**。仓库中的 `otherSoftware` 提供了基于 Canal 的简易订阅同步方案（本文已给出配置与使用步骤）。
 
@@ -47,7 +59,7 @@ docker compose -f init/ES/docker-compose.yml up -d
 
 建议优先确认以下关键字段：
 
-- `system.ip`、`system.port`、`system.env`、`system.gin_mode`
+- `system.ip`、`system.port`、`system.env`、`system.run_mode`
 - `db`（第一个为写库，后续为读库）
 - `redisStatic`、`redisDynamic`
 - `es.url`、`es.username`、`es.password`
@@ -67,8 +79,7 @@ system:
 log:
   app: GoBlog
   dir: log
-  # 后续计划：增加日志定时清理，精确到天，默认保留 7 天
-
+  log_level: debug
 ai:
   enable: true
   model: local
@@ -127,9 +138,9 @@ db:
     password: root
     host: 127.0.0.1
     port: 3306
-    db: db
+    db_name: db
     debug: false # 是否启用调试（打印完整日志）
-    source: mysql
+    sql_name: mysql
   # - user: root # 可按此格式继续添加多个数据库
   #   password: root
   #   host: 127.0.0.1
@@ -223,8 +234,9 @@ go run main.go -t user -s create
 
 - 初始化顺序：配置 -> 日志 -> IP库 -> DB -> Redis -> ES -> AI -> 定时任务 -> 路由
 - ES 为强依赖：ES 初始化失败会导致服务启动中断
+- 当前接口统一使用 `/api` 前缀，例如 `/api/user/login`
 - 静态资源目录映射为 `/web`，对应本地 `static/`
-- 当前定时任务 `SyncArticle/SyncComment` 是秒级调试频率（默认每 4 秒），上线前建议改回分钟级
+- 当前定时任务 `SyncArticle/SyncComment` 为 10 分钟级批量同步，用于刷新 Redis 中的计数增量
 
 ## 6. 数据库同步方案（otherSoftware）
 
@@ -300,7 +312,7 @@ go run samples/main.go
 - MySQL 连接失败：检查 `setting.yaml` 与 Canal 的账号密码、端口是否一致
 - ES 启动失败：确认 `http://127.0.0.1:9200` 可访问，账号密码匹配
 - Redis 警告淘汰策略：项目会检查动态 Redis 的 `maxmemory-policy`
-- 接口 404：注意当前没有 `/api` 前缀，直接访问 `/user/login` 这类路径
+- 接口 404：注意当前接口带 `/api` 前缀，应访问 `/api/user/login` 这类路径
 - Canal 无数据：优先检查 binlog 是否开启、`instance.properties` 的主库地址/账号、订阅规则是否匹配
 
 ## 8. 仅开发者提示
