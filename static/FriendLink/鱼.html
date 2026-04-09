@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>燃烬/心火の扩列条</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #FFEA00 0%, #008cff 100%);
+            padding: 20px;
+            overflow-x: hidden;
+            color: #333;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            padding: 30px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            background: linear-gradient(45deg, #FF4081, #3F51B5);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #444;
+            font-weight: 500;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #FFEA00, #2196F3);
+            border-radius: 20px 20px 0 0;
+        }
+        
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            color: #1A237E;
+            font-size: 1.5rem;
+        }
+        
+        .card-title i {
+            background: linear-gradient(45deg, #FF4081, #3F51B5);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            transition: background 0.3s ease;
+        }
+        
+        .info-item:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+        
+        .info-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(45deg, #FFEA00, #2196F3);
+            border-radius: 50%;
+            color: white;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        
+        .info-text {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .info-label {
+            font-size: 0.85rem;
+            color: #555;
+            margin-bottom: 3px;
+        }
+        
+        .info-content {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .tag {
+            padding: 6px 15px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            transition: all 0.3s ease;
+        }
+        
+        .tag:hover {
+            background: rgba(255, 255, 255, 0.5);
+            transform: scale(1.05);
+        }
+        
+        .highlight {
+            background: linear-gradient(45deg, #FF4081, #3F51B5);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 5px;
+            font-weight: 600;
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .social-btn {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border-radius: 50%;
+            color: #333;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .social-btn:hover {
+            transform: translateY(-5px) scale(1.1);
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .quote {
+            text-align: center;
+            font-style: italic;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            animation: float 15s infinite linear;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(100vw) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #444;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        /* 新增的图片画廊样式 */
+        .gallery-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 15px;
+        }
+        
+        .gallery-item {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            aspect-ratio: 1/1;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .gallery-item:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .gallery-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .gallery-item:hover .gallery-img {
+            transform: scale(1.05);
+        }
+        
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+            padding: 15px;
+            color: white;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            transform: translateY(10px);
+        }
+        
+        .gallery-item:hover .gallery-overlay {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .gallery-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+        
+        .gallery-desc {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+        
+        .gallery-actions {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 15px;
+        }
+        
+        .gallery-btn {
+            padding: 8px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            color: #333;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .gallery-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        @media (max-width: 768px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+            
+            .gallery-container {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <header>
+            <h1>燃烬/心火の扩列条</h1>
+            <!-- <p class="subtitle">来交个朋友吧！Owo</p> -->
+        </header>
+        
+        <div class="card">
+            <div class="card-title">
+                <i class="fas fa-user"></i>
+                <span>基本信息</span>
+            </div>
+            
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-id-card"></i>
+                    </div>
+                    <div class="info-text">
+                        <div class="info-label">ID</div>
+                        <div class="info-content">酸菜鱼℃ / 燃烬Ranjin</div>
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <div class="info-text">
+                        <div class="info-label">栖息地</div>
+                        <div class="info-content">QQ</div>
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="info-text">
+                        <div class="info-label">感情状况</div>
+                        <div class="info-content">有对象</div>
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <div class="info-text">
+                        <div class="info-label">约稿需求</div>
+                        <div class="info-content">想约稿，求纯兽画师 QwQ</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-title">
+                <i class="fas fa-gamepad"></i>
+                <span>兴趣爱好</span>
+            </div>
+            
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-dragon"></i>
+                    </div>
+                    <div class="info-text">
+                        <div class="info-label">喜欢</div>
+                        <div class="info-content">毛龙，vore</div>
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-chess-rook"></i>
+                    </div>
+                    <div class="info-text">
+                        <div class="info-label">游戏</div>
+                        <div class="info-content">明日方舟，战锤，MC</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tags">
+                <span class="tag">furry</span>
+                <span class="tag">绘画</span>
+                <span class="tag">MC生电大王</span>
+                <span class="tag">爪控</span>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-title">
+                <i class="fas fa-star"></i>
+                <span>个人特质</span>
+            </div>
+            
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-smile"></i>
+                    </div>
+                    <div class="info-text">
+                        <div class="info-label">可爱</div>
+                        <div class="info-content">可爱能当饭吃 uwu</div>
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <div class="info-text">
+                        <div class="info-label">幽默</div>
+                        <div class="info-content">幽默倜傥好说话 Owo</div>
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-hand-holding-heart"></i>
+                    </div>
+                    <div class="info-text">
+                        <div class="info-label">温柔</div>
+                        <div class="info-content">温柔又细心 awa</div>
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="info-text">
+                        <div class="info-label">细节</div>
+                        <div class="info-content">其实是完美主义者 >w<</div>
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-dove"></i>
+                    </div>
+                    <div class="info-text">
+                        <div class="info-label">脾气好</div>
+                        <div class="info-content">很少哈气 h°</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-title">
+                <i class="fas fa-paint-brush"></i>
+                <span>我的约稿</span>
+            </div>
+            
+            <!-- 新的图片画廊 -->
+            <div class="gallery-container">
+                <div class="gallery-item">
+                    <img src="8C3857FED975761CB3C39F3C919402D2.jpg" alt="约稿作品1" class="gallery-img">
+                    <div class="gallery-overlay">
+                        <div class="gallery-title">角色1</div>
+                    </div>
+                </div>
+                
+                <div class="gallery-item">
+                    <img src="878FCFD3ADD48BCD8DAEB96185752A6B.jpg" alt="约稿作品2" class="gallery-img">
+                    <div class="gallery-overlay">
+                        <div class="gallery-title">角色2</div>
+                    </div>
+                </div>
+                
+                <div class="gallery-item">
+                    <img src="C480E933E1E46DAED5CA5F49DE7A36AC.jpg" alt="约稿作品3" class="gallery-img">
+                    <div class="gallery-overlay">
+                        <div class="gallery-title">角色3</div>
+                    </div>
+                </div>
+            </div>
+            
+
+        </div>
+        
+        <footer>
+            <p>请勿cos本体</p>
+        </footer>
+    </div>
+
+    <script>
+        // 简单的粒子背景效果
+        document.addEventListener('DOMContentLoaded', function() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 30;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // 随机大小和位置
+                const size = Math.random() * 20 + 5;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${Math.random() * 100}vw`;
+                particle.style.top = `${Math.random() * 100}vh`;
+                
+                // 随机动画延迟
+                // particle.style.animationDelay = `${Math.random() * 15}s`;
+                
+                // particlesContainer.appendChild(particle);
+            }
+            
+            // 简单的画廊交互
+            const galleryItems = document.querySelectorAll('.gallery-item');
+            galleryItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

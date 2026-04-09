@@ -1,0 +1,143 @@
+# 系统基础配置
+system:
+  ip:            # 服务器IP地址
+  port:              # 服务端口
+  env:                 # 运行环境 (dev: 开发, prod: 生产)
+  run_mode:         # 运行模式 (debug: 调试模式, release: 发布模式)
+
+# 日志配置
+log:
+  app:     # 应用名称
+  dir:                     # 日志存储目录
+  # TODO: 后续添加定时清理日志功能，精确到天，默认保留7天
+
+# AI相关配置
+ai:
+  enable: true             # 是否启用AI功能
+  model:               # AI模型类型 (local: 本地模型)(其实可能目前也仅支持本地模型)
+  # temperature: 0.7        # AI生成温度参数 (预留字段)
+  # max_tokens: 1024        # 最大token数量 (预留字段)
+  
+  host:     # AI服务地址
+  ApiKey: 123456         # AI服务密钥
+  nickName:             # AI助手昵称
+  avatar:     # AI助手头像URL
+
+# 邮件服务配置
+email:
+  domain:                   # 邮件服务器域名
+  port:                     # 邮件服务器端口
+  sendEmail:                # 发送邮箱地址
+  authCode: ""              # 邮箱授权码
+  sendNickname: ""          # 发送者昵称 (预留字段)
+
+# 文件上传配置
+upload:
+  size:                     # 上传文件大小限制，单位MB
+  # 上传文件白名单（图片格式）
+  whiteList:
+    ".jpg": ~               # JPEG格式
+    ".jpeg": ~              # JPEG格式
+    ".png": ~               # PNG格式
+    ".gif": ~               # GIF格式
+    ".webp": ~              # WebP格式
+    ".bmp": ~               # BMP格式
+    ".tiff": ~              # TIFF格式
+    ".svg": ~               # SVG格式
+  uploadDir: images         # 图片上传目录
+
+# JWT认证配置
+jwt:
+  accessExpire: 30                    # 访问令牌过期时间 (分钟)，推荐30分钟
+  refreshExpire: 172                  # 刷新令牌过期时间 (小时)，推荐一周(172小时)
+  accessTokenSecret: xxxxx            # 访问令牌密钥
+  refreshTokenSecret: xxxxxxx         # 刷新令牌密钥
+  issuer: "StarDreamer"               # 令牌签发者
+
+# Redis静态数据配置
+redisStatic:
+  addr:                    # Redis地址
+  password:           # Redis密码
+  db:                     # 使用的数据库编号
+
+# Redis动态数据配置
+redisDynamic:
+  addr:       # Redis地址及端口
+  password:           # Redis密码
+  db:                 # 使用的数据库编号
+
+# Elasticsearch搜索引擎配置
+es:
+  url:     # ES服务地址
+  username:              # ES用户名
+  password:                   # ES密码
+
+# 数据库配置（支持读写分离）
+db:
+  # 多数据库读写分离配置，第一个为写库，其余为读库
+  - user: root              # 数据库用户名
+    password: root          # 数据库密码
+    host:         # 数据库主机地址
+    port:               # 数据库端口
+    db_name:              # 数据库名
+    debug:             # 是否启用调试模式（打印SQL日志）
+    sql_name:           # 数据库类型,支持Mysql,Sqlite(不建议),postgrasql
+  # 示例：可配置多个数据库实例
+  # - user: root
+  #   password: root
+  #   host: 127.0.0.1
+  #   port: 3306
+  #   db_name: db
+  #   debug: false
+  #   SqlName: mysql
+
+# 网站站点配置
+site:
+  # 站点基本信息
+  siteInfo:
+    title: ""               # 站点标题
+    logo: ""                # 站点Logo路径
+    beian: ""               # 网站备案号
+    mode: 2                # 运行模式 (1: 博客模式, 2: 社区模式)
+
+  # 项目信息
+  project:
+    title: ""               # 项目名称
+    icon: ""                # 项目图标
+    webPath: ""             # 项目访问路径
+
+  # SEO优化配置
+  seo:
+    keywords: ""            # SEO关键词
+    description: ""         # SEO描述
+
+  # 关于我们信息
+  about:
+    siteDate: ""            # 网站创建日期
+    qq: ""                  # QQ联系方式
+    wechat: ""              # 微信联系方式
+    biliBili: ""            # Bilibili账号
+    gitHub: ""              # GitHub账号
+
+  # 首页右侧边栏配置
+  indexRight:
+    list:
+      - title: "热门文章"
+        enable: true        # 是否启用热门文章模块
+      - title: "最新评论"
+        enable: true        # 是否启用最新评论模块
+      - title: "友情链接"
+        enable: true        # 是否启用友情链接模块
+      - title: "标签云"
+        enable: true        # 是否启用标签云模块
+
+  # 文章相关配置
+  article:
+    enableExamination: true # 是否启用文章审核功能
+
+  # 登录方式配置
+  login:
+    QQLogin: true           # 是否启用QQ登录 (TODO: 尚未实现)
+    usernamePassword: true  # 是否启用用户名密码登录
+    emailLogin: true        # 是否启用邮箱登录 (建议保持开启)
+    captcha: false          # 是否启用验证码

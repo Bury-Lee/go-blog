@@ -1,0 +1,1 @@
+{"clientDatas":[{"clientIdentity":{"clientId":1001,"destination":"example","filter":".*\\.article_models"},"cursor":{"identity":{"slaveId":-1,"sourceAddress":{"address":"kubernetes.docker.internal","port":3306}},"postion":{"gtid":"","included":false,"journalName":"mysql-bin.000008","position":3431,"serverId":1,"timestamp":1774027418000}}}],"destination":"example"}

@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  # 实例 1: 用于存储带 TTL 的黑名单 (对应你之前的代码)
+  # 策略建议: noeviction (禁止淘汰，依靠 TTL 自动清理，保证安全)
+  redis-blacklist:
+    image: redis:7-alpine
+    container_name: redis-blacklist-instance
+    restart: always
+    ports:
+      - "6379:6379"  # 宿主机端口 6379 -> 容器 6379
+    command: redis-server --maxmemory-policy noeviction --maxmemory 256mb
+    volumes:
+      - redis_blacklist_data:/data
+    networks:
+      - app-network
+
+  # 实例 2: 用于存储不带 TTL 的热门数据 (需要应用层 RLU 或 原生 LFU)
+  # 策略建议: allkeys-lfu (如果不用自定义 RLU) 或 noeviction (如果完全由代码控制)
+  redis-hot-cache:
+    image: redis:7-alpine
+    container_name: redis-hot-cache-instance
+    restart: always
+    ports:
+      - "6380:6379"  # 宿主机端口 6380 -> 容器 6379 (注意端口区别)
+    command: redis-server --maxmemory-policy allkeys-lfu --maxmemory 512mb
+    volumes:
+      - redis_hot_cache_data:/data
+    networks:
+      - app-network
+
+volumes:
+  redis_blacklist_data:
+  redis_hot_cache_data:
+
+networks:
+  app-network:
+    driver: bridge

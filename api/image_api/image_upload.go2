@@ -1,0 +1,99 @@
+package image_api
+
+import (
+	"StarDreamerCyberNook/common/response"
+	"StarDreamerCyberNook/global"
+	"errors"
+	"path/filepath"
+	"strings"
+
+	"github.com/gin-gonic/gin"
+)
+
+func (i *ImageApi) ImageUpdateView(c *gin.Context) {
+	// 处理图片上传逻辑
+	fileHeader, err := c.FormFile("file") //TODO:把表单名改为image
+	if err != nil {
+		response.FailWithError(err, c)
+		return
+	}
+	if fileHeader.Size > 1024*1024*10 { //TODO:从配置里读取图片大小限制
+		response.FailWithMsg("图片大小不能超过10MB", c)
+		return
+	}
+
+	filePath := "static/upload/images/" + fileHeader.Filename //TODO:后期把这个路径移到配置里,不要写死在代码里
+	c.SaveUploadedFile(fileHeader, filePath)                  //TODO:迟点完成保存图片的路径与随机逻辑,应该是多层文件夹随机命名,取不同的字符作为文件夹名
+	response.OkWithMsg("图片上传成功,路径: /"+filePath, c)
+}
+
+func imageSuffix(filename string) error { //根据文件名判断是否是图片
+	ext := strings.ToLower(filepath.Ext(filename))
+	return ext
+}
+
+func imageSuffixJudge(filename string) (suffix string, err error) {
+	_list := strings.Split(filename, ".")
+	if len(_list) == 1 {
+		err = errors.New("错误的文件名")
+		return
+	}
+	// xxx.jpg   xxx  xxx.jpg.exe
+	suffix = _list[len(_list)-1]
+	if !utils.InList(suffix, global.Config.Upload.WhiteList) {
+		err = errors.New("文件非法")
+		return
+	}
+	return
+}
+
+func IsImage(filename string) bool {
+	// 1. 检查文件名长度（至少需要一个字符 + "." + 至少一个扩展名字符，所以最小长度为 2，但为了安全通常设大一点）
+	if len(filename) < 4 {
+		return false
+	}
+
+	// 转为小写，方便后续比较
+	lowerFilename := strings.ToLower(filename)
+
+	// 手动从后往前解析扩展名
+	// 需要找到最后一个 '.' 的位置，同时确保 '.' 后面的字符数不超过 5
+	dotIndex := -1 // 记录最后一个点的位置
+	extLen := 0    // 记录已读取的字符数
+
+	// 从字符串末尾开始向前遍历
+	for i := len(lowerFilename) - 1; i >= 0; i-- {
+		if lowerFilename[i] == '.' {
+			dotIndex = i
+			break // 找到第一个点（从后往前看就是最后一个点），停止循环
+		}
+		extLen++
+		// 关键逻辑：如果已经读了 5 个字符还没遇到点，直接返回 false
+		if extLen > 5 {
+			return false
+		}
+	}
+
+	// 如果没有找到点，或者点在最后一个位置（即没有扩展名），返回 false
+	if dotIndex == -1 || dotIndex == len(lowerFilename)-1 {
+		return false
+	}
+
+	// 提取扩展名（包含点）
+	ext := lowerFilename[dotIndex:]
+
+	// 4. 定义有效的图片扩展名白名单
+	validExtensions := map[string]bool{
+		".jpg":  true,
+		".jpeg": true, // 5个字符，符合 <=5 的要求
+		".png":  true,
+		".gif":  true,
+		".webp": true, // 5个字符
+		".bmp":  true,
+		".tiff": true, // 5个字符
+		".svg":  true,
+		// 注意：如果有类似 ".jfif" (5 chars) 也可以加在这里
+	}
+
+	return validExtensions[ext]
+}

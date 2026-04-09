@@ -1,0 +1,24 @@
+2026-03-23 01:25:55.011 [destination = example , address = /127.0.0.1:3306 , EventParser] ERROR c.a.o.canal.parse.inbound.mysql.dbsync.DirectLogFetcher - I/O error while reading from client socket
+java.io.IOException: EOF encountered.
+	at com.alibaba.otter.canal.parse.driver.mysql.socket.BioSocketChannel.read(BioSocketChannel.java:117)
+	at com.alibaba.otter.canal.parse.inbound.mysql.dbsync.DirectLogFetcher.fetch0(DirectLogFetcher.java:170)
+	at com.alibaba.otter.canal.parse.inbound.mysql.dbsync.DirectLogFetcher.fetch(DirectLogFetcher.java:77)
+	at com.alibaba.otter.canal.parse.inbound.mysql.MysqlConnection.dump(MysqlConnection.java:270)
+	at com.alibaba.otter.canal.parse.inbound.AbstractEventParser$1.run(AbstractEventParser.java:257)
+	at java.lang.Thread.run(Thread.java:750)
+2026-03-23 01:25:55.034 [destination = example , address = /127.0.0.1:3306 , EventParser] ERROR c.a.o.c.p.inbound.mysql.rds.RdsBinlogEventParserProxy - dump address kubernetes.docker.internal/127.0.0.1:3306 has an error, retrying. caused by 
+java.io.IOException: EOF encountered.
+	at com.alibaba.otter.canal.parse.driver.mysql.socket.BioSocketChannel.read(BioSocketChannel.java:117)
+	at com.alibaba.otter.canal.parse.inbound.mysql.dbsync.DirectLogFetcher.fetch0(DirectLogFetcher.java:170)
+	at com.alibaba.otter.canal.parse.inbound.mysql.dbsync.DirectLogFetcher.fetch(DirectLogFetcher.java:77)
+	at com.alibaba.otter.canal.parse.inbound.mysql.MysqlConnection.dump(MysqlConnection.java:270)
+	at com.alibaba.otter.canal.parse.inbound.AbstractEventParser$1.run(AbstractEventParser.java:257)
+	at java.lang.Thread.run(Thread.java:750)
+2026-03-23 01:25:55.039 [destination = example , address = /127.0.0.1:3306 , EventParser] ERROR com.alibaba.otter.canal.common.alarm.LogAlarmHandler - destination:example[java.io.IOException: EOF encountered.
+	at com.alibaba.otter.canal.parse.driver.mysql.socket.BioSocketChannel.read(BioSocketChannel.java:117)
+	at com.alibaba.otter.canal.parse.inbound.mysql.dbsync.DirectLogFetcher.fetch0(DirectLogFetcher.java:170)
+	at com.alibaba.otter.canal.parse.inbound.mysql.dbsync.DirectLogFetcher.fetch(DirectLogFetcher.java:77)
+	at com.alibaba.otter.canal.parse.inbound.mysql.MysqlConnection.dump(MysqlConnection.java:270)
+	at com.alibaba.otter.canal.parse.inbound.AbstractEventParser$1.run(AbstractEventParser.java:257)
+	at java.lang.Thread.run(Thread.java:750)
+]

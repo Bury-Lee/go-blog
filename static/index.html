@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>后端接口测试</title>
+</head>
+<body>
+  <h1>后端接口测试</h1>
+
+  <div>
+    <div>
+      <label>Base URL：</label>
+      <input id="baseUrl" type="text" style="width: 420px" placeholder="留空表示同源，例如 http://127.0.0.1:8080" />
+    </div>
+    <div>
+      <label>API 前缀：</label>
+      <input id="apiPrefix" type="text" style="width: 420px" placeholder="当前为空，若后端改为 /api 这里填 /api" />
+    </div>
+    <div>
+      <label>Token：</label>
+      <input id="token" type="text" style="width: 420px" placeholder="请求头 token: <jwt>" />
+      <button id="saveTokenBtn" type="button">保存</button>
+      <button id="clearTokenBtn" type="button">清空</button>
+    </div>
+  </div>
+
+  <hr />
+
+  <h2>通用请求器</h2>
+  <div>
+    <div>
+      <label>方法：</label>
+      <select id="reqMethod">
+        <option>GET</option>
+        <option>POST</option>
+        <option>PUT</option>
+        <option>DELETE</option>
+      </select>
+      <label>Path：</label>
+      <input id="reqPath" type="text" style="width: 420px" placeholder="/captcha" />
+    </div>
+    <div>
+      <label>Query：</label>
+      <input id="reqQuery" type="text" style="width: 420px" placeholder="a=1&b=2（可留空）" />
+    </div>
+    <div>
+      <label>Headers(JSON)：</label>
+    </div>
+    <div>
+      <textarea id="reqHeaders" style="width: 760px; height: 90px;">{}</textarea>
+    </div>
+    <div>
+      <label>Body(JSON)：</label>
+    </div>
+    <div>
+      <textarea id="reqBody" style="width: 760px; height: 140px;">{}</textarea>
+    </div>
+    <div>
+      <button id="sendBtn" type="button">发送</button>
+    </div>
+  </div>
+
+  <hr />
+
+  <h2>常用接口快捷测试</h2>
+
+  <h3>验证码</h3>
+  <div>
+    <button id="captchaBtn" type="button">GET /captcha</button>
+    <div>
+      <label>captchaID：</label>
+      <input id="captchaID" type="text" style="width: 420px" />
+    </div>
+    <div>
+      <label>captchaCode：</label>
+      <input id="captchaCode" type="text" style="width: 420px" />
+    </div>
+    <div>
+      <img id="captchaImg" alt="captcha" />
+    </div>
+  </div>
+
+  <h3>发送邮箱验证码</h3>
+  <div>
+    <div>
+      <label>type：</label>
+      <input id="sendEmailType" type="text" style="width: 420px" placeholder="注册|重置密码|重置邮箱" />
+    </div>
+    <div>
+      <label>email：</label>
+      <input id="sendEmailAddr" type="text" style="width: 420px" placeholder="xx@xx.com" />
+    </div>
+    <button id="sendEmailBtn" type="button">POST /user/send_email</button>
+    <div>
+      <label>emailID：</label>
+      <input id="emailID" type="text" style="width: 420px" />
+    </div>
+    <div>
+      <label>emailCode：</label>
+      <input id="emailCode" type="text" style="width: 420px" />
+    </div>
+  </div>
+
+  <h3>邮箱注册</h3>
+  <div>
+    <div>
+      <label>nickName：</label>
+      <input id="regNick" type="text" style="width: 420px" />
+    </div>
+    <div>
+      <label>password：</label>
+      <input id="regPwd" type="text" style="width: 420px" />
+    </div>
+    <button id="registerBtn" type="button">POST /user/email</button>
+  </div>
+
+  <h3>登录（debug）</h3>
+  <div>
+    <div>
+      <label>type：</label>
+      <input id="loginType" type="text" style="width: 420px" placeholder="邮箱|用户名密码" />
+    </div>
+    <div>
+      <label>val：</label>
+      <input id="loginVal" type="text" style="width: 420px" />
+    </div>
+    <div>
+      <label>pwd：</label>
+      <input id="loginPwd" type="text" style="width: 420px" />
+    </div>
+    <button id="loginBtn" type="button">POST /user/login</button>
+  </div>
+
+  <h3>用户详情（需要 token）</h3>
+  <div>
+    <button id="userDetailBtn" type="button">GET /user/detail</button>
+  </div>
+
+  <h3>图片上传</h3>
+  <div>
+    <input id="uploadFile" type="file" />
+    <button id="uploadBtn" type="button">POST /image</button>
+    <div>
+      <label>imageID：</label>
+      <input id="imageID" type="text" style="width: 420px" />
+      <button id="showImgBtn" type="button">显示</button>
+    </div>
+    <div>
+      <img id="imagePreview" alt="image" />
+    </div>
+  </div>
+
+  <hr />
+
+  <h2>响应</h2>
+  <pre id="output" style="white-space: pre-wrap;"></pre>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const outputEl = $("output");
+
+    const safeJsonParse = (s) => {
+      const t = (s || "").trim();
+      if (!t) return null;
+      try {
+        return JSON.parse(t);
+      } catch (e) {
+        throw new Error("JSON 解析失败：" + e.message);
+      }
+    };
+
+    const setOutput = (data, append) => {
+      let text = "";
+      if (typeof data === "string") text = data;
+      else text = JSON.stringify(data, null, 2);
+      if (append) outputEl.textContent = outputEl.textContent + "\n\n" + text;
+      else outputEl.textContent = text;
+    };
+
+    const getBase = () => {
+      const baseUrl = $("baseUrl").value.trim();
+      const apiPrefix = $("apiPrefix").value.trim();
+      return (baseUrl ? baseUrl.replace(/\/$/, "") : "") + (apiPrefix ? apiPrefix : "");
+    };
+
+    const getToken = () => $("token").value.trim();
+
+    const request = async (path, init) => {
+      const urlBase = getBase();
+      const cleanPath = path.startsWith("/") ? path : "/" + path;
+      const url = urlBase + cleanPath;
+
+      const headers = new Headers(init && init.headers ? init.headers : {});
+      const token = getToken();
+      if (token && !headers.has("token")) headers.set("token", token);
+
+      const finalInit = Object.assign({}, init || {}, { headers });
+      const res = await fetch(url, finalInit);
+
+      const ct = (res.headers.get("content-type") || "").toLowerCase();
+      let body;
+      if (ct.includes("application/json")) body = await res.json();
+      else body = await res.text();
+
+      return { ok: res.ok, status: res.status, headers: Object.fromEntries(res.headers.entries()), body };
+    };
+
+    const buildQuery = (q) => {
+      const t = (q || "").trim();
+      if (!t) return "";
+      return t.startsWith("?") ? t : "?" + t;
+    };
+
+    const sendGeneric = async () => {
+      const method = $("reqMethod").value;
+      const path = $("reqPath").value.trim();
+      const query = $("reqQuery").value.trim();
+      if (!path) {
+        setOutput("Path 不能为空");
+        return;
+      }
+
+      let headersObj = {};
+      try {
+        const h = safeJsonParse($("reqHeaders").value);
+        headersObj = h || {};
+      } catch (e) {
+        setOutput(e.message);
+        return;
+      }
+
+      let init = { method, headers: headersObj };
+      if (method !== "GET") {
+        try {
+          const b = safeJsonParse($("reqBody").value);
+          if (b !== null) {
+            init.headers = Object.assign({ "Content-Type": "application/json" }, headersObj);
+            init.body = JSON.stringify(b);
+          }
+        } catch (e) {
+          setOutput(e.message);
+          return;
+        }
+      }
+
+      try {
+        const resp = await request(path + buildQuery(query), init);
+        setOutput({ request: { method, url: getBase() + (path.startsWith("/") ? path : "/" + path) + buildQuery(query) }, response: resp });
+      } catch (e) {
+        setOutput("请求失败：" + e.message);
+      }
+    };
+
+    const getCaptcha = async () => {
+      try {
+        const resp = await request("/captcha", { method: "GET" });
+        setOutput(resp);
+        if (resp && resp.body && resp.body.data) {
+          if (resp.body.data.captchaID) $("captchaID").value = resp.body.data.captchaID;
+          if (resp.body.data.captcha) $("captchaImg").src = "data:image/png;base64," + resp.body.data.captcha;
+        }
+      } catch (e) {
+        setOutput("请求失败：" + e.message);
+      }
+    };
+
+    const sendEmail = async () => {
+      const type = $("sendEmailType").value.trim();
+      const email = $("sendEmailAddr").value.trim();
+      const captchaID = $("captchaID").value.trim();
+      const captchaCode = $("captchaCode").value.trim();
+      if (!type || !email) {
+        setOutput("type/email 不能为空");
+        return;
+      }
+
+      const payload = { type, email };
+      if (captchaID) payload.captchaID = captchaID;
+      if (captchaCode) payload.captchaCode = captchaCode;
+
+      try {
+        const resp = await request("/user/send_email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        setOutput(resp);
+        if (resp && resp.body && resp.body.data && resp.body.data.emailID) $("emailID").value = resp.body.data.emailID;
+      } catch (e) {
+        setOutput("请求失败：" + e.message);
+      }
+    };
+
+    const registerEmail = async () => {
+      const emailID = $("emailID").value.trim();
+      const emailCode = $("emailCode").value.trim();
+      const password = $("regPwd").value.trim();
+      const nickName = $("regNick").value.trim();
+      if (!emailID || !emailCode || !password || !nickName) {
+        setOutput("emailID/emailCode/password/nickName 不能为空");
+        return;
+      }
+
+      const payload = {
+        emailID,
+        emailCode,
+        EmailID: emailID,
+        EmailCode: emailCode,
+        password,
+        nickName,
+      };
+
+      try {
+        const resp = await request("/user/email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        setOutput(resp);
+        if (resp && resp.body && typeof resp.body.data === "string" && resp.body.data) {
+          $("token").value = resp.body.data;
+          localStorage.setItem("token", resp.body.data);
+        }
+      } catch (e) {
+        setOutput("请求失败：" + e.message);
+      }
+    };
+
+    const login = async () => {
+      const type = $("loginType").value.trim();
+      const val = $("loginVal").value.trim();
+      const pwd = $("loginPwd").value.trim();
+      if (!type || !val || !pwd) {
+        setOutput("type/val/pwd 不能为空");
+        return;
+      }
+
+      const payload = { type, val, pwd };
+      try {
+        const resp = await request("/user/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        setOutput(resp);
+      } catch (e) {
+        setOutput("请求失败：" + e.message);
+      }
+    };
+
+    const userDetail = async () => {
+      try {
+        const resp = await request("/user/detail", { method: "GET" });
+        setOutput(resp);
+      } catch (e) {
+        setOutput("请求失败：" + e.message);
+      }
+    };
+
+    const uploadImage = async () => {
+      const file = $("uploadFile").files && $("uploadFile").files[0];
+      if (!file) {
+        setOutput("请选择文件");
+        return;
+      }
+
+      const fd = new FormData();
+      fd.append("file", file);
+      try {
+        const resp = await request("/image", { method: "POST", body: fd });
+        setOutput(resp);
+        if (resp && resp.body && resp.body.data) $("imageID").value = String(resp.body.data);
+      } catch (e) {
+        setOutput("请求失败：" + e.message);
+      }
+    };
+
+    const showImage = () => {
+      const id = $("imageID").value.trim();
+      if (!id) {
+        setOutput("imageID 不能为空");
+        return;
+      }
+      const url = getBase() + "/images?id=" + encodeURIComponent(id);
+      $("imagePreview").src = url;
+      setOutput({ imageUrl: url }, true);
+    };
+
+    const init = () => {
+      $("saveTokenBtn").addEventListener("click", () => {
+        localStorage.setItem("token", $("token").value.trim());
+        setOutput("token 已保存");
+      });
+      $("clearTokenBtn").addEventListener("click", () => {
+        $("token").value = "";
+        localStorage.removeItem("token");
+        setOutput("token 已清空");
+      });
+
+      $("sendBtn").addEventListener("click", sendGeneric);
+      $("captchaBtn").addEventListener("click", getCaptcha);
+      $("sendEmailBtn").addEventListener("click", sendEmail);
+      $("registerBtn").addEventListener("click", registerEmail);
+      $("loginBtn").addEventListener("click", login);
+      $("userDetailBtn").addEventListener("click", userDetail);
+      $("uploadBtn").addEventListener("click", uploadImage);
+      $("showImgBtn").addEventListener("click", showImage);
+
+      const savedToken = localStorage.getItem("token");
+      if (savedToken) $("token").value = savedToken;
+    };
+
+    init();
+  </script>
+</body>
+</html>

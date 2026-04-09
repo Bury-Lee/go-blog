@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - 迷路啦 (。・_・。)</title>
+    <style>
+        /* 导入一些圆润可爱的字体 */
+        @import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* 采用粉蓝渐变，非常二次元、清新 */
+            background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
+            font-family: 'ZCOOL KuaiLe', 'Microsoft YaHei', sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 容器样式 */
+        .container {
+            background: rgba(255, 255, 255, 0.85);
+            padding: 3rem 4rem;
+            border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+            border: 3px solid rgba(255, 255, 255, 0.5);
+            /* 容器上下悬浮动画 */
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .error-code {
+            font-size: 8rem;
+            font-weight: 900;
+            color: #ff9a9e;
+            text-shadow: 4px 4px 0px #fecfef, 8px 8px 0px rgba(0,0,0,0.05);
+            margin-bottom: -1rem;
+            letter-spacing: 5px;
+            line-height: 1;
+        }
+
+        .kaomoji {
+            font-size: 3rem;
+            color: #a6c1ee;
+            margin: 1rem 0;
+            font-family: Arial, sans-serif; /* 颜文字用无衬线字体渲染更好 */
+            font-weight: bold;
+            /* 眨眼动画 */
+            animation: blink 4s infinite;
+        }
+
+        .message h2 {
+            color: #ff758c;
+            font-size: 1.8rem;
+            margin: 15px 0 10px;
+            text-shadow: 1px 1px 2px rgba(255,117,140,0.2);
+        }
+
+        .message p {
+            color: #888;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        .home-btn {
+            display: inline-block;
+            padding: 12px 40px;
+            font-size: 1.2rem;
+            color: white;
+            background: linear-gradient(45deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+            border-radius: 50px;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 5px 15px rgba(255, 154, 158, 0.4);
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 按钮光泽划过效果 */
+        .home-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
+            transform: skewX(-25deg);
+            animation: shine 3s infinite;
+        }
+
+        .home-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(255, 154, 158, 0.6);
+            color: #fff;
+        }
+
+        .home-btn:active {
+            transform: translateY(1px);
+        }
+
+        /* 背景星星装饰 */
+        .star {
+            position: absolute;
+            color: #fff;
+            font-size: 1.5rem;
+            z-index: 1;
+            animation: twinkle ease-in-out infinite alternate;
+        }
+
+        /* 漂浮的云朵 */
+        .cloud {
+            position: absolute;
+            background: white;
+            border-radius: 50px;
+            opacity: 0.6;
+            z-index: 1;
+            animation: move-cloud linear infinite;
+        }
+
+        .cloud::before, .cloud::after {
+            content: '';
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .cloud::before {
+            width: 50px;
+            height: 50px;
+            top: -20px;
+            left: 15px;
+        }
+
+        .cloud::after {
+            width: 70px;
+            height: 70px;
+            top: -35px;
+            right: 15px;
+        }
+
+        /* 动画定义 */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        @keyframes blink {
+            0%, 94%, 98% { opacity: 1; transform: scaleY(1); }
+            96% { opacity: 0; transform: scaleY(0.1); }
+        }
+
+        @keyframes twinkle {
+            0% { transform: scale(0.8) rotate(0deg); opacity: 0.3; }
+            100% { transform: scale(1.2) rotate(45deg); opacity: 0.9; }
+        }
+
+        @keyframes move-cloud {
+            from { transform: translateX(-150px); }
+            to { transform: translateX(calc(100vw + 150px)); }
+        }
+
+        @keyframes shine {
+            0% { left: -100%; }
+            20% { left: 200%; }
+            100% { left: 200%; }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="error-code">404</div>
+        <div class="kaomoji" id="kaomoji">( >_&lt; )</div>
+        <div class="message">
+            <h2>啊哦...被异次元吞噬啦！</h2>
+            <p>你寻找的页面似乎迷失在时空的裂缝中了...</p>
+        </div>
+        <a href="/" class="home-btn">搭乘时光机返回</a>
+    </div>
+
+    <!-- 动态生成背景装饰 -->
+    <script>
+        // 随机颜文字数组，每次刷新都不一样
+        const kaomojis = [
+            "( >_&lt; )", 
+            "( ；´Д｀)", 
+            "Σ( ° △ °|||)︴", 
+            "(っ °Д °;)っ", 
+            "(๑•́ ₃ •̀๑)",
+            "(PД`q。)·。",
+            "o(╥﹏╥)o"
+        ];
+        document.getElementById('kaomoji').innerHTML = kaomojis[Math.floor(Math.random() * kaomojis.length)];
+
+        // 生成星星
+        function createStars() {
+            const starCount = 15;
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.innerHTML = '✨';
+                star.style.left = Math.random() * 100 + 'vw';
+                star.style.top = Math.random() * 100 + 'vh';
+                star.style.fontSize = (Math.random() * 1.5 + 0.5) + 'rem';
+                star.style.animationDuration = (Math.random() * 2 + 1) + 's';
+                star.style.animationDelay = (Math.random() * 2) + 's';
+                document.body.appendChild(star);
+            }
+        }
+
+        // 生成云朵
+        function createClouds() {
+            const cloudCount = 5;
+            for (let i = 0; i < cloudCount; i++) {
+                const cloud = document.createElement('div');
+                cloud.className = 'cloud';
+                // 随机云朵大小
+                const width = Math.random() * 60 + 80;
+                cloud.style.width = width + 'px';
+                cloud.style.height = (width * 0.3) + 'px';
+                
+                cloud.style.left = '-150px';
+                cloud.style.top = Math.random() * 80 + 'vh';
+                cloud.style.opacity = Math.random() * 0.4 + 0.3;
+                
+                // 随机移动速度和延迟
+                cloud.style.animationDuration = (Math.random() * 20 + 15) + 's';
+                cloud.style.animationDelay = (Math.random() * -20) + 's'; // 负数延迟让云朵初始时就分布在屏幕上
+                
+                document.body.appendChild(cloud);
+            }
+        }
+
+        window.onload = () => {
+            createStars();
+            createClouds();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,2 @@
+2026-03-21 01:19:18.809 - clientId:1001 cursor:[mysql-bin.000008,3033,1774027157000,1,] address[kubernetes.docker.internal/127.0.0.1:3306]
+2026-03-21 01:23:39.816 - clientId:1001 cursor:[mysql-bin.000008,3431,1774027418000,1,] address[kubernetes.docker.internal/127.0.0.1:3306]

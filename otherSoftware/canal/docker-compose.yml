@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  # Canal Server: 负责读取 MySQL Binlog
+  canal-server:
+    image: canal/canal-server:v1.1.7
+    container_name: canal-server
+    restart: always
+    environment:
+      - canal.instance.mysql.slaveId=10 # 必须与 MySQL 的 server-id 不同
+      - canal.register.ip=canal-server  # 容器内通信
+    volumes:
+      # 挂载自定义配置
+      - ./canal-server/conf/example/instance.properties:/home/admin/canal-server/conf/example/instance.properties
+      - ./canal-server/conf/example/logback.xml:/home/admin/canal-server/conf/example/logback.xml
+    networks:
+      blogx_network:
+        ipv4_address: 10.2.0.5
+    depends_on:
+      - es
+
+  # Canal Adapter: 负责将数据写入 ES
+  canal-adapter:
+    image: canal/canal-adapter:v1.1.7
+    container_name: canal-adapter
+    restart: always
+    environment:
+      - canal.conf.canalServerHost=canal-server:11111 # 指向 Server 容器名
+    volumes:
+      # 挂载适配器配置
+      - ./canal-adapter/conf/application.yml:/home/admin/canal-adapter/conf/application.yml
+      - ./canal-adapter/conf/es/v1:/home/admin/canal-adapter/conf/es/v1
+    networks:
+      blogx_network:
+        ipv4_address: 10.2.0.6
+    depends_on:
+      - canal-server
+
+networks:
+  blogx_network:
+    external: true # 使用你已有的外部网络
+    name: blogx_network

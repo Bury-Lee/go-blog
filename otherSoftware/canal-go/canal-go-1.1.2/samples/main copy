@@ -1,0 +1,167 @@
+// Licensed to the Apache Software Foundation (ASF) under one
+// ... (许可证头省略，保持原样) ...
+
+package main
+
+import (
+	"fmt"
+	"log"
+	"os"
+	"time"
+
+	// 引入 canal-go 客户端库
+	"github.com/withlin/canal-go/client"
+	// 引入协议定义，用于解析二进制数据
+	pbe "github.com/withlin/canal-go/protocol/entry"
+	// 引入 protobuf 库，用于反序列化数据
+	"google.golang.org/protobuf/proto"
+)
+
+func main() {
+	// ------------------------------------------------------------------
+	// 1. 初始化并连接 Canal Server
+	// ------------------------------------------------------------------
+
+	// 参数说明:
+	// "127.0.0.1": Canal Server 的 IP 地址 (请替换为你实际的服务器 IP，如 192.168.199.17)
+	// 11111:        Canal Server 的端口号 (默认通常是 11111)
+	// "":            用户名 (如果未配置鉴权则留空)
+	// "":            密码 (如果未配置鉴权则留空)
+	// "example":     目的地名称 (对应 Canal 配置文件中的 canal.destinations，默认为 example)
+	// 60000:         连接超时时间 (毫秒)
+	// 60*60*1000:    空闲超时时间 (毫秒)，这里设置为 1 小时
+	connector := client.NewSimpleCanalConnector("127.0.0.1", 11111, "", "", "example", 60000, 60*60*1000)
+
+	// 建立网络连接
+	err := connector.Connect()
+	if err != nil {
+		log.Println("连接 Canal Server 失败:", err)
+		os.Exit(1)
+	}
+
+	// ------------------------------------------------------------------
+	// 2. 订阅数据库表
+	// ------------------------------------------------------------------
+
+	// 订阅过滤规则：使用 Perl 兼容的正则表达式匹配关注的表
+	// 格式说明:
+	//   - 多个规则用逗号分隔
+	//   - 正则中的点号(.)需要转义为 \\.(因为是在 Go 字符串中，所以写成 \\.)
+	// 常见示例:
+	//   1. 所有库的所有表: ".*\\..*" 或 ".*"
+	//   2. 指定库的所有表: "canal\\..*"
+	//   3. 指定库的特定前缀表: "canal\\.canal.*"
+	//   4. 指定单张表: "canal\\.test1"
+	//   5. 组合规则: "canal\\..*,mysql.test1,mysql.test2"
+
+	// 这里订阅所有库的所有表
+	err = connector.Subscribe(".*\\.article_models")
+	if err != nil {
+		log.Println("订阅失败:", err)
+		os.Exit(1)
+	}
+
+	// ------------------------------------------------------------------
+	// 3. 循环获取并处理数据
+	// ------------------------------------------------------------------
+	for {
+		// 获取数据批次
+		// 参数说明:
+		// 100:      每次获取的最大条目数 (batchSize)
+		// nil, nil: 超时时间设置 (使用默认值)
+		message, err := connector.Get(100, nil, nil)
+		if err != nil {
+			log.Println("获取数据出错:", err)
+			os.Exit(1)
+		}
+
+		// 获取批次 ID
+		batchId := message.Id
+
+		// 判断是否有数据
+		// 如果 batchId 为 -1 或者 数据条目列表为空，说明当前没有新的 Binlog 数据
+		if batchId == -1 || len(message.Entries) <= 0 {
+			// 短暂休眠，避免空轮询占用过高 CPU
+			time.Sleep(300 * time.Millisecond)
+			fmt.Println("=== 当前没有新数据，等待中... ===")
+			continue
+		}
+
+		// 有数据时，调用打印函数处理
+		printEntry(message.Entries)
+
+		// 【重要提示】:
+		// 在生产环境中，数据处理成功后通常需要调用 connector.Ack(batchId)
+		// 来确认消费，否则 Canal 可能会重复推送数据。
+		// 此示例代码未包含 Ack 逻辑，仅做演示。
+	}
+}
+
+// printEntry 解析并打印接收到的数据条目
+func printEntry(entrys []pbe.Entry) {
+	for _, entry := range entrys {
+		// 跳过事务开始 (TRANSACTIONBEGIN) 和事务结束 (TRANSACTIONEND) 标记
+		// 我们只关心具体的数据行变更 (ROWDATA)
+		if entry.GetEntryType() == pbe.EntryType_TRANSACTIONBEGIN || entry.GetEntryType() == pbe.EntryType_TRANSACTIONEND {
+			continue
+		}
+
+		// 创建 RowChange 对象用于存储解析后的行变更数据
+		rowChange := new(pbe.RowChange)
+
+		// 使用 Protobuf 反序列化 storeValue (二进制数据) 到 rowChange 对象
+		// entry.GetStoreValue() 包含了实际的行变更数据
+		err := proto.Unmarshal(entry.GetStoreValue(), rowChange)
+		checkError(err)
+
+		if rowChange != nil {
+			// 获取事件类型 (INSERT, UPDATE, DELETE)
+			eventType := rowChange.GetEventType()
+			// 获取 Binlog 文件头信息 (文件名、偏移量、库名、表名等)
+			header := entry.GetHeader()
+
+			// 打印元数据信息
+			// 格式: binlog[文件名:偏移量], 库名.表名, 事件类型
+			fmt.Printf("================> binlog[%s : %d], name[%s,%s], eventType: %s\n",
+				header.GetLogfileName(),
+				header.GetLogfileOffset(),
+				header.GetSchemaName(),
+				header.GetTableName(),
+				header.GetEventType())
+
+			// 遍历该事件中包含的所有行数据 (一次操作可能影响多行)
+			for _, rowData := range rowChange.GetRowDatas() {
+				if eventType == pbe.EventType_DELETE {
+					// 删除操作：只打印删除前的数据 (BeforeColumns)
+					printColumn(rowData.GetBeforeColumns())
+				} else if eventType == pbe.EventType_INSERT {
+					// 插入操作：只打印插入后的数据 (AfterColumns)
+					printColumn(rowData.GetAfterColumns())
+				} else {
+					// 更新操作 (UPDATE)：同时打印更新前和更新后的数据
+					fmt.Println("-------> before (更新前)")
+					printColumn(rowData.GetBeforeColumns())
+					fmt.Println("-------> after (更新后)")
+					printColumn(rowData.GetAfterColumns())
+				}
+			}
+		}
+	}
+}
+
+// printColumn 遍历并打印列信息
+func printColumn(columns []*pbe.Column) {
+	for _, col := range columns {
+		// 打印格式: 列名 : 列值  是否被更新
+		// GetUpdated() 在 INSERT/DELETE 时通常为 true，在 UPDATE 时标识该列是否发生了变化
+		fmt.Printf("\t%s : %s  update= %t\n", col.GetName(), col.GetValue(), col.GetUpdated())
+	}
+}
+
+// checkError 辅助函数：检查错误并退出程序
+func checkError(err error) {
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "发生致命错误: %s\n", err.Error())
+		os.Exit(1)
+	}
+}

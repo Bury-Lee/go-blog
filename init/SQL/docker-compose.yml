@@ -1,0 +1,58 @@
+#init/docker-compose.yml
+version: '3.2'
+services:
+  mysql-master:
+    image: "mysql:5.7"
+    container_name: mysql-master
+    restart: always
+    privileged: true
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456  #主库root用户的密码
+    command:
+      --default-authentication-plugin=mysql_native_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_general_ci
+      --explicit_defaults_for_timestamp=true
+      --lower_case_table_names=1
+      --max_allowed_packet=128M;
+    ports:
+      - 3306:3306  #映射宿主机端口：容器端口
+    volumes:  #宿主机配置目录或文件挂载到容器
+      - ./master/my.cnf:/etc/mysql/my.cnf
+      - ./master/mysql-files:/var/lib/mysql-files
+      - ./master/data:/var/lib/mysql
+      - ./master/log:/var/log/
+    networks:
+      blogx_network:
+        ipv4_address: 10.2.0.2
+  mysql-slave:
+    image: "mysql:5.7"
+    container_name: mysql-slave
+    restart: always
+    privileged: true
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456  #从库root用户的密码
+    command:
+      --default-authentication-plugin=mysql_native_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_general_ci
+      --explicit_defaults_for_timestamp=true
+      --lower_case_table_names=1
+      --max_allowed_packet=128M;
+    ports:
+      - 3307:3306  #映射宿主机端口：容器端口
+    volumes:  #宿主机配置目录或文件挂载到容器
+      - ./slave/my.cnf:/etc/mysql/my.cnf
+      - ./slave/mysql-files:/var/lib/mysql-files
+      - ./slave/data:/var/lib/mysql
+      - ./slave/log:/var/log/
+    networks:
+      blogx_network:
+        ipv4_address: 10.2.0.3
+networks:  #定义容器连接网络
+  blogx_network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.2.0.0/24
