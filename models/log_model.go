@@ -7,7 +7,6 @@ import "StarDreamerCyberNook/models/enum"
 
 // LogModel 日志模型
 // 存储系统日志信息，包括操作日志、登录日志等
-// TODO:后期一定要改一下!把用户输入的账号密码记录下来这样的行为太危险了!
 type LogModel struct {
 	Model
 	LogType     enum.LogType   `json:"logType"`                    // 日志类型枚举
