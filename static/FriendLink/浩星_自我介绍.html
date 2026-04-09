@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>浩星⭐的自我介绍</title>
+    <style>
+        :root {
+            --primary-pink: #FFB6C1;
+            --primary-blue: #4169E1;
+            --primary-gold: #FFD700;
+            --text-color: #577fdb;
+            /* 添加新的文字基础颜色 */
+            --gradient-bg: linear-gradient(135deg, var(--primary-pink) 0%, var(--primary-blue) 50%, var(--primary-gold) 100%);
+        }
+
+        /* 更新普通文本颜色 */
+        .content-item {
+            color: var(--text-color);
+            text-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 个人信息样式更新 */
+        .profile-item span {
+            color: var(--text-color);
+            text-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 性格特点文字样式 */
+        .personality {
+            color: var(--text-color);
+            text-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+            font-size: 1.1em;
+        }
+
+        /* 警告列表文字样式 */
+        .warning-list li {
+            color: var(--text-color);
+            text-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 游戏标签文字样式 */
+        .game-item {
+            color: var(--text-color);
+            text-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(135deg,
+                    rgba(65, 105, 225, 0.3),
+                    rgba(255, 182, 193, 0.3));
+            border: 1px solid rgba(255, 215, 0, 0.4);
+        }
+
+        /* 强调文字样式 */
+        .profile-item strong {
+            color: var(--primary-gold);
+            text-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+            font-size: 1.1em;
+        }
+
+        /* 标题文字阴影增强 */
+        .section-title {
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 上方诗句样式优化 */
+        .top-poem {
+            background: linear-gradient(135deg,
+                    #7EB2FF,
+                    /* 更亮的蓝色 */
+                    #FFE066
+                    /* 更亮的金色 */
+                );
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 5px rgba(65, 105, 225, 0.3);
+        }
+
+        /* 副标题样式优化 */
+        .subtitle {
+            color: #FFD4DB;
+            /* 更亮的粉色 */
+            text-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+            background: rgba(65, 105, 225, 0.15);
+        }
+
+        /* 页脚样式优化 */
+        .footer {
+            background: linear-gradient(135deg,
+                    #7EB2FF,
+                    /* 更亮的蓝色 */
+                    #FFE066
+                    /* 更亮的金色 */
+                );
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 5px rgba(65, 105, 225, 0.3);
+        }
+
+        /* 内容区块背景加深 */
+        .content-section {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .content-item {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", sans-serif;
+            background: linear-gradient(135deg,
+                    rgba(255, 182, 193, 0.2),
+                    rgba(65, 105, 225, 0.2),
+                    rgba(255, 215, 0, 0.2));
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 容器的渐变边框 */
+        .container {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 20px;
+            padding: 2px;
+            background: var(--gradient-bg);
+            -webkit-mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 1;
+        }
+
+        /* 内容区域样式 */
+        .content-section {
+            position: relative;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .content-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 20px;
+            padding: 1px;
+            background: var(--gradient-bg);
+            -webkit-mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 1;
+        }
+
+        /* 内容项样式 */
+        .content-item {
+            position: relative;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 14px;
+        }
+
+        .content-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 14px;
+            padding: 1px;
+            background: var(--gradient-bg);
+            -webkit-mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 1;
+        }
+
+        /* 游戏标签样式 */
+        .game-item {
+            position: relative;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 5px 15px;
+            border-radius: 15px;
+            color: white;
+        }
+
+        .game-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 15px;
+            padding: 1px;
+            background: var(--gradient-bg);
+            -webkit-mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 1;
+        }
+
+        /* 标题下划线效果 */
+        /* 标题样式修改 - 移除下划线 */
+        .section-title {
+            position: relative;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            background: var(--gradient-bg);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+        }
+
+        /* 移除之前的下划线效果 */
+        .section-title::after {
+            display: none;
+        }
+
+        /* 游戏标签样式简化 */
+        .game-item {
+            background: linear-gradient(135deg,
+                    rgba(255, 182, 193, 0.2),
+                    rgba(65, 105, 225, 0.2));
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            padding: 5px 15px;
+            border-radius: 15px;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        /* 移除之前的游戏标签渐变边框效果 */
+        .game-item::before {
+            display: none;
+        }
+
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: 15px;
+        padding: 1px;
+        background: var(--gradient-bg);
+        -webkit-mask: linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        opacity: 1;
+        }
+
+        /* 标题区域布局调整 */
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            /* 增加底部间距 */
+            position: relative;
+            padding-top: 40px;
+            /* 为上方文字留出空间 */
+        }
+
+        /* 上方诗句样式 */
+        .top-poem {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 1.8em;
+            color: var(--primary-blue);
+            letter-spacing: 3px;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-gold));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px rgba(65, 105, 225, 0.2);
+        }
+
+        /* 主标题样式 */
+        .title-container {
+            position: relative;
+            display: inline-block;
+            margin: 20px 0;
+        }
+
+        /* 主标题与内容间距调整 */
+        .title-container {
+            margin-bottom: 60px;
+            /* 增加间距 */
+        }
+
+        /* 主标题居中对齐 */
+        .title {
+            font-size: 2.8em;
+            background: var(--gradient-bg);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin: 0 auto;
+            text-align: center;
+            display: block;
+        }
+
+        /* 副标题右移 */
+        .subtitle {
+            position: absolute;
+            right: 20px;
+            bottom: -25px;
+            font-size: 1em;
+            font-family: "Brush Script MT", cursive;
+            color: var(--primary-pink);
+            text-align: right;
+            padding: 5px 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+        }
+
+        /* 上方诗句字体缩小 */
+        .top-poem {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 1.2em;
+            /* 调整为更小的字体 */
+            color: var(--primary-blue);
+            letter-spacing: 3px;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-gold));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px rgba(65, 105, 225, 0.2);
+        }
+
+        .top-text {
+            font-size: 1.5em;
+            color: var(--primary-blue);
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        /* 内容区域样式 */
+        .content-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .section-title {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            background: var(--gradient-bg);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+            padding-bottom: 5px;
+            border-bottom: 2px solid var(--primary-gold);
+        }
+
+        .content-item {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+        }
+
+        /* 个人信息样式 */
+        .content-item.profile {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .profile-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .profile-item strong {
+            color: var(--primary-gold);
+            font-size: 1.1em;
+        }
+
+        .profile-divider {
+            width: 2px;
+            height: 20px;
+            background: var(--primary-gold);
+            opacity: 0.5;
+        }
+
+        /* 游戏列表样式 */
+        .game-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .game-item {
+            background: linear-gradient(135deg,
+                    rgba(255, 182, 193, 0.2),
+                    rgba(65, 105, 225, 0.2));
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            padding: 5px 15px;
+            border-radius: 15px;
+            color: white;
+        }
+
+        /* 警告列表样式 */
+        .warning-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .warning-list li {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .warning-list li::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            color: var(--primary-gold);
+        }
+
+        /* 页脚样式 */
+        .footer {
+            text-align: center;
+            background: var(--gradient-bg);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-size: 1.1em;
+            margin-top: 40px;
+            padding: 20px;
+            border-top: 1px solid rgba(255, 215, 0, 0.2);
+            letter-spacing: 5px;
+        }
+
+        /* 星星背景 */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.5;
+        }
+
+        /* 响应式设计 */
+        @media screen and (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            .title {
+                font-size: 2em;
+            }
+
+            .subtitle {
+                font-size: 0.9em;
+            }
+
+            .section-title {
+                font-size: 1.5em;
+            }
+
+            .content-item.profile {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .profile-divider {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="stars"></div>
+    <div class="container">
+        <div class="header">
+            <div class="top-poem">浩荡天河流 &nbsp;&nbsp;&nbsp; 瀚空广阔任遨游</div>
+            <div class="title-container">
+                <h1 class="title">浩星⭐的自我介绍</h1>
+                <p class="subtitle"> 犹如天生的浪漫诗人——热烈而充满诗意 </p>
+            </div>
+        </div>
+
+
+        <div class="content">
+
+            <h2 class="section-title">基本信息 👤</h2>
+            <div class="content-item profile">
+                <div class="profile-item">
+                    <strong>ID：</strong>
+                    <span>遨游浩瀚星海</span>
+                </div>
+                <div class="profile-divider"></div>
+                <div class="profile-item">
+                    <strong>栖息地：</strong>
+                    <span>QQ, 微信, B站</span>
+
+                </div>
+            </div>
+
+
+            <h2 class="section-title">性格特点 💫</h2>
+            <div class="content-item">
+                🌸 善良可爱 ✨|
+                🌈 治愈纯真 🌼|
+                🔥 热情真诚 💗
+            </div>
+        </div>
+
+
+        <h2 class="section-title">雷点说明 ⚡</h2>
+        <div class="content-item">
+            <ul class="warning-list">
+                <li>❌ 食言</li>
+                <li>❌ 污蔑</li>
+                <li>❌ 随意移动或破坏浩星的东西</li>
+                <li>❌ 对浩星虚伪</li>
+                <li>❌ 没有底线的开玩笑</li>
+            </ul>
+        </div>
+
+
+        <h2 class="section-title">游戏列表 🎮</h2>
+        <div class="content-item">
+            <div class="game-list">
+                <span class="game-item">🕵️‍♂️ 第5人格</span>
+                <span class="game-item">⚔️ 王者荣耀</span>
+                <span class="game-item">🌌 明日方舟</span>
+                <span class="game-item">🚄 星穹铁道</span>
+                <span class="game-item">🎵 phigros</span>
+                <span class="game-item">🏁 巅峰极速</span>
+                <span class="game-item">🔫 使命召唤</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        星光闪烁 海纳长空
+    </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,61 @@
+# version: '3.8'
+
+# services:
+#   es:
+#     image: "elasticsearch:8.17.0"
+#     restart: always
+#     privileged: true
+#     environment:
+#       - discovery.type=single-node
+#       - ES_JAVA_OPTS=-Xms512m -Xmx512m
+#       # 【关键修改】预设 elastic 超级用户的密码为 es
+#       - ELASTIC_PASSWORD=es
+#       # 【推荐修改】禁用 HTTP SSL，方便本地直接用 http://localhost:9200 访问 (开发环境专用)
+#       - xpack.security.http.ssl.enabled=false
+#       - xpack.security.transport.ssl.enabled=false
+#     ports:
+#       - "9200:9200"
+#     volumes:
+#       - ./es/data:/usr/share/elasticsearch/data
+#     networks:
+#       blogx_network:
+#         ipv4_address: 10.2.0.4
+
+# networks:
+#   blogx_network:
+#     driver: bridge
+#     ipam:
+#       driver: default
+#       config:
+#         - subnet: 10.2.0.0/24
+
+
+
+version: '3'
+services:
+  es:
+    image: "elasticsearch:7.17.24"
+    restart: always
+    privileged: true
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      # 【关键修改】预设 elastic 超级用户的密码为 es
+      - ELASTIC_PASSWORD=es
+      # 【推荐修改】禁用 HTTP SSL，方便本地直接用 http://localhost:9200 访问 (开发环境专用)
+      - xpack.security.http.ssl.enabled=false
+      - xpack.security.transport.ssl.enabled=false
+    ports:
+      - 9200:9200
+    volumes:
+      - ./es/data:/usr/share/elasticsearch/data
+    networks:
+      blogx_network:
+        ipv4_address: 10.2.0.4
+networks:
+  blogx_network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.2.0.0/24

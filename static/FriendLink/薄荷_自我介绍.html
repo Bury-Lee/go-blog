@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>扩列条</title>
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(90deg, #a2d9a2 0%, #c1f0f0 100%);
+            --ice-blue: #e0f7fa;
+            --mint-green: #b2fab4;
+            --text-color: #2e7d32;
+            --border-radius: 12px;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f0fcff;
+            color: var(--text-color);
+        }
+
+        .card {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: var(--border-radius);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            padding: 24px;
+            position: relative;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--primary-gradient);
+            border-radius: 2px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2em;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            z-index: 1;
+        }
+
+        .avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid transparent;
+            background-clip: padding-box;
+            background: linear-gradient(135deg, #a2d9a2, #c1f0f0) border-box;
+            position: relative;
+        }
+
+        .avatar::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        section {
+            margin-bottom: 24px;
+            padding: 16px;
+            background: #f8fff8;
+            border-left: 3px solid var(--mint-green);
+            border-radius: var(--border-radius);
+        }
+
+        h2 {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-color);
+            margin-top: 0;
+            font-size: 1.2em;
+            position: relative;
+            padding-left: 12px;
+        }
+
+        h2::before {
+            content: '';
+            font-size: 1.2em;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 16px;
+            margin-top: 12px;
+        }
+
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .tag-list span {
+            background: #e8ffe8;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tag-list span::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -10px;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(45deg, #a2d9a2, #c1f0f0);
+            border-radius: 50%;
+            opacity: 0.3;
+        }
+
+        .feature-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .feature-list li {
+            background: #f0fff0;
+            padding: 8px 16px;
+            border-radius: 12px;
+            list-style: none;
+            position: relative;
+            font-weight: 500;
+        }
+
+        /* 修改此处：移除特征项前的❄️ */
+        .feature-list li::before {
+            content: '🧊';
+            position: absolute;
+            left: -8px;
+            top: -4px;
+            font-size: 1.2em;
+            opacity: 0.3;
+        }
+
+        .warning-list {
+            margin-top: 12px;
+        }
+
+        .warning-list li {
+            background: #fff5f5;
+            padding: 8px 16px;
+            border-radius: 12px;
+            list-style: none;
+            margin-bottom: 8px;
+            border-left: 3px solid #ff6b6b;
+        }
+
+        .warning-list .note {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .note::before {
+            content: '🌿';
+        }
+
+        .gallery,
+        .photos {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 16px;
+            margin-top: 12px;
+        }
+
+        .gallery img,
+        .photos img {
+            width: 100%;
+            border-radius: 12px;
+            object-fit: cover;
+            height: 180px;
+            border: 2px solid #c1f0f0;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .gallery img:hover,
+        .photos img:hover {
+            transform: scale(1.03);
+            box-shadow: 0 10px 20px rgba(162, 217, 162, 0.3);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 24px;
+            color: #2e7d32;
+            font-weight: bold;
+            background: #e0f7fa;
+            border-radius: var(--border-radius);
+            margin-top: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 保留页脚装饰 */
+        .footer::before {
+            content: '❄️';
+            position: absolute;
+            top: 8px;
+            left: 20%;
+            font-size: 1.5em;
+            opacity: 0.3;
+            animation: float 3s infinite ease-in-out;
+        }
+
+        .footer::after {
+            content: '❄️';
+            position: absolute;
+            bottom: 8px;
+            right: 20%;
+            font-size: 1.2em;
+            opacity: 0.3;
+            animation: float 4s infinite ease-in-out;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .avatar {
+                margin-top: 16px;
+                width: 70px;
+                height: 70px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 主卡片容器 -->
+    <div class="card">
+        <!-- 头部区域 -->
+        <div class="header">
+            <h1>薄荷味的芍药 / 冰荷</h1>
+            <img src="DF333F9EA599329EE29D96705C03C8B7.jpg" alt="头像" class="avatar">
+        </div>
+
+        <!-- 基本信息 -->
+        <section>
+            <h2>基本信息</h2>
+            <div class="info-grid">
+                <div>ID: 薄荷味的芍药/冰荷</div>
+                <div>栖息地: QQ</div>
+                <div>身高: 187cm（高人一枚）</div>
+            </div>
+        </section>
+
+        <!-- 我的爱好 -->
+        <section>
+            <h2>我的爱好</h2>
+            <div class="tag-list">
+                <span>🐾 furry</span>
+                <span>🧩 乐高搭建</span>
+                <span>🗡️ 幻影忍者</span>
+                <span>🐼 有兽焉同人</span>
+                <span>🖌️ 画师求加</span>
+                <span>🟥 MC黑奴</span>
+                <span>🀄 麻将</span>
+                <span>🃏 打牌</span>
+                <span>♟️ 三国杀军师</span>
+                <span>🔫 三角洲行动</span>
+                <span>🎖️ WOT老兵</span>
+                <span>📚 科幻小说</span>
+                <span>📺 瑞克和莫蒂</span>
+                <span>👾 格历奇</span>
+                <span>🐉 JOJO的奇妙冒险</span>
+            </div>
+        </section>
+
+        <!-- 性格特点 -->
+        <section>
+            <h2>性格特点</h2>
+            <div class="feature-list">
+                <li>✨ 善良单纯又理智</li>
+                <li>❄️ 呆萌可爱有心机</li>
+                <li>🌱 平易近人求指导</li>
+                <li>💡 容易冲动但听劝</li>
+            </div>
+        </section>
+
+        <!-- 雷点说明 -->
+        <section>
+            <h2>⚠️ 雷点说明</h2>
+            <div class="warning-list">
+                <li>❌ 拒绝黄腔（尤其不认识的人开黄腔）</li>
+                <li>❌ 讨厌说话不过脑子的</li>
+                <li>❌ 不喜欢情绪不稳定/易怒</li>
+                <div class="note">* 薄荷值得被温柔对待</div>
+            </div>
+        </section>
+
+        <!-- 内容展示 -->
+        <section>
+            <h2>🎨 我的约稿</h2>
+            <div class="gallery">
+                <img src="AE75203B8B51D647F64FB972A5FF6DF6.jpg" alt="作品1">
+                <img src="2904DD26D542D1BAF5DA906FD381E108.jpg" alt="作品2">
+                <img src="D78C506D314314D2DEB1AB68CB2CED9D.jpg" alt="作品3">
+            </div>
+        </section>
+
+        <section>
+            <h2>📷 足迹记录</h2>
+            <div class="photos">
+                <img src="AE75203B8B51D647F64FB972A53FF6DF6.jpg" alt="生活照1">
+                <img src="8B9869EB29C50829E2CAAFBD9A1FD324.jpg" alt="生活照2">
+            </div>
+        </section>
+
+        <!-- 页脚标语 -->
+        <div class="footer">
+            ✨ 愿你的生活如薄荷般清新 ✨
+        </div>
+    </div>
+</body>
+
+</html>
