@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # 实例 1: 用于存储带 TTL 的黑名单 (对应你之前的代码)
+  # 实例 1: 用于存储带 TTL 的数据
   # 策略建议: noeviction (禁止淘汰，依靠 TTL 自动清理，保证安全)
   redis-blacklist:
     image: redis:7-alpine
