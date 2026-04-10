@@ -25,37 +25,37 @@ type FollowUserListResponse struct {
 
 // FollowUserListView 我的关注和用户的关注
 func (FollowApi) FollowUserListView(c *gin.Context) {
-	var cr FollowUserListRequest
+	var req FollowUserListRequest
 	// 绑定参数
-	if err := c.ShouldBindQuery(&cr); err != nil {
+	if err := c.ShouldBindQuery(&req); err != nil {
 		response.FailWithMsg("参数错误", c)
 		return
 	}
 	var claims = jwts.GetClaims(c)
-	if cr.UserID == 0 {
+	if req.UserID == 0 {
 		var err error
 		claims, err = jwts.ParseTokenByGin(c)
 		if err != nil || claims == nil {
 			response.FailWithMsg("请登录", c)
 			return
 		}
-		cr.UserID = claims.UserID
+		req.UserID = claims.UserID
 	}
 	var userConf models.UserConfModel
-	err := global.DB.Take(&userConf, "user_id = ?", cr.UserID).Error
+	err := global.DB.Take(&userConf, "user_id = ?", req.UserID).Error
 	if err != nil {
 		response.FailWithMsg("用户配置信息不存在", c)
 		return
 	}
-	if !userConf.OpenFollow && cr.UserID != claims.UserID {
+	if !userConf.OpenFollow && req.UserID != claims.UserID {
 		response.FailWithMsg("此用户未公开我的关注", c)
 		return
 	}
 
 	_list, count, _ := common.ListQuery[models.UserFollowModel](models.UserFollowModel{
-		UserID: cr.UserID, //是这样吗?
+		UserID: req.UserID, //是这样吗?
 	}, common.Options{
-		PageInfo: cr.PageInfo,
+		PageInfo: req.PageInfo,
 		Preloads: []string{"FocusUserModel"},
 	})
 

@@ -33,22 +33,22 @@ type LogListResponse struct { //还需要什么就自己加
 
 func (LogApi) LogListView(c *gin.Context) {
 	//支持分页查询和模糊匹配&精确查询
-	var cr LogListRequest
-	if err := c.ShouldBindQuery(&cr); err != nil {
+	var req LogListRequest
+	if err := c.ShouldBindQuery(&req); err != nil {
 		response.FailWithError(err, c)
 		return
 	}
 
-	cr.PageInfo.Key = "created_at desc"
+	req.PageInfo.Key = "created_at desc"
 	list, count, err := common.ListQuery[models.LogModel](models.LogModel{
-		UserID:      cr.UserID,
-		LogType:     cr.LogType,
-		Level:       cr.Level,
-		IP:          cr.IP,
-		LoginStatus: cr.LoginStatus,
-		ServiceName: cr.ServiceName,
+		UserID:      req.UserID,
+		LogType:     req.LogType,
+		Level:       req.Level,
+		IP:          req.IP,
+		LoginStatus: req.LoginStatus,
+		ServiceName: req.ServiceName,
 	}, common.Options{
-		PageInfo: cr.PageInfo,
+		PageInfo: req.PageInfo,
 		Likes:    []string{"Title"},
 		Preloads: []string{"UserModel"},
 	})
@@ -61,13 +61,13 @@ func (LogApi) LogListView(c *gin.Context) {
 }
 
 func (LogApi) LogReadView(c *gin.Context) {
-	var cr models.IDRequest
-	if err := c.ShouldBindUri(&cr); err != nil {
+	var req models.IDRequest
+	if err := c.ShouldBindUri(&req); err != nil {
 		response.FailWithError(err, c)
 		return
 	}
 	var log models.LogModel
-	if err := global.DB.Take(&log, cr.ID).Error; err != nil {
+	if err := global.DB.Take(&log, req.ID).Error; err != nil {
 		response.FailWithMsg("日志不存在", c)
 		return
 	}
@@ -81,8 +81,8 @@ func (LogApi) LogReadView(c *gin.Context) {
 }
 
 func (LogApi) LogRemoveView(c *gin.Context) {
-	var cr models.RemoveRequest
-	if err := c.ShouldBindJSON(&cr); err != nil {
+	var req models.RemoveRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
 		response.FailWithError(err, c)
 		return
 	}
@@ -91,7 +91,7 @@ func (LogApi) LogRemoveView(c *gin.Context) {
 	log.ShowResponse()
 
 	var logList []models.LogModel
-	global.DB.Find(&logList, "id IN ?", cr.IDList)
+	global.DB.Find(&logList, "id IN ?", req.IDList)
 	if len(logList) > 0 {
 		global.DB.Delete(&logList)
 	}

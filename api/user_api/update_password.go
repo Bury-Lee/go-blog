@@ -15,8 +15,8 @@ type UpdatePasswordRequest struct { //TODO：要经过邮箱验证
 }
 
 func (UserApi) UpdatePasswordView(c *gin.Context) {
-	var cr UpdatePasswordRequest
-	err := c.ShouldBindJSON(&cr)
+	var req UpdatePasswordRequest
+	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		response.FailWithError(err, c)
 		return
@@ -41,7 +41,7 @@ func (UserApi) UpdatePasswordView(c *gin.Context) {
 	// 	return
 	// }
 
-	hashPwd, _ := Hash.HashPassword(cr.NewPwd)
+	hashPwd, _ := Hash.HashPassword(req.NewPwd)
 	global.DB.Model(&user).Update("password", hashPwd)
 	response.OkWithMsg("密码重置成功", c)
 }

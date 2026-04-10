@@ -19,21 +19,21 @@ import (
 // TODO:上一次登录日期,前端动态计算出距今多少天未登录
 type UserModel struct {
 	Model
-	UserName       string              `gorm:"size:32;uniqueIndex" json:"username"`           // 用户名，唯一索引
-	NickName       string              `gorm:"size:32" json:"nickname"`                       // 昵称
-	Avatar         string              `gorm:"size:512" json:"avatar"`                        // 头像URL
-	Abstract       string              `gorm:"size:512" json:"abstract"`                      // 个人简介
-	RegisterSource enum.RegisterSource `json:"registerSource"`                                // 注册来源枚举
-	Age            int                 `json:"Age"`                                           // 年龄
-	Password       string              `gorm:"size:64" json:"-"`                              // 哈希密码，不序列化到JSON
-	ContactInfo    map[string]string   `gorm:"type:json;serializer:json" json:"contactInfo"`  // 联系方式，JSON格式存储
-	Email          string              `gorm:"size:128;uniqueIndex" json:"email"`             // 邮箱，唯一索引
-	OpenID         string              `gorm:"size:128" json:"openID"`                        // 第三方登录唯一ID
-	Role           enum.RoleType       `json:"role"`                                          // 用户角色枚举：1-管理员,2-VIP用户,3-普通用户,4-游客,5-封禁用户
-	UserConfModel  *UserConfModel      `gorm:"foreignKey:UserID" json:"-"`                    // 用户配置信息，外键关联
-	LikeTags       []string            `gorm:"type:longtext;serializer:json" json:"likeTags"` // 兴趣标签列表，JSON格式存储
-	LastLoginTime  time.Time           `json:"lastLoginTime"`                                 // 上次登录时间
-	IP             string              `gorm:"size:64" json:"IP"`                             // IP属地
+	UserName       string              `gorm:"size:32;uniqueIndex" json:"username"`          // 用户名，唯一索引
+	NickName       string              `gorm:"size:32" json:"nickname"`                      // 昵称
+	Avatar         string              `gorm:"size:512" json:"avatar"`                       // 头像URL
+	Abstract       string              `gorm:"size:512" json:"abstract"`                     // 个人简介
+	RegisterSource enum.RegisterSource `json:"registerSource"`                               // 注册来源枚举
+	Age            int                 `json:"Age"`                                          // 年龄
+	Password       string              `gorm:"size:64" json:"-"`                             // 哈希密码，不序列化到JSON
+	ContactInfo    map[string]string   `gorm:"type:json;serializer:json" json:"contactInfo"` // 联系方式，JSON格式存储
+	Email          string              `gorm:"size:128;uniqueIndex" json:"email"`            // 邮箱，唯一索引
+	OpenID         string              `gorm:"size:128" json:"openID"`                       // 第三方登录唯一ID
+	Role           enum.RoleType       `json:"role"`                                         // 用户角色枚举：1-管理员,2-VIP用户,3-普通用户,4-游客,5-封禁用户
+	UserConfModel  *UserConfModel      `gorm:"foreignKey:UserID" json:"-"`                   // 用户配置信息，外键关联
+	LikeTags       []string            `gorm:"type:text;serializer:json" json:"likeTags"`    // 兴趣标签列表，JSON格式存储
+	LastLoginTime  time.Time           `json:"lastLoginTime"`                                // 上次登录时间
+	IP             string              `gorm:"size:64" json:"IP"`                            // IP属地
 }
 
 func (self UserModel) AfterCreate(tx *gorm.DB) error { //用户创建后,自动创建用户配置

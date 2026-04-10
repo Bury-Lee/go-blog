@@ -11,8 +11,8 @@ import (
 )
 
 func (CommentApi) AtOther(c *gin.Context) { //@别人并且发送时前端自动调用的接口
-	var cr models.IDRequest
-	if err := c.ShouldBindQuery(&cr); err != nil {
+	var req models.IDRequest
+	if err := c.ShouldBindQuery(&req); err != nil {
 		response.FailWithMsg("参数错误", c)
 		return
 	}
@@ -23,5 +23,5 @@ func (CommentApi) AtOther(c *gin.Context) { //@别人并且发送时前端自动
 		response.FailWithMsg("用户不存在", c)
 		return
 	}
-	message_service.InsertAtMessage(actor, cr.ID)
+	message_service.InsertAtMessage(actor, req.ID)
 }

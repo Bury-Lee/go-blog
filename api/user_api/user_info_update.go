@@ -30,14 +30,14 @@ type UserInfoUpdateRequest struct { //TODO:这个到时候要做测试
 }
 
 func (UserApi) UserInfoUpdateView(c *gin.Context) {
-	var cr UserInfoUpdateRequest
-	err := c.ShouldBindJSON(&cr)
+	var req UserInfoUpdateRequest
+	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		response.FailWithMsg(err.Error(), c)
 		return
 	}
 
-	if cr.LikeTags != nil && len(*cr.LikeTags) > 36 {
+	if req.LikeTags != nil && len(*req.LikeTags) > 36 {
 		response.FailWithMsg("喜欢的标签数量太多啦", c)
 		return
 	}
@@ -56,25 +56,25 @@ func (UserApi) UserInfoUpdateView(c *gin.Context) {
 		})
 
 		// 添加增量更新的值
-		if cr.Abstract != nil {
+		if req.Abstract != nil {
 			messages = append(messages,
 				openai.ChatCompletionMessage{
 					Role:    openai.ChatMessageRoleUser,
-					Content: "用户简介:" + *cr.Abstract,
+					Content: "用户简介:" + *req.Abstract,
 				})
 		}
-		if cr.NickName != nil {
+		if req.NickName != nil {
 			messages = append(messages,
 				openai.ChatCompletionMessage{
 					Role:    openai.ChatMessageRoleUser,
-					Content: "用户昵称:" + *cr.NickName,
+					Content: "用户昵称:" + *req.NickName,
 				})
 		}
-		if cr.LikeTags != nil {
+		if req.LikeTags != nil {
 			messages = append(messages,
 				openai.ChatCompletionMessage{
 					Role:    openai.ChatMessageRoleUser,
-					Content: "用户喜欢的标签:" + fmt.Sprintf("%v", *cr.LikeTags),
+					Content: "用户喜欢的标签:" + fmt.Sprintf("%v", *req.LikeTags),
 				})
 		}
 		// 创建非流式请求
@@ -97,14 +97,14 @@ func (UserApi) UserInfoUpdateView(c *gin.Context) {
 			response.FailWithMsg("存在违规信息,用户信息未更新", c)
 			return
 		default:
-			logrus.Errorf("ai审核结果未知: %s,用户:%+v", res.Choices[0].Message.Content, cr)
+			logrus.Errorf("ai审核结果未知: %s,用户:%+v", res.Choices[0].Message.Content, req)
 			response.FailWithMsg("审核结果未知,用户信息未更新", c) //也许也可以考虑放行?
 			return
 		}
 	}
 
-	userMap := utils_other.StructToMap(cr, "s-u")
-	userConfMap := utils_other.StructToMap(cr, "s-u-c")
+	userMap := utils_other.StructToMap(req, "s-u")
+	userConfMap := utils_other.StructToMap(req, "s-u-c")
 	// fmt.Println("userMap", userMap)
 	// fmt.Println("userConfMap", userConfMap)
 
@@ -141,7 +141,7 @@ func (UserApi) UserInfoUpdateView(c *gin.Context) {
 		// 	}
 		// }
 
-		if cr.NickName != nil || cr.Avatar != nil {
+		if req.NickName != nil || req.Avatar != nil {
 		}
 
 		err = global.DB.Model(&userModel).Updates(userMap).Error

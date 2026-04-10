@@ -64,8 +64,8 @@ type RemoveRequest struct {
 // 参数: c - gin上下文
 // 说明: 根据ID列表批量删除图片,记录操作日志
 func (ImageApi) ImageRemoveView(c *gin.Context) {
-	var cr RemoveRequest
-	if err := c.ShouldBindJSON(&cr); err != nil {
+	var req RemoveRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
 		response.FailWithError(err, c)
 		return
 	}
@@ -77,7 +77,7 @@ func (ImageApi) ImageRemoveView(c *gin.Context) {
 
 	// 查询要删除的图片
 	var list []models.ImageModel
-	global.DB.Find(&list, "id IN ?", cr.IDlist)
+	global.DB.Find(&list, "id IN ?", req.IDlist)
 
 	// 批量删除图片
 	if len(list) > 0 {

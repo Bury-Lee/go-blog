@@ -49,8 +49,8 @@ type ArticleSearchListResponse struct {
 // 5. 合并数据并返回搜索结果
 func (ArticleApi) ArticleSearchView(c *gin.Context) {
 	// 1. 解析并验证请求参数
-	var cr ArticleSearchRequest
-	if err := c.ShouldBindQuery(&cr); err != nil {
+	var req ArticleSearchRequest
+	if err := c.ShouldBindQuery(&req); err != nil {
 		response.FailWithMsg("参数绑定失败", c)
 		return
 	}
@@ -69,7 +69,7 @@ func (ArticleApi) ArticleSearchView(c *gin.Context) {
 		3: "digg_count",    // 最多点赞：按点赞数排序
 		4: "collect_count", // 最多收藏：按收藏数排序
 	}
-	sortKey, ok := sortMap[cr.Type]
+	sortKey, ok := sortMap[req.Type]
 	if !ok { // 如果传入的Type不在map中，则返回错误
 		response.FailWithMsg("搜索类型错误", c)
 		return
@@ -78,17 +78,17 @@ func (ArticleApi) ArticleSearchView(c *gin.Context) {
 	// 构建Elasticsearch Bool Query
 	query := elastic.NewBoolQuery()
 	// 如果有关键词，则在标题、摘要、内容中进行模糊匹配（Should关系）
-	if cr.Key != "" {
+	if req.Key != "" {
 		query.Should(
-			elastic.NewMatchQuery("title", cr.Key),
-			elastic.NewMatchQuery("abstract", cr.Key),
-			elastic.NewMatchQuery("content", cr.Key),
+			elastic.NewMatchQuery("title", req.Key),
+			elastic.NewMatchQuery("abstract", req.Key),
+			elastic.NewMatchQuery("content", req.Key),
 		)
 	}
 	// 如果指定了标签，则必须匹配该标签（Must关系）
-	if cr.Tag != "" {
+	if req.Tag != "" {
 		query.Must(
-			elastic.NewTermQuery("tag_list", cr.Tag),
+			elastic.NewTermQuery("tag_list", req.Tag),
 		)
 	}
 
@@ -120,7 +120,7 @@ func (ArticleApi) ArticleSearchView(c *gin.Context) {
 	//TODO.END
 
 	// 如果是"猜你喜欢"（Type=1），则加入用户兴趣标签查询
-	if cr.Type == 1 {
+	if req.Type == 1 {
 		// 尝试从JWT Token中解析用户信息
 		claims, err := jwts.ParseTokenByGin(c)
 		if err == nil && claims != nil {
@@ -157,8 +157,8 @@ func (ArticleApi) ArticleSearchView(c *gin.Context) {
 		Search(models.ArticleModel{}.Index()). // 指定搜索的索引
 		Query(query).                          // 设置查询DSL
 		Highlight(highlight).                  // 设置高亮
-		From(cr.GetOffset()).                  // 设置分页偏移量
-		Size(cr.GetLimit()).                   // 设置分页大小
+		From(req.GetOffset()).                 // 设置分页偏移量
+		Size(req.GetLimit()).                  // 设置分页大小
 		Sort(sortKey, false).                  // 设置排序字段和方向(false表示降序)
 		Do(context.Background())               // 执行搜索
 	if err != nil {

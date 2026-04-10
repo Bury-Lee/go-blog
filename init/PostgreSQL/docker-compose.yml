@@ -3,28 +3,13 @@ version: '3.8'
 services:
   postgres:
     image: postgres:16
-    container_name: goblog-postgres
+    container_name: postgres
     restart: always
     environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: root
-      POSTGRES_DB: db
-      TZ: Asia/Shanghai
+      POSTGRES_USER: root        # 数据库用户名
+      POSTGRES_PASSWORD: root    # 数据库密码
+      POSTGRES_DB: db            # 默认创建的数据库
     ports:
-      - "127.0.0.1:3306:5432"
+      - "5432:5432"              # 宿主机端口:容器端口
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U root -d db"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - blogx_network
-
-volumes:
-  postgres_data:
-
-networks:
-  blogx_network:
-    driver: bridge
+      - ./data:/var/lib/postgresql/data

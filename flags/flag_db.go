@@ -40,6 +40,7 @@ func FlagDB() { //数据库迁移
 	)
 	if err != nil {
 		logrus.Errorf("数据库迁移失败 %s", err)
+	} else {
+		logrus.Info("数据库已迁移")
 	}
-	logrus.Info("数据库已迁移")
 }

@@ -24,9 +24,9 @@ type FriendUserListResponse struct {
 
 // UserListView 我的关注和用户的关注
 func (FollowApi) FriendUserListView(c *gin.Context) {
-	var cr FriendUserListRequest
+	var req FriendUserListRequest
 	// 绑定参数
-	if err := c.ShouldBindQuery(&cr); err != nil {
+	if err := c.ShouldBindQuery(&req); err != nil {
 		response.FailWithMsg("参数错误", c)
 		return
 	}
@@ -39,7 +39,7 @@ func (FollowApi) FriendUserListView(c *gin.Context) {
 		UserID: claim.UserID,
 		Friend: true,
 	}, common.Options{
-		PageInfo: cr.PageInfo,
+		PageInfo: req.PageInfo,
 		Preloads: []string{"FocusUserModel"},
 	})
 

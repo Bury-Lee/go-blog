@@ -221,35 +221,6 @@ func (ArticleApi) CollectRemoveView(c *gin.Context) {
 	response.OkWithMsg("删除收藏夹成功", c)
 }
 
-/*
-反面教材(效率低):
-func (ArticleApi) CollectRemoveView(c *gin.Context) {
-  var cr = middleware.GetBind[models.RemoveRequest](c)
-
-  var list []models.CollectModel
-  query := global.DB.Where("id in ?", cr.IDList)
-  claims := jwts.GetClaims(c)
-  if claims.Role != enum.AdminRole {
-    query.Where("user_id = ?", claims.UserID)
-  }
-
-  global.DB.Where(query).Find(&list)
-
-  if len(list) > 0 {
-    err := global.DB.Delete(&list).Error
-    if err != nil {
-      res.FailWithMsg("删除分类失败", c)
-      return
-    }
-  }
-
-  msg := fmt.Sprintf("删除收藏夹成功 共删除%d条", len(list))
-
-  res.OkWithMsg(msg, c)
-}
-
-*/
-
 type CollectListViewRequest struct {
 	common.PageInfo
 	Likes []string `form:"likes"`

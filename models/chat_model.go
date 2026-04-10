@@ -4,12 +4,12 @@ import "time"
 
 type ChatModel struct {
 	Model
-	SendUserID    uint            `json:"sendUserID"`                               // 发送用户ID
-	SendUserModel UserModel       `gorm:"foreignKey:SendUserID"  json:"-"`          // 发送用户模型
-	RevUserID     uint            `json:"revUserID"`                                // 接收用户ID
-	RevUserModel  UserModel       `gorm:"foreignKey:RevUserID"  json:"-"`           // 接收用户模型
-	MsgType       ChatMessageType `json:"msgType"`                                  // 消息类型,预备以后扩展
-	Msg           ChatMsg         `gorm:"type:longtext;serializer:json" json:"msg"` // 消息内容
+	SendUserID    uint            `json:"sendUserID"`                           // 发送用户ID
+	SendUserModel UserModel       `gorm:"foreignKey:SendUserID"  json:"-"`      // 发送用户模型
+	RevUserID     uint            `json:"revUserID"`                            // 接收用户ID
+	RevUserModel  UserModel       `gorm:"foreignKey:RevUserID"  json:"-"`       // 接收用户模型
+	MsgType       ChatMessageType `json:"msgType"`                              // 消息类型,预备以后扩展
+	Msg           ChatMsg         `gorm:"type:text;serializer:json" json:"msg"` // 消息内容
 }
 type ChatMessageType uint8
 

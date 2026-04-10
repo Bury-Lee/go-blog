@@ -15,20 +15,20 @@ type FollowUserRequest struct {
 
 // FollowUserView 登录后关注用户
 func (FollowApi) FollowUserView(c *gin.Context) {
-	var cr FollowUserRequest
-	if err := c.ShouldBindJSON(&cr); err != nil {
+	var req FollowUserRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
 		response.FailWithMsg("参数错误", c)
 		return
 	}
 
 	claims := jwts.GetClaims(c)
-	if cr.FocusUserID == claims.UserID {
+	if req.FocusUserID == claims.UserID {
 		response.FailWithMsg("其实你时刻都在关注自己~", c)
 		return
 	}
 	// 查关注的用户是否存在
 	var user models.UserModel
-	err := global.DB.Take(&user, cr.FocusUserID).Error
+	err := global.DB.Take(&user, req.FocusUserID).Error
 	if err != nil {
 		response.FailWithMsg("关注用户不存在", c)
 		return
@@ -45,7 +45,7 @@ func (FollowApi) FollowUserView(c *gin.Context) {
 	// 关注
 	global.DB.Create(&models.UserFollowModel{
 		UserID:      claims.UserID,
-		FocusUserID: cr.FocusUserID,
+		FocusUserID: req.FocusUserID,
 	})
 
 	response.OkWithMsg("关注成功", c)
@@ -53,20 +53,20 @@ func (FollowApi) FollowUserView(c *gin.Context) {
 
 // UnFollowUserView 登录人取关用户
 func (FollowApi) UnFollowUserView(c *gin.Context) {
-	var cr FollowUserRequest
-	if err := c.ShouldBindJSON(&cr); err != nil {
+	var req FollowUserRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
 		response.FailWithMsg("参数错误", c)
 		return
 	}
 
 	claims := jwts.GetClaims(c)
-	if cr.FocusUserID == claims.UserID {
+	if req.FocusUserID == claims.UserID {
 		response.FailWithMsg("你无法取关自己", c)
 		return
 	}
 	// 查关注的用户是否存在
 	var user models.UserModel
-	err := global.DB.Take(&user, cr.FocusUserID).Error
+	err := global.DB.Take(&user, req.FocusUserID).Error
 	if err != nil {
 		response.FailWithMsg("取关用户不存在", c)
 		return

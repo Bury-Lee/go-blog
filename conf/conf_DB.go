@@ -23,7 +23,7 @@ type DB struct {
 
 const (
 	DBMysqlMode  = "mysql"
-	DBPgsqlMode  = "pgsql"
+	DBPgsqlMode  = "postgresql"
 	DBSqliteMode = "sqlite"
 )
 
@@ -39,7 +39,14 @@ func (db *DB) DSN() gorm.Dialector {
 		)
 		return mysql.Open(dsn)
 	case DBPgsqlMode:
-		dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable TimeZone=Asia/Shanghai",
+		// dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable TimeZone=Asia/Shanghai",
+		// 	db.Host,
+		// 	db.User,
+		// 	db.Password,
+		// 	db.DBName,
+		// 	db.Port,
+		// )
+		dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable",
 			db.Host,
 			db.User,
 			db.Password,

@@ -76,15 +76,15 @@ type SiteUpdate struct {
 // 路由注册需要改为：PUT /site/update/:name/:value
 
 func (SiteApi) SiteUpdateView(c *gin.Context) {
-	var cr SiteUpdate
-	err := c.ShouldBindUri(&cr)
+	var req SiteUpdate
+	err := c.ShouldBindUri(&req)
 	if err != nil {
 		response.FailWithError(err, c)
 		return
 	}
 
 	var rep any
-	switch cr.Name {
+	switch req.Name {
 	case "site":
 		var data conf.Site
 		err = c.ShouldBindJSON(&data)

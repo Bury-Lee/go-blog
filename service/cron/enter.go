@@ -8,12 +8,15 @@ import (
 )
 
 func CronArticle() {
+
+	var crontab *cron.Cron
 	timezone, err := time.LoadLocation("Asia/Shanghai")
 	if err != nil {
-		logrus.Error("无法设置时区!建议停止程序")
+		logrus.Warnf("无法设置时区,已使用UTC时区:%v", err)
+		crontab = cron.New(cron.WithSeconds(), cron.WithLocation(time.UTC))
+	} else {
+		crontab = cron.New(cron.WithSeconds(), cron.WithLocation(timezone))
 	}
-
-	crontab := cron.New(cron.WithSeconds(), cron.WithLocation(timezone))
 
 	//debug使用
 	// crontab.AddFunc("*/10 * * * * *", SyncArticle)//debug:10秒一次
