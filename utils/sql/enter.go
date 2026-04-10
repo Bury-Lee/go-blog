@@ -2,28 +2,19 @@ package sql
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
 )
 
-func ConvertSliceSql(orderList []uint) string {
-	result := "("
-	for i, v := range orderList {
-		result += fmt.Sprintf("%d", v)
-		if i < len(orderList)-1 {
-			result += ","
-		}
-	}
-	result += ")"
-	return result
-}
-
 func ConvertSliceOrderSql(orderList []uint) string {
-	result := ""
-	for i, v := range orderList {
-		if i == len(orderList)-1 {
-			result += fmt.Sprintf("id = %d desc", v)
-			break
-		}
-		result += fmt.Sprintf("id = %d desc,", v)
+	if len(orderList) == 0 {
+		return ""
 	}
-	return result
+
+	var idStrs []string
+	for _, id := range orderList {
+		idStrs = append(idStrs, strconv.FormatUint(uint64(id), 10))
+	}
+
+	return fmt.Sprintf("FIELD(id, %s)", strings.Join(idStrs, ","))
 }

@@ -7,10 +7,10 @@ import (
 	"StarDreamerCyberNook/models"
 	"StarDreamerCyberNook/models/enum"
 	jwts "StarDreamerCyberNook/utils/jwts"
+	utils_other "StarDreamerCyberNook/utils/other"
 	"StarDreamerCyberNook/utils/sql"
 	"context"
 	"encoding/json"
-	"fmt"
 
 	"github.com/gin-gonic/gin"
 	"github.com/olivere/elastic/v7"
@@ -54,6 +54,7 @@ func (ArticleApi) ArticleSearchView(c *gin.Context) {
 		response.FailWithMsg("参数绑定失败", c)
 		return
 	}
+
 	//TODO:也许要考虑服务降级的问题?
 	// if global.ES == nil {//在这里写降级处理
 	// 	response.FailWithMsg("Elasticsearch服务未启动", c)
@@ -100,6 +101,8 @@ func (ArticleApi) ArticleSearchView(c *gin.Context) {
 	var topArticleIDList []uint // 存储被管理员置顶的文章ID
 
 	//TODO:这里两步查询还是有点低效，以后想想怎么优化吧
+	//TODO:这里也应该先去Redis查询置顶文章列表，没有再从数据库查询(预计管理员置顶文章不会太多的情况下)
+	//在管理员及其置顶的文章不会太多的情况下,也许可以把这些放Redis里,直接从Redis里取置顶文章列表.记得和top的CRUD函数同步更改
 	// 查询所有角色为管理员的用户ID
 	global.DB.Model(models.UserModel{}).Where("role = ?", enum.AdminRole).Select("id").Scan(&userIDList) //由于管理员的数量不会超过100人，所以这里可以直接查询所有管理员的ID
 	// 查询这些管理员置顶的文章ID
@@ -114,6 +117,7 @@ func (ArticleApi) ArticleSearchView(c *gin.Context) {
 		// 只给命中的置顶文章加权，不绕过搜索条件
 		query.Should(elastic.NewTermsQuery("id", topArticleIDListAny...).Boost(10))
 	}
+	//TODO.END
 
 	// 如果是"猜你喜欢"（Type=1），则加入用户兴趣标签查询
 	if cr.Type == 1 {
@@ -179,10 +183,6 @@ func (ArticleApi) ArticleSearchView(c *gin.Context) {
 			logrus.Warnf("解析失败 %s  %s", err, string(hit.Source))
 			continue
 		}
-		// （可选）打印评分和标题，用于调试
-		if hit.Score != nil {
-			fmt.Println(*hit.Score, art.Title, art.ID)
-		}
 		// 如果有高亮结果，则替换原始内容
 		if len(hit.Highlight["title"]) > 0 {
 			art.Title = hit.Highlight["title"][0]
@@ -206,6 +206,8 @@ func (ArticleApi) ArticleSearchView(c *gin.Context) {
 	}
 
 	// 根据Elasticsearch返回的文章ID列表，从数据库查询完整的文章对象（包含关联的分类和用户信息）
+	//TODO:这里也应该先去Redis查询，没有再从数据库查询(注:这里没查到的文章页不应该放入Redis,查询率不一定代表点击率)
+
 	where := global.DB.Where("id in ?", articleIDList)
 	_list, _, err := common.ListQuery[models.ArticleModel](models.ArticleModel{}, common.Options{
 		Where:        where,
@@ -217,6 +219,7 @@ func (ArticleApi) ArticleSearchView(c *gin.Context) {
 		response.FailWithMsg("查询失败", c)
 		return
 	}
+	//TODO.END
 
 	// 将数据库查询的完整信息与ES返回的高亮信息合并
 	var list = make([]ArticleSearchListResponse, 0)
@@ -241,5 +244,5 @@ func (ArticleApi) ArticleSearchView(c *gin.Context) {
 
 	//TODO:以后加入带点赞数和评论数的响应字段
 	// 返回成功响应，包含文章列表和总数
-	response.OkWithList(list, int(count), c)
+	response.OkWithList(utils_other.ReverseArray(list), int(count), c)
 }
