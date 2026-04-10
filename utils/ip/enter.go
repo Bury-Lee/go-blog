@@ -15,7 +15,7 @@ import (
 // 说明:对于本地IP地址，返回"未知的本地ip"对于无效IP地址，返回"异常地址",对于格式异常的查询结果，返回"未知地址",优先显示省份和城市信息，其次是国家信息
 func GetIpAddr(ip string) (addr string) {
 	if HasLocalIPAddr(ip) {
-		return "未知的本地ip"
+		return "本地ip"
 	}
 
 	region, err := global.IPsearcher.Search(ip)
@@ -27,8 +27,9 @@ func GetIpAddr(ip string) (addr string) {
 	if len(_addrList) != 5 {
 		// 数据库返回的格式异常，记录警告日志
 		logrus.Warnf("异常的ip地址 %s", ip)
-		return "未知地址"
+		return "异常地址"
 	}
+
 	// _addrList 五个部分分别代表：
 	// 国家(0) | 区域(1) | 省份(2) | 城市(3) | 运营商(4)
 	country := _addrList[0]

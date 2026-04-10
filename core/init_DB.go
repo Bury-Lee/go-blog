@@ -68,6 +68,7 @@ func InitDB() *gorm.DB {
 
 	if global.Config.System.RunMode == "debug" {
 		db := db.Debug()
+		logrus.Debug("数据库调试模式已开启")
 		return db
 	}
 	return db

@@ -7,10 +7,10 @@ import (
 	"StarDreamerCyberNook/models"
 	"StarDreamerCyberNook/models/enum"
 	jwts "StarDreamerCyberNook/utils/jwts"
-	utils_other "StarDreamerCyberNook/utils/other"
 	"StarDreamerCyberNook/utils/sql"
 	"context"
 	"encoding/json"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/olivere/elastic/v7"
@@ -208,41 +208,101 @@ func (ArticleApi) ArticleSearchView(c *gin.Context) {
 	// 根据Elasticsearch返回的文章ID列表，从数据库查询完整的文章对象（包含关联的分类和用户信息）
 	//TODO:这里也应该先去Redis查询，没有再从数据库查询(注:这里没查到的文章页不应该放入Redis,查询率不一定代表点击率)
 
-	where := global.DB.Where("id in ?", articleIDList)
-	_list, _, err := common.ListQuery[models.ArticleModel](models.ArticleModel{}, common.Options{
-		Where:        where,
-		Preloads:     []string{"CategoryModel", "UserModel"},  // 预加载分类和用户信息
-		DefaultOrder: sql.ConvertSliceOrderSql(articleIDList), // 按照articleIDList的顺序进行排序
-	})
-	if err != nil {
-		logrus.Errorf("查询文章详情失败 %s", err)
-		response.FailWithMsg("查询失败", c)
-		return
+	KeyList := []string{}
+	for _, id := range articleIDList {
+		idStr := strconv.FormatUint(uint64(id), 10)
+		KeyList = append(KeyList, "ArticleID"+idStr)
 	}
-	//TODO.END
 
-	// 将数据库查询的完整信息与ES返回的高亮信息合并
+	ctx := context.Background()
+	res, exit := global.RedisHotPool.MGet(ctx, KeyList...).Result()
+
 	var list = make([]ArticleSearchListResponse, 0)
-	for _, model := range _list {
-		item := ArticleSearchListResponse{
-			ArticleModel: model,
-			AdminTop:     articleTopMap[model.ID],  // 设置是否置顶
-			UserNickname: model.UserModel.NickName, // 设置用户名
-			UserAvatar:   model.UserModel.Avatar,   // 设置用户头像
+	var cacheMissIDList []uint                                 // 缓存未命中的文章ID
+	var cacheHitMap = make(map[uint]ArticleSearchListResponse) // 缓存命中的文章数据
+
+	if exit == nil { //查询成功
+		// 处理缓存命中结果
+		for i, cacheData := range res {
+			if cacheData != nil {
+				// 缓存命中
+				var cached ArticleDetailResponse
+				err := json.Unmarshal([]byte(cacheData.(string)), &cached)
+				if err != nil {
+					logrus.Warnf("缓存数据解析错误: %s", err)
+					// 解析失败时，将文章ID加入未命中列表，后续从数据库查询
+					cacheMissIDList = append(cacheMissIDList, articleIDList[i])
+					continue
+				}
+
+				// 组装缓存数据为搜索结果格式
+				item := ArticleSearchListResponse{
+					ArticleModel: cached.ArticleModel,
+					AdminTop:     articleTopMap[cached.ID], // 设置是否置顶
+					UserNickname: cached.NickName,          // 设置用户名
+					UserAvatar:   cached.UserAvatar,        // 设置用户头像
+				}
+
+				// 使用ES返回的高亮标题和摘要覆盖缓存中的内容
+				if art, ok := searchArticleMap[cached.ID]; ok {
+					item.Title = art.Title
+					item.Abstract = art.Abstract
+				}
+
+				cacheHitMap[cached.ID] = item
+			} else {
+				// 缓存未命中
+				cacheMissIDList = append(cacheMissIDList, articleIDList[i])
+			}
 		}
-		// 设置分类标题（如果存在）
-		if model.CategoryModel != nil {
-			item.CategoryTitle = &model.CategoryModel.Title
+	} else {
+		// Redis查询失败，所有文章ID都从未命中列表处理
+		cacheMissIDList = articleIDList
+	}
+
+	// 如果有缓存未命中的文章，从数据库查询
+	if len(cacheMissIDList) > 0 {
+		where := global.DB.Where("id in ?", cacheMissIDList)
+		_list, _, err := common.ListQuery[models.ArticleModel](models.ArticleModel{}, common.Options{
+			Where:        where,
+			Preloads:     []string{"CategoryModel", "UserModel"},    // 预加载分类和用户信息
+			DefaultOrder: sql.ConvertSliceOrderSql(cacheMissIDList), // 按照cacheMissIDList的顺序进行排序
+		})
+		if err != nil {
+			logrus.Errorf("查询文章详情失败 %s", err)
+			response.FailWithMsg("查询失败", c)
+			return
 		}
-		// 使用ES返回的高亮标题和摘要覆盖数据库中的原始内容
-		if art, ok := searchArticleMap[model.ID]; ok {
-			item.Title = art.Title
-			item.Abstract = art.Abstract
+
+		// 将数据库查询的完整信息与ES返回的高亮信息合并
+		for _, model := range _list {
+			item := ArticleSearchListResponse{
+				ArticleModel: model,
+				AdminTop:     articleTopMap[model.ID],  // 设置是否置顶
+				UserNickname: model.UserModel.NickName, // 设置用户名
+				UserAvatar:   model.UserModel.Avatar,   // 设置用户头像
+			}
+			// 设置分类标题（如果存在）
+			if model.CategoryModel != nil {
+				item.CategoryTitle = &model.CategoryModel.Title
+			}
+			// 使用ES返回的高亮标题和摘要覆盖数据库中的原始内容
+			if art, ok := searchArticleMap[model.ID]; ok {
+				item.Title = art.Title
+				item.Abstract = art.Abstract
+			}
+			cacheHitMap[model.ID] = item // 存入map，便于后续排序
 		}
-		list = append(list, item)
+	}
+
+	// 按照原始文章ID列表的顺序组装最终结果
+	for _, id := range articleIDList {
+		if item, ok := cacheHitMap[id]; ok {
+			list = append(list, item)
+		}
 	}
 
 	//TODO:以后加入带点赞数和评论数的响应字段
 	// 返回成功响应，包含文章列表和总数
-	response.OkWithList(utils_other.ReverseArray(list), int(count), c)
+	response.OkWithList(list, int(count), c)
 }

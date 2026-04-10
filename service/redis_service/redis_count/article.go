@@ -262,7 +262,7 @@ func setDirtArticle(t CacheType, articleID uint, increase bool) {
 func getDirtArticle(t CacheType, ID uint) int { //获取单个文章的增量值
 	context := context.Background()
 	num, err := global.RedisTimeCache.HGet(context, string(t), strconv.Itoa(int(ID))).Int()
-	if err != nil {
+	if err != nil && err != redis.Nil {
 		logrus.Errorf("获取缓存计数失败, err: %v", err)
 	}
 	return num

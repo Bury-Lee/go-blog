@@ -29,6 +29,7 @@ func InitElasticSearch() *elastic.Client { //TODO:升级到v8
 			elastic.SetBasicAuth(es.UserName, es.Password),
 			elastic.SetTraceLog(ESLog),
 		)
+		logrus.Debug("es调试模式已开启")
 	} else {
 		client, err = elastic.NewClient(
 			elastic.SetURL(es.Url),
