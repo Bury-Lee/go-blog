@@ -354,5 +354,6 @@ go run samples/main.go
 
 - **GitHub Issues**: 在 [项目仓库](https://github.com/Bury-Lee/go-blog ) 提交 Issue
 - **邮箱联系**: [18151161@qq.com](18151161@qq.com)
+- **交流群**: [星梦的交流群](https://qun.qq.com/universal-share/share?ac=1&authKey=2MOKPRKsyf8SGY12y3L%2By8yC53zfKakQDg5qiZvgz46DHm%2Bil90q6MuER5XVKo4g&busi_data=eyJncm91cENvZGUiOiIxMDk4NDgzNzk0IiwidG9rZW4iOiJMdTVWVWFQK3pMYXdteDdrVzF5MzE1Nm12SDlHLy9PYm1zZXJBUm5peGxKcGptdHoxcXhacWtsSlNNTDN6S3hVIiwidWluIjoiMTgxNTExNjEifQ%3D%3D&data=71mrINsJgoFhsfYAIO6n6qMWIh9Fi73oWgVrPeRDFjKIwlhBnVaCGFKx5Hr73xvNrEsKaAIk-gvPCV2nkslvHQ&svctype=4&tempid=h5_group_info)
 
 作者非常乐意解决有价值的技术问题，也欢迎提交 PR 参与项目贡献！
