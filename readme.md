@@ -1,86 +1,92 @@
-# GoBlog（StarDreamerCyberNook）
+# GoBlog (StarDreamerCyberNook)
 
-一个基于 `Gin + GORM + Redis + Elasticsearch` 的博客/社区后端项目，包含用户、文章、评论、消息、关注、聊天、站点配置等模块。
+A blog/community backend project based on `Gin + GORM + Redis + Elasticsearch`, featuring modules for users, articles, comments, messages, follows, chat, and site configuration.
 
-## 📋 功能速览
+## 🌐 Multilingual Documentation
 
-- **博客与社区一体化**：文章、评论、收藏、消息、关注、私聊集中在同一套后端
-- **搜索能力完整**：基于 `Elasticsearch` 提供文章全文搜索、高亮和多维排序
-- **高并发友好**：浏览、点赞、收藏、评论计数先写 Redis，再由定时任务批量同步数据库
-- **AI 已接入业务**：支持站点 AI 助手，以及文章、评论、昵称等内容审核
-- **运营能力齐全**：支持站点配置、SEO、轮播图、友情链接、推广位和日志管理
+**Languages:** :[🇨🇳 中文](docs/README.zh-CN.md) • [🇺🇸 English](README.md) • [🇯🇵 日本語](docs/README.ja.md) • [🇰🇷 한국어](docs/README.ko.md)
 
-> 📖 **功能文档**：[博客功能文档](docs/功能文档.md)
 
-> ⚠️ **注意**：项目本体支持数据库读写分离，但**不原生支持数据库之间的数据同步**。仓库中的 `otherSoftware` 提供了基于 Canal 的简易订阅同步方案（本文已给出配置与使用步骤）。
+## 📋 Features Overview
 
-## 🏗️ 项目结构
+- **Blog & Community Integration**: Articles, comments, collections, messages, follows, and private chat all in one backend
+- **Complete Search Capabilities**: Full-text article search, highlighting, and multi-dimensional sorting based on `Elasticsearch`
+- **High Concurrency Friendly**: Views, likes, collections, and comment counts are written to Redis first, then synchronized to the database in batches by scheduled tasks
+- **AI Integration**: Site AI assistant and content moderation for articles, comments, and nicknames
+- **Complete Operations Features**: Site configuration, SEO, banners, friend links, promotion slots, and log management
+
+> 📖 **Feature Documentation**: [Blog Feature Documentation](docs/功能文档.md)
+
+> ⚠️ **Note**: The project supports database read-write separation but **does not natively support data synchronization between databases**. The repository provides a simple subscription-based synchronization solution using Canal (configuration and usage steps are provided in this document).
+
+## 🏗️ Project Structure
 
 ```
 go-blog
-├─ api/                 # 控制器层
-├─ router/              # 路由注册
-├─ models/              # 数据模型与 ES Mapping
-├─ service/             # 业务服务（含定时任务、ES服务、Redis服务）
-├─ middleware/          # 中间件
-├─ core/                # 配置/日志/DB/Redis/ES/AI 初始化
-├─ conf/                # 配置结构体
-├─ flags/               # 命令行参数（迁移、建索引、建用户）
-├─ init/                # 本地依赖服务 docker-compose 与基础配置
-├─ otherSoftware/       # 数据同步方案（Canal + canal-go）
-├─ setting.yaml         # 主配置文件
-└─ main.go              # 入口
+├─ api/                 # Controller layer
+├─ router/              # Route registration
+├─ models/              # Data models and ES Mapping
+├─ service/             # Business services (including scheduled tasks, ES services, Redis services)
+├─ middleware/          # Middleware
+├─ core/                # Configuration/log/DB/Redis/ES/AI initialization
+├─ conf/                # Configuration structures
+├─ flags/               # Command line arguments (migration, index creation, user creation)
+├─ init/                # Local dependency services docker-compose and basic configuration
+├─ otherSoftware/       # Data synchronization solution (Canal + canal-go)
+├─ setting.yaml         # Main configuration file
+└─ main.go              # Entry point
 ```
 
-## 🔧 环境要求
+## 🔧 Environment Requirements
 
-| 组件 | 版本要求 | 备注 |
-|------|----------|------|
-| Go | 1.26.0 | 按项目 `go.mod` 版本 |
-| MySQL | 5.7 | 项目内提供 docker-compose |
-| Redis | 7 | 项目内提供 docker-compose，双实例 |
-| Elasticsearch | 7.17.x | 项目使用 `olivere/elastic/v7` |
-| AI 服务 | 可选 | 默认配置示例：`http://localhost:1234/v1` (目前仅支持本地模型) |
+| Component | Version Requirement | Notes |
+|----------|-------------------|-------|
+| Go | 1.26.0 | According to project `go.mod` version |
+| MySQL | 5.7 | Docker-compose provided in project |
+| Redis | 7 | Docker-compose provided in project, dual instances |
+| Elasticsearch | 7.17.x | Project uses `olivere/elastic/v7` |
+| AI Service | Optional | Default configuration example: `http://localhost:1234/v1` (currently only supports local models) |
 
-## 🚀 快速启动
+## 🚀 Quick Start
 
-### 1️⃣ 启动依赖服务
+### 1️⃣ Start Dependency Services
 
-在项目根目录 `go-blog` 下分别执行：
+Execute in the project root directory `go-blog`:
 
 ```bash
-# 启动 MySQL
+# Start MySQL
 docker compose -f init/SQL/docker-compose.yml up -d
 
-# 启动 Redis
+# Start Redis
 docker compose -f init/Redis/docker-compose.yml up -d
 
-# 启动 Elasticsearch
+# Start Elasticsearch
 docker compose -f init/ES/docker-compose.yml up -d
 ```
-在写完配置文件后执行发行版程序:
+
+After writing the configuration file, execute the release program:
 
 Windows
 ```bash
-# 启动项目
+# Start project
 .\main_windows_amd64.exe
 ```
 Linux
 ```bash
-# 启动项目
+# Start project
 ./main_linux_amd64
 ```
 macOS
 ```bash
-# 启动项目
+# Start project
 ./main_macos_amd64
 ```
 
 
 
-> 💡 **提示**：由于 MySQL 5.7 以上版本和 Canal 之间的兼容性不是特别好，故在 `init/SQL/docker-compose.yml` 中配置了 `5.7.360.0` 版本。
+> 💡 **Tip**: Due to compatibility issues between MySQL versions above 5.7 and Canal, version `5.7.360.0` is configured in `init/SQL/docker-compose.yml`.
 
-### 2️⃣ 编译项目
+### 2️⃣ Compile Project
 
 #### Windows AMD64
 ```bash
@@ -106,27 +112,27 @@ set CGO_ENABLED=0
 go build -ldflags="-s -w" -trimpath -o main_macos_amd64 .\main.go
 ```
 
-### 3️⃣ 修改主配置 `setting.yaml`
+### 3️⃣ Modify Main Configuration `setting.yaml`
 
-建议优先确认以下关键字段：
+Key fields to confirm first:
 
-- `system.ip`、`system.port`、`system.env`、`system.gin_mode`
-- `db`（第一个为写库，后续为读库）
-- `redisStatic`、`redisDynamic`
-- `es.url`、`es.username`、`es.password`
-- `jwt.accessTokenSecret`、`jwt.refreshTokenSecret`
-- `email`（用于邮箱验证码登录/注册）
-- `ai.enable`（不使用 AI 可设为 `false`）
+- `system.ip`, `system.port`, `system.env`, `system.gin_mode`
+- `db` (first is write database, subsequent are read databases)
+- `redisStatic`, `redisDynamic`
+- `es.url`, `es.username`, `es.password`
+- `jwt.accessTokenSecret`, `jwt.refreshTokenSecret`
+- `email` (for email verification code login/registration)
+- `ai.enable` (set to `false` if not using AI)
 
 <details>
-<summary>📖 点击查看完整配置示例</summary>
+<summary>📖 Click to view complete configuration example</summary>
 
 ```yaml
 system:
   ip: 0.0.0.0
   port: 8080
   env: dev
-  gin_mode: debug # Gin 运行模式：debug 或 release
+  gin_mode: debug # Gin run mode: debug or release
 
 log:
   app: GoBlog
@@ -138,19 +144,19 @@ ai:
   model: local
   host: http://localhost:1234/v1
   ApiKey: 123456
-  nickName: 昵称
-  avatar: "https://example.com/avatar.jpg" # TODO：后续适配头像来源
+  nickName: Nickname
+  avatar: "https://example.com/avatar.jpg" # TODO: Adapt avatar source later
 
 email:
   domain: smtp.qq.com
-  port: 587 # QQ 邮箱常用端口为 587 或 465
+  port: 587 # QQ email common ports are 587 or 465
   sendEmail: xxxxxx@qq.com
-  authCode: "xxxxxxx" # 邮箱授权码
-  sendNickname: 昵称
+  authCode: "xxxxxxx" # Email authorization code
+  sendNickname: Nickname
 
 upload:
-  size: 20 # 上传文件大小限制，单位 MB
-  whiteList: # 上传文件白名单
+  size: 20 # Upload file size limit, unit MB
+  whiteList: # Upload file whitelist
     ".jpg": ~
     ".jpeg": ~
     ".png": ~
@@ -159,11 +165,11 @@ upload:
     ".bmp": ~
     ".tiff": ~
     ".svg": ~
-  uploadDir: images # 图片上传目录
+  uploadDir: images # Image upload directory
 
 jwt:
-  accessExpire: 30 # 访问令牌过期时间（分钟），推荐 30 分钟
-  refreshExpire: 172 # 刷新令牌过期时间（小时），推荐一周（172 小时）
+  accessExpire: 30 # Access token expiration time (minutes), recommended 30 minutes
+  refreshExpire: 172 # Refresh token expiration time (hours), recommended one week (172 hours)
   accessTokenSecret: xxxxx
   refreshTokenSecret: xxxxxxx
   issuer: "StarDreamer"
@@ -184,37 +190,37 @@ es:
   password: es
 
 db:
-  # 多数据库读写分离：第一个为写库，其余为读库
+  # Multiple database read-write separation: first is write database, rest are read databases
   - user: root
     password: root
     host: 127.0.0.1
     port: 3306
     db_name: db
-    debug: false # 是否启用调试（打印完整日志）
+    debug: false # Whether to enable debug (print complete logs)
     sql_name: mysql
-  # - user: root # 可按此格式继续添加多个数据库
+  # - user: root # Can continue adding multiple databases in this format
   #   password: root
   #   host: 127.0.0.1
   #   port: 3306
   #   db: db
-  #   debug: false # 是否启用调试（打印完整日志）
+  #   debug: false # Whether to enable debug (print complete logs)
   #   source: mysql
 
 site:
   siteInfo:
-    title: "星梦网络空间" # 站点标题
-    logo: "/static/images/logo.png" # 站点 Logo 路径
-    beian: "京ICP备XXXXXXXX号" # 备案号
-    mode: 1 # 运行模式（1: 博客模式, 2: 社区模式等，需对应代码枚举）
+    title: "StarDreamer Cyberspace" # Site title
+    logo: "/static/images/logo.png" # Site Logo path
+    beian: "京ICP备XXXXXXXX号" # Filing number
+    mode: 1 # Run mode (1: blog mode, 2: community mode, etc., needs to correspond to code enum)
 
   project:
-    title: "StarDreamer" # 项目名称
-    icon: "/static/images/favicon.ico" # 项目图标
-    webPath: "https://www.example.com" # 项目访问路径
+    title: "StarDreamer" # Project name
+    icon: "/static/images/favicon.ico" # Project icon
+    webPath: "https://www.example.com" # Project access path
 
   seo:
-    keywords: "技术博客, Go语言, 人工智能, 分享"
-    description: "一个专注于技术分享与人工智能探索的个人站点。"
+    keywords: "tech blog, Go language, AI, sharing"
+    description: "A personal site focused on technology sharing and AI exploration."
 
   about:
     siteDate: "2023-01-01"
@@ -225,163 +231,163 @@ site:
 
   indexRight:
     list:
-      - title: "热门文章"
+      - title: "Popular Articles"
         enable: true
-      - title: "最新评论"
+      - title: "Latest Comments"
         enable: true
-      - title: "友情链接"
+      - title: "Friend Links"
         enable: true
-      - title: "标签云"
+      - title: "Tag Cloud"
         enable: true
 
   article:
-    # 说明：Go 字段名是 DisableExamination，但 yaml tag 是 enableExamination
-    # 若以 enableExamination 读取：true 表示"启用审核"（即不禁用）
-    # 业务语义：true = 需要审核，false = 无需审核
+    # Note: Go field name is DisableExamination, but yaml tag is enableExamination
+    # If read as enableExamination: true means "enable review" (i.e., not disabled)
+    # Business semantics: true = needs review, false = no review needed
     enableExamination: true
 
   login:
-    QQLogin: true # TODO：尚未实现
+    QQLogin: true # TODO: Not yet implemented
     usernamePassword: true
-    emailLogin: true # TODO：可考虑固定开启（基础登录方式）
-    captcha: false # 是否启用验证码
+    emailLogin: true # TODO: Can consider always on (basic login method)
+    captcha: false # Whether to enable captcha
 ```
 
 </details>
 
-### 4️⃣ 初始化数据库结构
+### 4️⃣ Initialize Database Structure
 
 ```bash
 go run main.go -db
 ```
 
-### 5️⃣ 初始化 ES 索引
+### 5️⃣ Initialize ES Index
 
 ```bash
 go run main.go -es
 ```
 
-### 6️⃣ 启动服务
+### 6️⃣ Start Service
 
 ```bash
 go run main.go -f setting.yaml
 ```
 
-🌐 启动后默认监听：`http://127.0.0.1:8080`
+🌐 Default listening after startup: `http://127.0.0.1:8080`
 
-## 📝 命令行参数
+## 📝 Command Line Parameters
 
-| 参数 | 说明 |
-|------|------|
-| `-f` | 配置文件路径（默认 `setting.yaml`） |
-| `-db` | 执行 GORM 自动迁移 |
-| `-es` | 创建/重建 ES 索引 |
-| `-v` | 查看版本 |
-| `-t user -s create` | 命令行创建用户 |
+| Parameter | Description |
+|-----------|-------------|
+| `-f` | Configuration file path (default `setting.yaml`) |
+| `-db` | Execute GORM auto migration |
+| `-es` | Create/rebuild ES index |
+| `-v` | View version |
+| `-t user -s create` | Create user via command line |
 
-**示例：**
+**Example:**
 ```bash
 go run main.go -t user -s create
 ```
 
-## ⚙️ 关键运行说明
+## ⚙️ Key Runtime Instructions
 
-- **初始化顺序**：配置 → 日志 → IP库 → DB → Redis → ES → AI → 定时任务 → 路由
-- **ES 为强依赖**：ES 初始化失败会导致服务启动中断
-- **接口规范**：当前接口统一使用 `/api` 前缀，例如 `/api/user/login`
-- **静态资源**：静态资源目录映射为 `/web`，对应本地 `static/`
-- **定时任务**：当前定时任务 `SyncArticle/SyncComment` 为 10 分钟级批量同步，用于刷新 Redis 中的计数增量
+- **Initialization order**: Configuration → Log → IP library → DB → Redis → ES → AI → Scheduled tasks → Routes
+- **ES is a strong dependency**: ES initialization failure will cause service startup interruption
+- **Interface specification**: Current interfaces use `/api` prefix, e.g., `/api/user/login`
+- **Static resources**: Static resource directory mapped as `/web`, corresponding to local `static/`
+- **Scheduled tasks**: Current scheduled tasks `SyncArticle/SyncComment` are 10-minute level batch synchronization for refreshing count increments in Redis
 
-## 🔄 数据库同步方案（otherSoftware）
+## 🔄 Database Synchronization Solution (otherSoftware)
 
-### 📍 背景
+### 📍 Background
 
-项目原生只做读写分离，不做跨库自动同步。  
-`otherSoftware` 提供了一个简易方案：
+The project natively only does read-write separation, not cross-database automatic synchronization.  
+`otherSoftware` provides a simple solution:
 
-- `otherSoftware/canal`：Canal Server，订阅 MySQL binlog
-- `otherSoftware/canal-go/canal-go-1.1.2/samples/main.go`：Go 客户端消费变更并做下游处理（示例里同步到 ES）
+- `otherSoftware/canal`: Canal Server, subscribes to MySQL binlog
+- `otherSoftware/canal-go/canal-go-1.1.2/samples/main.go`: Go client consumes changes and does downstream processing (example syncs to ES)
 
-### ✅ 前置条件
+### ✅ Prerequisites
 
-1. MySQL 开启 binlog（项目 `init/SQL/master/my.cnf` 已包含 `log-bin`、`server-id`）
-2. Canal 连接信息和你的 MySQL 实际账号密码一致
-3. `canal.instance.master.address` 指向要订阅的 MySQL（通常主库 `127.0.0.1:3306`）
-4. 建议统一密码，避免 `setting.yaml`、MySQL、Canal 三处不一致
+1. MySQL binlog enabled (project `init/SQL/master/my.cnf` already includes `log-bin`, `server-id`)
+2. Canal connection info matches your actual MySQL account password
+3. `canal.instance.master.address` points to the MySQL to subscribe (usually master `127.0.0.1:3306`)
+4. Recommend unified password to avoid inconsistency between `setting.yaml`, MySQL, and Canal
 
-### 🔧 配置 Canal
+### 🔧 Configure Canal
 
-编辑文件：
+Edit files:
 
 - `otherSoftware/canal/canal.deployer-1.1.8/conf/canal.properties`
 - `otherSoftware/canal/canal.deployer-1.1.8/conf/example/instance.properties`
 
-**重点关注：**
+**Key focus:**
 
 - `canal.destinations=example`
 - `canal.port=11111`
 - `canal.instance.master.address=127.0.0.1:3306`
 - `canal.instance.dbUsername=...`
 - `canal.instance.dbPassword=...`
-- `canal.instance.filter.regex=.*\\..*`（可改成只监听目标库表）
+- `canal.instance.filter.regex=.*\..*` (can change to only listen to target tables)
 
-### 🚀 启动 Canal
+### 🚀 Start Canal
 
-按仓库说明，使用 `startup.bat` 直接启动（Windows环境下）：
+According to repository instructions, start directly with `startup.bat` (Windows environment):
 
-- **Windows**：双击 `otherSoftware/canal/canal.deployer-1.1.8/bin/startup.bat`
+- **Windows**: Double-click `otherSoftware/canal/canal.deployer-1.1.8/bin/startup.bat`
 
-然后查看日志：
+Then check logs:
 
 - `otherSoftware/canal/canal.deployer-1.1.8/logs/example/example.log`
 
-看到 MySQL 连接成功相关日志即表示 Canal 端正常。
+Seeing MySQL connection success logs indicates Canal is working properly.
 
-### 🎯 启动 canal-go 消费端
+### 🎯 Start canal-go Consumer
 
-在 `otherSoftware/canal-go/canal-go-1.1.2` 目录执行：
+Execute in `otherSoftware/canal-go/canal-go-1.1.2` directory:
 
 ```bash
 go run samples/main.go
 ```
 
-该示例默认：
+This example defaults:
 
-- **连接 Canal**：`127.0.0.1:11111`
-- **destination**：`example`
-- **订阅规则**：`.*\.article_models`
-- **处理逻辑**：读取 binlog 变更，转换后写入 `article_index`（ES）
+- **Connect to Canal**: `127.0.0.1:11111`
+- **destination**: `example`
+- **Subscription rule**: `.*\.article_models`
+- **Processing logic**: Read binlog changes, convert and write to `article_index` (ES)
 
-如果你要同步到"另一个数据库"而不是 ES，可替换 `samples/ES_pkg` 中的处理逻辑为自己的 DB 写入逻辑。
+If you want to sync to "another database" instead of ES, replace the processing logic in `samples/ES_pkg` with your own DB write logic.
 
-### 📋 使用流程建议
+### 📋 Recommended Usage Process
 
-1. 先启动 MySQL/Redis/ES 与 GoBlog 主服务
-2. 启动 Canal Server（生产 binlog 订阅流）
-3. 启动 canal-go 消费端（执行转换与落库/落 ES）
-4. 在主库执行 `insert/update/delete` 验证目标端是否同步
+1. Start MySQL/Redis/ES and GoBlog main service first
+2. Start Canal Server (produce binlog subscription stream)
+3. Start canal-go consumer (execute conversion and write to DB/ES)
+4. Execute `insert/update/delete` in master database to verify if target end is synchronized
 
-## ❓ 常见问题
+## ❓ Common Issues
 
-| 问题 | 解决方案 |
-|------|----------|
-| **MySQL 连接失败** | 检查 `setting.yaml` 与 Canal 的账号密码、端口是否一致 |
-| **ES 启动失败** | 确认 `http://127.0.0.1:9200` 可访问，账号密码匹配 |
-| **Redis 警告淘汰策略** | 项目会检查动态 Redis 的 `maxmemory-policy` |
-| **接口 404** | 注意当前接口带 `/api` 前缀，应访问 `/api/user/login` 这类路径 |
-| **Canal 无数据** | 优先检查 binlog 是否开启、`instance.properties` 的主库地址/账号、订阅规则是否匹配 |
+| Issue | Solution |
+|-------|----------|
+| **MySQL connection failed** | Check if account password and port are consistent between `setting.yaml` and Canal |
+| **ES startup failed** | Confirm `http://127.0.0.1:9200` is accessible and account password matches |
+| **Redis warning eviction policy** | Project will check dynamic Redis `maxmemory-policy` |
+| **Interface 404** | Note current interfaces have `/api` prefix, should access paths like `/api/user/login` |
+| **Canal no data** | Priority check if binlog is enabled, master address/account in `instance.properties`, and subscription rules match |
 
-## 💡 仅开发者提示
+## 💡 Developer Only Tips
 
-- 代码中含部分 TODO（如 ES 升级 v8、路由前缀切换、定时任务频率）
-- 若用于生产，建议补充：鉴权、限流、监控、配置分环境管理、错误恢复与幂等处理
+- Code contains some TODOs (e.g., ES upgrade to v8, route prefix switching, scheduled task frequency)
+- For production use, recommend adding: authentication, rate limiting, monitoring, environment-specific configuration management, error recovery and idempotent processing
 
-## 📞 联系我们
+## 📞 Contact Us
 
-如果在部署或使用过程中遇到任何问题，欢迎通过以下方式反馈：
+If you encounter any problems during deployment or use, please provide feedback through the following methods:
 
-- **🐛 GitHub Issues**: 在 [项目仓库](https://github.com/Bury-Lee/go-blog) 提交 Issue
-- **📧 邮箱联系**: [18151161@qq.com](mailto:18151161@qq.com)
-- **👥 交流群**: [星梦的交流群](https://qun.qq.com/universal-share/share?ac=1&authKey=2MOKPRKsyf8SGY12y3L%2By8yC53zfKakQDg5qiZvgz46DHm%2Bil90q6MuER5XVKo4g&busi_data=eyJncm91cENvZGUiOiIxMDk4NDgzNzk0IiwidG9rZW4iOiJMdTVWVWFQK3pMYXdteDdrVzF5MzE1Nm12SDlHLy9PYm1zZXJBUm5peGxKcGptdHoxcXhacWtsSlNNTDN6S3hVIiwidWluIjoiMTgxNTExNjEifQ%3D%3D&data=71mrINsJgoFhsfYAIO6n6qMWIh9Fi73oWgVrPeRDFjKIwlhBnVaCGFKx5Hr73xvNrEsKaAIk-gvPCV2nkslvHQ&svctype=4&tempid=h5_group_info)
+- **🐛 GitHub Issues**: Submit Issue in [project repository](https://github.com/Bury-Lee/go-blog)
+- **📧 Email Contact**: [18151161@qq.com](mailto:18151161@qq.com)
+- **👥 Discussion Group**: [StarDreamer Discussion Group](https://qun.qq.com/universal-share/share?ac=1&authKey=2MOKPRKsyf8SGY12y3L%2By8yC53zfKakQDg5qiZvgz46DHm%2Bil90q6MuER5XVKo4g&busi_data=eyJncm91cENvZGUiOiIxMDk4NDgzNzk0IiwidG9rZW4iOiJMdTVWVWFQK3pMYXdteDdrVzF5MzE1Nm12SDlHLy9PYm1zZXJBUm5peGxKcGptdHoxcXhacWtsSlNNTDN6S3hVIiwidWluIjoiMTgxNTExNjEifQ%3D%3D&data=71mrINsJgoFhsfYAIO6n6qMWIh9Fi73oWgVrPeRDFjKIwlhBnVaCGFKx5Hr73xvNrEsKaAIk-gvPCV2nkslvHQ&svctype=4&tempid=h5_group_info)
 
-作者非常乐意解决有价值的技术问题，也欢迎提交 PR 参与项目贡献！
+The author is very willing to solve valuable technical problems and welcomes PR submissions to contribute to the project!
