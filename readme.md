@@ -58,6 +58,25 @@ docker compose -f init/Redis/docker-compose.yml up -d
 # 启动 Elasticsearch
 docker compose -f init/ES/docker-compose.yml up -d
 ```
+在写完配置文件后执行发行版程序:
+
+Windows
+```bash
+# 启动项目
+.\main_windows_amd64.exe
+```
+Linux
+```bash
+# 启动项目
+./main_linux_amd64
+```
+macOS
+```bash
+# 启动项目
+./main_macos_amd64
+```
+
+
 
 > 💡 **提示**：由于 MySQL 5.7 以上版本和 Canal 之间的兼容性不是特别好，故在 `init/SQL/docker-compose.yml` 中配置了 `5.7.360.0` 版本。
 
