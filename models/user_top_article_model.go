@@ -3,8 +3,8 @@ package models
 
 type UserTopArticleModel struct {
 	Model
-	UserID       uint         `gorm:"uniqueIndex:idx_name" json:"userID"`
-	ArticleID    uint         `gorm:"uniqueIndex:idx_name" json:"articleID"`
+	UserID       uint         `gorm:"uniqueIndex:idx_user" json:"userID"`
+	ArticleID    uint         `gorm:"uniqueIndex:idx_article" json:"articleID"`
 	UserModel    UserModel    `gorm:"foreignKey:UserID" json:"-"`
 	ArticleModel ArticleModel `gorm:"foreignKey:ArticleID" json:"-"`
 }

@@ -331,7 +331,7 @@ func (CommentApi) CommentDeleteView(c *gin.Context) {
 		return
 	}
 	var comment models.CommentModel
-	err := global.DB.Take(&comment, "id = ?", req.ID).Error //TODO:调试时用,发布后要去掉Debug()
+	err := global.DB.Take(&comment, "id = ?", req.ID).Error
 	if err != nil {
 		response.FailWithMsg("评论不存在", c)
 		return
@@ -374,15 +374,13 @@ func (CommentApi) CommentDeleteView(c *gin.Context) {
 	response.OkWithMsg("删除评论成功", c)
 }
 
-// TODO:评论点赞
-// 目前还不能集成到路由
+// 评论点赞
 func (CommentApi) CommentDiggView(c *gin.Context) {
 	var req models.IDRequest
 	if err := c.ShouldBindUri(&req); err != nil {
 		response.FailWithMsg("参数错误", c)
 		return
 	}
-	//TODO:这里应该先查缓存
 	var comment models.CommentModel
 	err := global.DB.Take(&comment, req.ID).Error
 	if err != nil {
@@ -391,13 +389,6 @@ func (CommentApi) CommentDiggView(c *gin.Context) {
 	}
 
 	claim := jwts.GetClaims(c) //要先登录才能点赞
-	// type CommentDiggModel struct { //UserID和CommentID创建复合索引,共同使用同一个索引
-	// 	Model
-	// 	UserID       uint         `gorm:"uniqueIndex:idx_name" json:"userID"`    // 用户ID
-	// 	CommentID    uint         `gorm:"uniqueIndex:idx_name" json:"commentID"` // 文章ID
-	// 	UserModel    UserModel    `gorm:"foreignKey:UserID" json:"-"`            // 用户信息（关联）
-	// 	ArticleModel ArticleModel `gorm:"foreignKey:ArticleID" json:"-"`         // 文章信息（关联）
-	// }
 	if global.DB.Take(&models.CommentDiggModel{}, "user_id = ? and comment_id = ?", claim.UserID, req.ID).Error == gorm.ErrRecordNotFound {
 		//查询不到说明没有点赞过,可以点赞
 		if global.DB.Create(&models.CommentDiggModel{
