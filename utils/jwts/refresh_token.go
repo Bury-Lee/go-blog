@@ -85,7 +85,6 @@ func GetToken(claims Claims) (string, string, error) {
 // RefreshTokenPair 刷新通行令牌
 // 参数:refreshToken - 旧refresh token
 // 返回:string - 新access token
-// 返回:string - 新refresh token
 // 返回:error - 刷新错误
 // 说明:校验refresh,查用户状态,重新签发AccessToken
 func RefreshAccessToken(refreshToken string) (string, error) {

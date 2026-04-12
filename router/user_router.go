@@ -9,9 +9,10 @@ import (
 
 func UserRouter(r *gin.RouterGroup) {
 	app := api.App.UserApi
-	r.POST("/user/send_email", middleware.CaptchaMiddleware, middleware.ActLimitMiddleware, app.SendEmailView)                                        //发送邮箱验证码
+	r.POST("/user/send_email", middleware.CaptchaMiddleware, middleware.ActLimitMiddleware, app.SendEmailView)
 	r.POST("/user/email", middleware.EmailVerifyMiddleware, app.RegisterEmailView)                                                                    //邮箱注册
 	r.POST("/user/login", middleware.CaptchaMiddleware, app.Login)                                                                                    //登录
+	r.DELETE("/user/logout", middleware.AuthMiddleware, app.LogoutView)                                                                               //发送邮箱验证码
 	r.GET("/user/detail", middleware.AuthMiddleware, app.UserDetailView)                                                                              //获取用户详情
 	r.GET("/user/info/:id", app.CheckUserBaseInfoView)                                                                                                //检查用户基础信息
 	r.GET("/user/loginlog", middleware.AuthMiddleware, app.UserLoginListView)                                                                         //获取用户登录日志
