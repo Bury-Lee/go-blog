@@ -1500,3 +1500,4 @@ init/PostgreSQL/data/base/16384/24792
 init/PostgreSQL/data/base/16384/24794
 init/PostgreSQL/data/base/16384/24795
 init/PostgreSQL/data/base/16384/24799
+init/PostgreSQL/data/pg_stat/pgstat.stat

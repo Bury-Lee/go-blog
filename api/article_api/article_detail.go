@@ -12,6 +12,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/redis/go-redis/v9"
 	"github.com/sirupsen/logrus"
 )
 
@@ -54,6 +55,8 @@ func (ArticleApi) ArticleDetailView(c *gin.Context) {
 				response.FailWithMsg("文章不存在", c)
 				return
 			}
+		} else if err != redis.Nil {
+			logrus.Errorf("查询缓存错误:%v", err)
 		}
 
 		// 计数只在响应阶段叠加,不写回详情缓存

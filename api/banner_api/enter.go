@@ -5,9 +5,13 @@ import (
 	"StarDreamerCyberNook/common/response"
 	"StarDreamerCyberNook/global"
 	"StarDreamerCyberNook/models"
+	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
+	"github.com/redis/go-redis/v9"
+	"github.com/sirupsen/logrus"
 )
 
 type BannerApi struct{}
@@ -37,9 +41,28 @@ func (BannerApi) BannerCreateView(c *gin.Context) { //TODO:如果图片不存在
 		response.FailWithMsg("添加失败", c)
 		return
 	}
+	//更新缓存
+	ctx := context.Background()
+	global.RedisHotPool.Del(ctx, "banner_list")
 	response.OkWithMsg("上传成功", c)
 }
 func (BannerApi) BannerListView(c *gin.Context) {
+	//放缓存里,也在缓存查询
+	ctx := context.Background()
+	List, err := global.RedisHotPool.Get(ctx, "banner_list").Result()
+	if err != nil || err != redis.Nil {
+		logrus.Errorf("查询缓存失败:%v", err)
+		//走数据库查询
+	} else { //查询到了,直接返回
+		var cached []models.BannerModel
+		err := json.Unmarshal([]byte(List), &cached)
+		if err != nil {
+			response.FailWithMsg("缓存数据解析错误", c)
+			return
+		}
+		response.OkWithList(cached, len(cached), c)
+		return
+	}
 	var req common.PageInfo
 	c.ShouldBind(&req)
 
@@ -48,6 +71,8 @@ func (BannerApi) BannerListView(c *gin.Context) {
 	}, common.Options{
 		PageInfo: req,
 	})
+	//把数据加入缓存
+	global.RedisHotPool.Set(ctx, "banner_list", list, 0)
 	response.OkWithList(list, count, c)
 }
 
@@ -61,6 +86,9 @@ func (BannerApi) BannerRemoveView(c *gin.Context) {
 	if len(list) > 0 {
 		global.DB.Delete(&list)
 	}
+	//更新缓存
+	ctx := context.Background()
+	global.RedisHotPool.Del(ctx, "banner_list")
 	response.OkWithMsg(fmt.Sprintf("成功删除%d个", len(list)), c)
 }
 
@@ -76,7 +104,7 @@ func (BannerApi) BannerUpdateView(c *gin.Context) {
 		response.FailWithMsg("未找到记录", c)
 	}
 	var data BannerCreateRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
+	if err := c.ShouldBindJSON(&data); err != nil {
 		response.FailWithMsg("绑定参数失败", c)
 		return
 	}
@@ -89,4 +117,7 @@ func (BannerApi) BannerUpdateView(c *gin.Context) {
 	} else {
 		response.OkWithMsg("更新成功", c)
 	}
+	//更新缓存
+	ctx := context.Background()
+	global.RedisHotPool.Del(ctx, "banner_list")
 }
