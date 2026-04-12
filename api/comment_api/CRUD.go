@@ -240,7 +240,6 @@ func (CommentApi) CommentListlView(c *gin.Context) { //获取某文章的一级�
 	options.Preloads = []string{"UserModel"}                                                    //预加载用户信息
 	options.Where = global.DB.Where("article_id = ? and root_parent_id is null", req.ArticleID) //查询一级评论
 	options.DefaultOrder = "digg_count desc"                                                    //默认按点赞数降序排序
-	options.Debug = true                                                                        //TODO:移除DEBUG
 	List, count, err := common.ListQuery[models.CommentModel](&comments, options)
 	if err != nil {
 		response.FailWithMsg("查询评论失败", c)

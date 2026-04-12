@@ -50,7 +50,6 @@ type Options struct { //可用选项,目前有模糊匹配和预加载,以后可
 	Preloads     []string //预加载的关联表
 	Where        *gorm.DB //定制化查询
 	DefaultOrder string   //其他查询参数,主要是排序,前端没有传入就使用这个默认排序参数
-	Debug        bool     //是否开启调试模式
 }
 
 // ListQuery 通用分页查询函数
@@ -63,10 +62,6 @@ type Options struct { //可用选项,目前有模糊匹配和预加载,以后可
 func ListQuery[T any](model any, option Options) (list []T, count int, err error) {
 	//基础查询
 	query := global.DB.Model(model).Where(model)
-
-	if option.Debug {
-		query = query.Debug()
-	}
 	//模糊匹配
 	if len(option.Likes) > 0 && option.PageInfo.Key != "" {
 		likes := global.DB.Where("")

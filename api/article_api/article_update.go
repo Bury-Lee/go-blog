@@ -153,13 +153,10 @@ func (ArticleApi) ArticleUpdateView(c *gin.Context) {
 	// 	}
 	// 	global.RedisHotPool.Set("ArticleID"+idStr, articleJSON, 0)
 	// }
+
 	//redis中存在就删除的策略
 	idStr := strconv.FormatUint(uint64(article.ID), 10)
 	ctx := context.Background()
-	_, err = global.RedisHotPool.Get(ctx, "ArticleID"+idStr).Result()
-	if err == nil {
-		global.RedisHotPool.Del(ctx, "ArticleID"+idStr)
-	}
-
+	global.RedisHotPool.Del(ctx, "ArticleID"+idStr)
 	response.OkWithMsg("文章更新成功,当前状态为:"+article.Status.String(), c)
 }

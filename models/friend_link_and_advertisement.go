@@ -22,12 +22,7 @@ type FriendPromotion struct { //友情推广
 	PreviewImages string `gorm:"type:text;" json:"preview_images"` // 作品预览图，JSON数组 ["url1","url2"]
 
 	// 联系方式
-	Homepage string `gorm:"size:500;" json:"homepage"` // 个人主页/作品集
-	Bilibili string `gorm:"size:100;" json:"bilibili"` // B站
-	Email    string `gorm:"size:100;" json:"email"`    // 联系邮箱
-	QQ       string `gorm:"size:20;" json:"qq"`        // QQ
-	WeChat   string `gorm:"size:50;" json:"wechat"`    // 微信号
-	GitHub   string `gorm:"size:50;" json:"github"`
+	ContactInfo []string `gorm:"type:text;serializer:json" json:"contact_info"`
 
 	// 展示控制
 	IsShow    bool   `gorm:"default:true" json:"is_show"`            // 是否展示

@@ -46,11 +46,12 @@ func (BannerApi) BannerCreateView(c *gin.Context) { //TODO:如果图片不存在
 	global.RedisHotPool.Del(ctx, "banner_list")
 	response.OkWithMsg("上传成功", c)
 }
+
 func (BannerApi) BannerListView(c *gin.Context) {
 	//放缓存里,也在缓存查询
 	ctx := context.Background()
 	List, err := global.RedisHotPool.Get(ctx, "banner_list").Result()
-	if err != nil || err != redis.Nil {
+	if err != nil && err != redis.Nil {
 		logrus.Errorf("查询缓存失败:%v", err)
 		//走数据库查询
 	} else { //查询到了,直接返回

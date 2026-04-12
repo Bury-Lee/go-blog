@@ -22,22 +22,17 @@ type FriendLinkCreateRequest struct {
 }
 
 type FriendPromotionCreateRequest struct {
-	Title         string `json:"title"`
-	FriendName    string `json:"friend_name"`
-	Avatar        string `json:"avatar"`
-	Category      string `json:"category"`
-	Description   string `json:"description"`
-	PreviewImages string `json:"preview_images"`
-	Homepage      string `json:"homepage"`
-	Bilibili      string `json:"bilibili"`
-	Email         string `json:"email"`
-	QQ            string `json:"qq"`
-	WeChat        string `json:"wechat"`
-	GitHub        string `json:"github"`
-	IsShow        bool   `json:"is_show"`
-	SortOrder     int    `json:"sort_order"`
-	Position      string `json:"position"`
-	Remark        string `json:"remark"`
+	Title         string   `json:"title"`
+	FriendName    string   `json:"friend_name"`
+	Avatar        string   `json:"avatar"`
+	Category      string   `json:"category"`
+	Description   string   `json:"description"`
+	PreviewImages string   `json:"preview_images"`
+	ContactInfo   []string `json:"contact_info"`
+	IsShow        bool     `json:"is_show"`
+	SortOrder     int      `json:"sort_order"`
+	Position      string   `json:"position"`
+	Remark        string   `json:"remark"`
 }
 
 func (FriendApi) FriendLinkCreateView(c *gin.Context) {
@@ -77,15 +72,16 @@ func (FriendApi) FriendLinkRemoveView(c *gin.Context) {
 	var req models.RemoveRequest
 	if err := c.ShouldBind(&req); err != nil {
 		response.FailWithMsg("参数错误", c)
+		return // 添加返回语句
 	}
-	var list = []models.FriendLink{}
-	global.DB.Find(&list, "id in ?", req.IDList)
-	if len(list) > 0 {
-		global.DB.Delete(&list)
+	// 执行删除操作
+	result := global.DB.Where("id IN ?", req.IDList).Delete(&models.FriendLink{})
+	if result.Error != nil {
+		response.FailWithMsg("删除失败", c)
+		return
 	}
-	response.OkWithMsg(fmt.Sprintf("成功删除%d个", len(list)), c)
+	response.OkWithMsg(fmt.Sprintf("成功删除%d个", result.RowsAffected), c)
 }
-
 func (FriendApi) FriendLinkUpdateView(c *gin.Context) {
 	var req models.IDRequest
 	if err := c.ShouldBindUri(&req); err != nil {
@@ -96,9 +92,10 @@ func (FriendApi) FriendLinkUpdateView(c *gin.Context) {
 	err := global.DB.Take(&model, req.ID).Error
 	if err != nil {
 		response.FailWithMsg("未找到记录", c)
+		return
 	}
 	var data FriendLinkCreateRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
+	if err := c.ShouldBindJSON(&data); err != nil {
 		response.FailWithMsg("绑定参数失败", c)
 		return
 	}
@@ -134,12 +131,13 @@ func (FriendApi) FriendPromotionRemoveView(c *gin.Context) {
 		response.FailWithMsg("参数错误", c)
 		return
 	}
-	var list = []models.FriendPromotion{}
-	global.DB.Find(&list, "id in ?", req.IDList)
-	if len(list) > 0 {
-		global.DB.Delete(&list)
+	// 执行删除操作
+	result := global.DB.Where("id IN ?", req.IDList).Delete(&models.FriendPromotion{})
+	if result.Error != nil {
+		response.FailWithMsg("删除失败", c)
+		return
 	}
-	response.OkWithMsg(fmt.Sprintf("成功删除%d个", len(list)), c)
+	response.OkWithMsg(fmt.Sprintf("成功删除%d个", result.RowsAffected), c)
 }
 
 func (FriendApi) FriendPromotionUpdateView(c *gin.Context) {
@@ -166,12 +164,7 @@ func (FriendApi) FriendPromotionUpdateView(c *gin.Context) {
 		"category":       updateReq.Category,
 		"description":    updateReq.Description,
 		"preview_images": updateReq.PreviewImages,
-		"homepage":       updateReq.Homepage,
-		"bilibili":       updateReq.Bilibili,
-		"email":          updateReq.Email,
-		"qq":             updateReq.QQ,
-		"wechat":         updateReq.WeChat,
-		"github":         updateReq.GitHub,
+		"contact_info":   updateReq.ContactInfo,
 		"is_show":        updateReq.IsShow,
 		"sort_order":     updateReq.SortOrder,
 		"position":       updateReq.Position,
@@ -196,12 +189,7 @@ func (FriendApi) FriendPromotionCreateView(c *gin.Context) {
 		Category:      req.Category,
 		Description:   req.Description,
 		PreviewImages: req.PreviewImages,
-		Homepage:      req.Homepage,
-		Bilibili:      req.Bilibili,
-		Email:         req.Email,
-		QQ:            req.QQ,
-		WeChat:        req.WeChat,
-		GitHub:        req.GitHub,
+		ContactInfo:   req.ContactInfo,
 		IsShow:        req.IsShow,
 		SortOrder:     req.SortOrder,
 		Position:      req.Position,

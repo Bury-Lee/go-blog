@@ -39,7 +39,7 @@ func Run() {
 	MessageRouter(nr)
 	ChatRouter(nr)
 	AIRouter(nr) //已测试完毕
-
+	FriendRouter(nr)
 	//硬编码的HTML内容,我信不过前端
 	r.NoRoute(func(ctx *gin.Context) { //自定义的404页面
 		ctx.Data(200, "text/html; charset=utf-8", []byte(UnFoundPage))
