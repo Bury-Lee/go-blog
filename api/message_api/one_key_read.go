@@ -51,9 +51,9 @@ func (MessageApi) OneKeyClearView(c *gin.Context) {
 	}
 
 	// 4. 单次数据库更新
-	// WHERE rev_user_id <> ? AND type IN (收集到的所有类型)
+	// WHERE rev_user_id = ? AND type IN (收集到的所有类型)
 	result := global.DB.Model(&models.MessageModel{}).
-		Where("action_user_id <> ?", claim.UserID).
+		Where("rev_user_id = ?", claim.UserID).
 		Where("type IN ?", targetTypes).
 		Update("is_read", true)
 

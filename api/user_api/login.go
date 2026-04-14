@@ -15,7 +15,7 @@ import (
 )
 
 type LoginRequest struct {
-	Type string `json:"type" binding:"required"` //登录类型,用户名密码或邮箱登录//TODO:qq登录
+	Type string `json:"type" binding:"required"` //登录类型,用户名或邮箱登录//TODO:qq登录
 	Val  string `json:"val" binding:"required"`
 	Pwd  string `json:"pwd" binding:"required"`
 }

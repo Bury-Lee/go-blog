@@ -23,8 +23,8 @@ import (
 // RegisterEmailRequest 邮箱注册请求参数结构体
 // 用于接收前端提交的注册信息，包含邮箱验证ID、验证码、密码和昵称
 type RegisterEmailRequest struct {
-	EmailID   string `json:"EmailID" binding:"required"`   // 邮箱验证记录的唯一标识ID
-	EmailCode string `json:"EmailCode" binding:"required"` // 邮箱收到的验证码
+	EmailID   string `json:"emailID" binding:"required"`   // 邮箱验证记录的唯一标识ID
+	EmailCode string `json:"emailCode" binding:"required"` // 邮箱收到的验证码
 	Pwd       string `json:"password" binding:"required"`  // 用户设置的登录密码
 	NickName  string `json:"nickName"`                     // 用户昵称（可选）
 }

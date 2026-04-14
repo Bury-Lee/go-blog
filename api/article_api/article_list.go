@@ -28,12 +28,11 @@ import (
 管理员侧 查全部，支持按照用户搜索，状态过滤，文章标题模糊匹配，分类过滤
 */
 
-// TODO:点赞收藏浏览量统计的Redis缓存逻辑一定要重写!
 type ArticleListRequest struct {
 	common.PageInfo
 	Type       string        `form:"type" binding:"required"`
 	UserID     uint          `form:"userID"`
-	CategoryID uint          `form:"categoryID"` //这里不应该是指针吧,默认就是为0,也就是无分类
+	CategoryID uint          `form:"categoryID"`
 	Status     models.Status `form:"status"`
 }
 
@@ -151,9 +150,6 @@ func (ArticleApi) ArticleListView(c *gin.Context) {
 	// diggCountMap := redis_count.GetAllCacheDigg(articleIDs)
 
 	for _, model := range _list {
-		if model.Status != models.StatusPublished {
-			continue // 只查询已发布的文章
-		}
 		// model.Content = ""//前台写个文章预览吧
 		// model.DiggCount += diggCountMap[model.ID]
 		// model.LookCount += lookCountMap[model.ID]

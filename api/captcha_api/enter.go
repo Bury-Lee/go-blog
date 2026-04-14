@@ -3,7 +3,6 @@ package captcha_api
 import (
 	"StarDreamerCyberNook/common/response"
 	"StarDreamerCyberNook/global"
-	"fmt"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -31,14 +30,13 @@ func (CaptchaApi) CaptchaView(c *gin.Context) {
 	}
 	target := req.Target //历史遗留代码问题
 
-	fmt.Println(target) //debug
-	//注册,重置密码,重置邮箱,用户名密码,邮箱
+	//注册,重置密码,重置邮箱,用户名,邮箱
 	mapTarget := map[string]bool{
-		"注册":    true,
-		"重置密码":  true,
-		"重置邮箱":  true,
-		"用户名密码": true,
-		"邮箱":    true,
+		"注册":   true,
+		"重置密码": true,
+		"重置邮箱": true,
+		"用户名":  true,
+		"邮箱":   true,
 	}
 	if _, ok := mapTarget[target]; !ok {
 		response.FailWithMsg("目标业务不存在", c)
