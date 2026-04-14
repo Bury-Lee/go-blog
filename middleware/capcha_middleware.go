@@ -56,7 +56,8 @@ func CaptchaMiddleware(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	answer := parts[0]
+	// 验证码缓存格式为 target/answer
+	answer := parts[1]
 	if answer != req.CaptchaCode {
 		response.FailWithMsg("验证码错误", c)
 		c.Abort()
@@ -66,5 +67,5 @@ func CaptchaMiddleware(c *gin.Context) {
 	c.Request.Body = io.NopCloser(bytes.NewReader(body))
 	//把业务标识添加到上下文,给后面的函数使用
 
-	c.Set("target", parts[1])
+	c.Set("target", parts[0])
 }

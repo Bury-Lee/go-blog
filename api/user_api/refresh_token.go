@@ -8,15 +8,19 @@ import (
 )
 
 func (UserApi) RefreshAccessToken(c *gin.Context) {
-	// 从请求头的 refreshToken 字段获取 token
-	authHeader := c.GetHeader("refreshToken") // 或者使用 "refresh-token"
-	if authHeader == "" {
-		response.FailWithMsg("缺少 refreshToken 头", c)
+	// 优先兼容标准 Authorization: Bearer <token>，其次兼容历史 refreshToken 头
+	token := ""
+	authHeader := c.GetHeader("Authorization")
+	if len(authHeader) > 7 && authHeader[:7] == "Bearer " {
+		token = authHeader[7:]
+	}
+	if token == "" {
+		token = c.GetHeader("refreshToken")
+	}
+	if token == "" {
+		response.FailWithMsg("缺少 refreshToken", c)
 		return
 	}
-
-	// 直接使用 token，不需要 Bearer 前缀
-	token := authHeader
 
 	accessToken, err := jwts.RefreshAccessToken(token)
 	// 处理错误

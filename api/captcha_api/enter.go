@@ -63,7 +63,7 @@ func (CaptchaApi) CaptchaView(c *gin.Context) {
 	store := &NoStore{}
 	captcha := base64Captcha.NewCaptcha(driver, store) //创建验证码,由于已经使用了redis,所以不需要存储验证码到内存,定义空实现Store
 	//取消存储
-	lid, lb64s, answer, err := captcha.Generate() //TODO:第三个是键值对的answer,到时候就是在Redis里存ip,业务,id,answer
+	lid, lb64s, answer, err := captcha.Generate() //第三个是键值对的answer,到时候就是在Redis里存ip,业务,id,answer
 	if err != nil {
 		logrus.Error(err)
 		response.FailWithMsg("图片验证码生成失败", c)

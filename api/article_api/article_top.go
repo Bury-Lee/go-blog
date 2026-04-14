@@ -66,7 +66,7 @@ func (ArticleApi) ArticleCancleTopView(c *gin.Context) {
 		return
 	}
 	//查询是否已经有这篇文章的置顶
-	if global.DB.Where("user_id = ? AND article_id = ?", claim.UserID, req.ArticleID).First(&models.UserTopArticleModel{}).Error == nil {
+	if global.DB.Where("user_id = ? AND article_id = ?", claim.UserID, req.ArticleID).First(&models.UserTopArticleModel{}).Error != nil {
 		response.FailWithMsg("你还没置顶过文章", c)
 		return
 	}
@@ -102,13 +102,13 @@ func (ArticleApi) AdminArticleDeleteView(c *gin.Context) {
 	}
 
 	//查询是否已经有这篇文章的置顶
-	if global.DB.Where("user_id = ? AND article_id = ?", req.UserID, req.ArticleID).First(&models.UserTopArticleModel{}).Error == nil {
+	if global.DB.Where("user_id = ? AND article_id = ?", req.UserID, req.ArticleID).First(&models.UserTopArticleModel{}).Error != nil {
 		response.FailWithMsg("没有相关记录", c)
 		return
 	}
 	//如果有就删除
 	topModel := models.UserTopArticleModel{
-		UserID:    claim.UserID,
+		UserID:    req.UserID,
 		ArticleID: req.ArticleID,
 	}
 
