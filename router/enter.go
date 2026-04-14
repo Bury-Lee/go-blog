@@ -13,7 +13,7 @@ import (
 //go:embed 404page.html
 var UnFoundPage string //这是404页面的HTML内容,用于自定义404页面,由于前端不想做,所以这里直接写在这里了
 
-func InitRouter() {
+func InitRouter() *gin.Engine {
 	gin.SetMode(global.Config.System.RunMode) //设置gin模式
 	r := gin.Default()
 
@@ -48,6 +48,7 @@ func InitRouter() {
 		ctx.Data(200, "text/html; charset=utf-8", []byte(UnFoundPage))
 	})
 
-	add := global.Config.System.Addr()
-	r.Run(add) //监听地址为配置文件中的IP和端口
+	// add := global.Config.System.Addr()
+	// r.Run(add) //监听地址为配置文件中的IP和端口
+	return r
 }

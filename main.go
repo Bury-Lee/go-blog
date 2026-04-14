@@ -35,5 +35,11 @@ func main() {
 	// 启动定时任务
 	go cron_service.CronArticle()
 
-	router.InitRouter() //运行路由
+	router := router.InitRouter() //注册路由
+	server := core.InitServer(router)
+	err := server.ListenAndServe()
+	if err != nil {
+		logrus.Error("服务器启动失败:", err)
+		return
+	}
 }
