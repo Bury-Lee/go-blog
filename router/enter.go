@@ -13,7 +13,7 @@ import (
 //go:embed 404page.html
 var UnFoundPage string //这是404页面的HTML内容,用于自定义404页面,由于前端不想做,所以这里直接写在这里了
 
-func Run() {
+func InitRouter() {
 	gin.SetMode(global.Config.System.RunMode) //设置gin模式
 	r := gin.Default()
 
@@ -24,7 +24,8 @@ func Run() {
 	nr := r.Group("/api") //TODO:测试使用无前缀api,开发完成了要给app组加上/api的前缀,nr := r.Group("/api")这样
 
 	if global.Config.System.RunMode == "debug" {
-		nr.Use(middleware.RequestLogMiddleware())
+		nr.Use(middleware.RequestLogMiddleware)
+		nr.Use(middleware.CORS)
 		TestRouter(nr)
 	}
 	nr.Use(middleware.LogMiddleware)
