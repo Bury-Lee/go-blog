@@ -11,4 +11,5 @@ func TestRouter(nr *gin.RouterGroup) {
 	nr = nr.Group("/t")
 	app := api.App.TestApi
 	nr.GET("/test", app.TestView)
+	nr.POST("/print", app.Print)
 }

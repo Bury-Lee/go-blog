@@ -35,5 +35,5 @@ func main() {
 	// 启动定时任务
 	go cron_service.CronArticle()
 
-	router.Run() //运行路由
+	router.InitRouter() //运行路由
 }
