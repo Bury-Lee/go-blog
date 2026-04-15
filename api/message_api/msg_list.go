@@ -12,7 +12,7 @@ import (
 
 type SiteMessageListViewRequest struct {
 	common.PageInfo
-	Type models.MessageType `query:"type" binding:"required"` //查询的消息类型
+	Type models.MessageType `form:"type" binding:"required"` //查询的消息类型
 }
 
 func (MessageApi) SiteMessageListView(c *gin.Context) { //可以在读取之后,返回响应之后吧已读字段一起写回数据库

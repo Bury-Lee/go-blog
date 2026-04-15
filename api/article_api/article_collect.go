@@ -37,7 +37,7 @@ func (ArticleApi) ArticleCollectView(c *gin.Context) {
 	claims := jwts.GetClaims(c)
 	if req.CollectID == 0 {
 		// 是默认收藏夹
-		err = global.DB.Take(&collectModel, "user_id = ? and is_default = ?", claims.UserID, 1).Error
+		err = global.DB.Take(&collectModel, "user_id = ? and is_default = ?", claims.UserID, true).Error
 		if err != nil {
 			// 创建一个默认收藏夹
 			collectModel.Title = "默认收藏夹"

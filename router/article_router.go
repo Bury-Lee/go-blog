@@ -12,7 +12,7 @@ func ArticleRouter(r *gin.RouterGroup) {
 	r.POST("/article", middleware.AuthMiddleware, app.ArticleCreateView) //创建文章
 	r.PUT("/article", middleware.AuthMiddleware, app.ArticleUpdateView)  //更新文章
 	r.GET("/article", app.ArticleListView)                               //获取文章列表
-	r.GET("/article/search", app.ArticleSearchView)                      //搜索文章//TODO:测试
+	r.GET("/article/search", app.ArticleSearchView)                      //搜索文章
 	r.GET("/article/:id", app.ArticleDetailView)                         //获取文章详情
 
 	r.POST("/article/top/:id", middleware.AuthMiddleware, app.ArticleTopView)              //置顶文章

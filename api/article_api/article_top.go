@@ -65,21 +65,11 @@ func (ArticleApi) ArticleCancleTopView(c *gin.Context) {
 		response.FailWithMsg("token解析失败", c)
 		return
 	}
-	//查询是否已经有这篇文章的置顶
-	if global.DB.Where("user_id = ? AND article_id = ?", claim.UserID, req.ArticleID).First(&models.UserTopArticleModel{}).Error != nil {
-		response.FailWithMsg("你还没置顶过文章", c)
+	if err := global.DB.Where("user_id = ? AND article_id = ?", claim.UserID, req.ArticleID).Delete(&models.UserTopArticleModel{}).Error; err != nil {
+		response.FailWithMsg("没有找到相关的置顶记录", c)
 		return
-	}
-	//如果有就删除
-	topModel := models.UserTopArticleModel{
-		UserID:    claim.UserID,
-		ArticleID: req.ArticleID,
 	}
 
-	if global.DB.Delete(&topModel).Error != nil {
-		response.FailWithMsg("取消置顶失败", c)
-		return
-	}
 	response.OkWithMsg("取消置顶成功", c)
 }
 
