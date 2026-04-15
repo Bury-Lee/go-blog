@@ -6,10 +6,37 @@ services:
     container_name: postgres
     restart: always
     environment:
-      POSTGRES_USER: root        # 数据库用户名
-      POSTGRES_PASSWORD: root    # 数据库密码
-      POSTGRES_DB: db            # 默认创建的数据库
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: db
     ports:
-      - "5432:5432"              # 宿主机端口:容器端口
+      - "5432:5432"
     volumes:
       - ./data:/var/lib/postgresql/data
+    # ===== 关键补充：启用逻辑解码 =====
+    command: >
+      postgres 
+      -c wal_level=logical
+      -c max_replication_slots=4
+      -c max_wal_senders=4
+      -c max_slot_wal_keep_size=1GB
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U root -d db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ===== 新增：Elasticsearch/OpenSearch（必需）=====
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: elasticsearch
+    restart: always
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - ./es_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+

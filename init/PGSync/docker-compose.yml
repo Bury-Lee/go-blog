@@ -1,0 +1,34 @@
+services:
+  # PGSync 通过宿主机已暴露的端口连接 PostgreSQL / Elasticsearch / Redis
+  pgsync:
+    image: toluaina1/pgsync:latest
+    container_name: pgsync
+    restart: always
+    environment:
+      # PostgreSQL 连接
+      PG_HOST: ${PG_HOST:-host.docker.internal}
+      PG_PORT: ${PG_PORT:-5432}
+      PG_USER: ${PG_USER:-root}
+      PG_PASSWORD: ${PG_PASSWORD:-root}
+      PG_SSLMODE: ${PG_SSLMODE:-disable}
+
+      # Redis 用于保存 checkpoint，默认接入 6379 实例
+      REDIS_CHECKPOINT: "true"
+      REDIS_SCHEME: ${REDIS_SCHEME:-redis}
+      REDIS_HOST: ${REDIS_HOST:-host.docker.internal}
+      REDIS_PORT: ${REDIS_PORT:-6379}
+      REDIS_DB: ${REDIS_DB:-0}
+      REDIS_AUTH: ${REDIS_AUTH:-}
+
+      # Elasticsearch 连接，默认对接 init/ES 中的 7.17 实例
+      ELASTICSEARCH_SCHEME: ${ELASTICSEARCH_SCHEME:-http}
+      ELASTICSEARCH_HOST: ${ELASTICSEARCH_HOST:-host.docker.internal}
+      ELASTICSEARCH_PORT: ${ELASTICSEARCH_PORT:-9200}
+      ELASTICSEARCH_USER: ${ELASTICSEARCH_USER:-elastic}
+      ELASTICSEARCH_PASSWORD: ${ELASTICSEARCH_PASSWORD:-es}
+
+      # schema.json 中定义同步关系
+      SCHEMA: /app/schema.json
+    volumes:
+      - ./schema.json:/app/schema.json:ro
+    command: ["-c", "/app/schema.json", "-d", "-b"]

@@ -1,0 +1,111 @@
+services:
+  # PostgreSQL：启用逻辑解码供 PGSync 增量同步
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: db
+    command: >
+      postgres -c listen_addresses='*' -c wal_level=logical -c max_replication_slots=4 -c max_wal_senders=4 -c max_slot_wal_keep_size=1GB
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U root -d db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  # Elasticsearch：PGSync 同步目标
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.24
+    container_name: elasticsearch
+    restart: always
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+    volumes:
+      - ./es_data:/usr/share/elasticsearch/data
+    networks:
+      - app-network
+
+  # Redis 实例 1：TTL 数据，禁淘汰
+  redis-ttl:
+    image: redis:7-alpine
+    container_name: redis-ttl-instance
+    restart: always
+    command: redis-server --maxmemory-policy noeviction --maxmemory 256mb
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_ttl_data:/data
+    networks:
+      - app-network
+
+  # Redis 实例 2：热点缓存，LFU 淘汰
+  redis-hot-cache:
+    image: redis:7-alpine
+    container_name: redis-hot-cache-instance
+    restart: always
+    command: redis-server --maxmemory-policy allkeys-lfu --maxmemory 512mb
+    ports:
+      - "6378:6379"
+    volumes:
+      - redis_hot_cache_data:/data
+    networks:
+      - app-network
+
+  # PGSync：通过宿主机端口连接 PostgreSQL/Elasticsearch/Redis
+  pgsync:
+    image: toluaina1/pgsync:latest
+    container_name: pgsync
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_started
+      redis-ttl:
+        condition: service_started
+    environment:
+      PG_HOST: ${PG_HOST:-host.docker.internal}
+      PG_PORT: ${PG_PORT:-5432}
+      PG_USER: ${PG_USER:-root}
+      PG_PASSWORD: ${PG_PASSWORD:-root}
+      PG_SSLMODE: ${PG_SSLMODE:-disable}
+
+      REDIS_CHECKPOINT: "true"
+      REDIS_SCHEME: ${REDIS_SCHEME:-redis}
+      REDIS_HOST: ${REDIS_HOST:-host.docker.internal}
+      REDIS_PORT: ${REDIS_PORT:-6379}
+      REDIS_DB: ${REDIS_DB:-0}
+      REDIS_AUTH: ${REDIS_AUTH:-}
+
+      ELASTICSEARCH_SCHEME: ${ELASTICSEARCH_SCHEME:-http}
+      ELASTICSEARCH_HOST: ${ELASTICSEARCH_HOST:-host.docker.internal}
+      ELASTICSEARCH_PORT: ${ELASTICSEARCH_PORT:-9200}
+      ELASTICSEARCH_USER: ${ELASTICSEARCH_USER:-elastic}
+      ELASTICSEARCH_PASSWORD: ${ELASTICSEARCH_PASSWORD:-es}
+      SCHEMA: /app/schema.json
+    volumes:
+      - ./schema.json:/app/schema.json:ro
+    command: ["-c", "/app/schema.json", "-d", "-b"]
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  redis_ttl_data:
+  redis_hot_cache_data:

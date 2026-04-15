@@ -3,21 +3,25 @@ version: '3.8'
 services:
   # Canal Server: 负责读取 MySQL Binlog
   canal-server:
-    image: canal/canal-server:v1.1.7
-    container_name: canal-server
-    restart: always
-    environment:
-      - canal.instance.mysql.slaveId=10 # 必须与 MySQL 的 server-id 不同
-      - canal.register.ip=canal-server  # 容器内通信
-    volumes:
-      # 挂载自定义配置
-      - ./canal-server/conf/example/instance.properties:/home/admin/canal-server/conf/example/instance.properties
-      - ./canal-server/conf/example/logback.xml:/home/admin/canal-server/conf/example/logback.xml
-    networks:
-      blogx_network:
-        ipv4_address: 10.2.0.5
-    depends_on:
-      - es
+      image: canal/canal-server:v1.1.7  # 或者使用最新版本的镜像
+      container_name: canal-server
+      restart: unless-stopped
+      network_mode: host  # 使用宿主机网络，方便端口访问
+      ports:
+        - "11111:11111"  # Canal默认端口
+      environment:
+        - canal.instance.master.address=127.0.0.1:3306  # 替换为你的MySQL地址
+        - canal.instance.dbUsername=root  # Canal连接MySQL的用户名
+        - canal.instance.dbPassword=root  # Canal连接MySQL的密码
+        - canal.instance.connectionCharset=UTF-8
+        - canal.instance.tsdb.enable=true
+        - canal.instance.gtidon=false
+      volumes:
+        - ./canal.properties:/home/admin/canal-server/conf/canal.properties
+        - ./instance.properties:/home/admin/canal-server/conf/example/instance.properties
+      depends_on:
+        - mysql  # 如果MySQL也在Docker中运行的话
+
 
   # Canal Adapter: 负责将数据写入 ES
   canal-adapter:

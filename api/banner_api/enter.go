@@ -51,13 +51,14 @@ func (BannerApi) BannerListView(c *gin.Context) {
 	//放缓存里,也在缓存查询
 	ctx := context.Background()
 	List, err := global.RedisHotPool.Get(ctx, "banner_list").Result()
-	if err != nil && err != redis.Nil {
-		logrus.Errorf("查询缓存失败:%v", err)
-		//走数据库查询
-	} else { //查询到了,直接返回
+	if err != nil && err != redis.Nil { //查询出错
+		logrus.Errorf("查询缓存失败:%v,内容:%s", err, List)
+
+	} else if err == nil { //查询到了,返回
 		var cached []models.BannerModel
 		err := json.Unmarshal([]byte(List), &cached)
 		if err != nil {
+			logrus.Errorf("缓存数据解析错误:%v,内容:%s", err, List)
 			response.FailWithMsg("缓存数据解析错误", c)
 			return
 		}
@@ -72,8 +73,12 @@ func (BannerApi) BannerListView(c *gin.Context) {
 	}, common.Options{
 		PageInfo: req,
 	})
+	jsonData, err := json.Marshal(list)
+	if err != nil {
+		logrus.Error("缓存数据序列化错误:", err)
+	}
 	//把数据加入缓存
-	global.RedisHotPool.Set(ctx, "banner_list", list, 0)
+	global.RedisHotPool.Set(ctx, "banner_list", string(jsonData), 0)
 	response.OkWithList(list, count, c)
 }
 
