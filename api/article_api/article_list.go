@@ -75,11 +75,13 @@ func (ArticleApi) ArticleListView(c *gin.Context) {
 
 	switch req.Type {
 	case "other":
-		// 查别人。用户id就是必填的
-		if req.UserID == 0 {
-			response.FailWithMsg("用户id是必填项", c)
-			return
-		}
+		// 查别人,用户id就是必填的
+		// if req.UserID == 0 {
+		// 	response.FailWithMsg("用户id是必填项", c)
+		// 	return
+		// }
+		//啊算了,去除这个限制来支持查询最新文章
+
 		// if req.Page > 2 || req.Limit > 10 {
 		// 	response.FailWithMsg("查询更多，请登录", c)
 		// 	return
