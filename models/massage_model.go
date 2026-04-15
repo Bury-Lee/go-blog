@@ -4,13 +4,13 @@ type MessageType uint8
 
 // 分点赞我的文章,评论我的文章,@我,收藏我的文章,私信和系统通知
 const (
-	MessageTypeComment MessageType = 0 //评论我的文章
-	MessageTypeReply   MessageType = 1 //回复我的评论
-	MessageTypeDigg    MessageType = 2 //点赞我的文章/评论
-	MessageTypeCollect MessageType = 3 //收藏我的文章
-	MessageTypePrivate MessageType = 4 //私信
-	MessageTypeSystem  MessageType = 5 //系统通知
-	MessageTypeAt      MessageType = 6 //@我
+	MessageTypeComment MessageType = 1 //评论我的文章
+	MessageTypeReply   MessageType = 2 //回复我的评论
+	MessageTypeDigg    MessageType = 3 //点赞我的文章/评论
+	MessageTypeCollect MessageType = 4 //收藏我的文章
+	MessageTypePrivate MessageType = 5 //私信
+	MessageTypeSystem  MessageType = 6 //系统通知
+	MessageTypeAt      MessageType = 7 //@我
 )
 
 func (m MessageType) String() string {
