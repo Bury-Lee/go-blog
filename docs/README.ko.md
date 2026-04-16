@@ -94,28 +94,17 @@ macOS
 
 ### 2️⃣ 프로젝트 컴파일
 
-#### Windows AMD64
-```bash
-set GOOS=windows
-set GOARCH=amd64
-set CGO_ENABLED=0
-go build -ldflags="-s -w" -trimpath -o main_windows_amd64.exe .\main.go
-```
+Windows에서 컴파일:
 
-#### Linux AMD64
-```bash
-set GOOS=linux
-set GOARCH=amd64
-set CGO_ENABLED=0
-go build -ldflags="-s -w" -trimpath -o main_linux_amd64 .\main.go
-```
+```powershell
+# Windows AMD64
+$env:GOOS="windows"; $env:GOARCH="amd64"; $env:CGO_ENABLED="0"; go build -ldflags="-s -w" -trimpath -o main_windows_amd64.exe .\main.go
 
-#### macOS AMD64
-```bash
-set GOOS=darwin
-set GOARCH=amd64
-set CGO_ENABLED=0
-go build -ldflags="-s -w" -trimpath -o main_macos_amd64 .\main.go
+# Linux AMD64
+$env:GOOS="linux"; $env:GOARCH="amd64"; $env:CGO_ENABLED="0"; go build -ldflags="-s -w" -trimpath -o main_linux_amd64 .\main.go
+
+# macOS AMD64
+$env:GOOS="darwin"; $env:GOARCH="amd64"; $env:CGO_ENABLED="0"; go build -ldflags="-s -w" -trimpath -o main_macos_amd64 .\main.go
 ```
 
 ### 3️⃣ 메인 설정 `setting.yaml` 수정

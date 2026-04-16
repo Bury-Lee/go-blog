@@ -97,31 +97,16 @@ macOS
 
 ### 2️⃣ 编译项目
 
-#### Windows AMD64
-
+在Windows上编译:
 ```bash
-set GOOS=windows
-set GOARCH=amd64
-set CGO_ENABLED=0
-go build -ldflags="-s -w" -trimpath -o main_windows_amd64.exe .\main.go
-```
+# Windows AMD64
+$env:GOOS="windows"; $env:GOARCH="amd64"; $env:CGO_ENABLED="0"; go build -ldflags="-s -w" -trimpath -o main_windows_amd64.exe .\main.go
 
-#### Linux AMD64
+# Linux AMD64
+$env:GOOS="linux"; $env:GOARCH="amd64"; $env:CGO_ENABLED="0"; go build -ldflags="-s -w" -trimpath -o main_linux_amd64 .\main.go
 
-```bash
-set GOOS=linux
-set GOARCH=amd64
-set CGO_ENABLED=0
-go build -ldflags="-s -w" -trimpath -o main_linux_amd64 .\main.go
-```
-
-#### macOS AMD64
-
-```bash
-set GOOS=darwin
-set GOARCH=amd64
-set CGO_ENABLED=0
-go build -ldflags="-s -w" -trimpath -o main_macos_amd64 .\main.go
+# macOS AMD64
+$env:GOOS="darwin"; $env:GOARCH="amd64"; $env:CGO_ENABLED="0"; go build -ldflags="-s -w" -trimpath -o main_macos_amd64 .\main.go
 ```
 
 ### 3️⃣ 修改主配置 `setting.yaml`
