@@ -3,7 +3,7 @@ package utils
 import (
 	"StarDreamerCyberNook/global"
 	"StarDreamerCyberNook/models"
-	utils "StarDreamerCyberNook/utils/imageEncoder"
+	"StarDreamerCyberNook/utils"
 	"context"
 	"fmt"
 	"strings"

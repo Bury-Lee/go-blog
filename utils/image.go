@@ -2,7 +2,7 @@ package utils
 
 import (
 	"StarDreamerCyberNook/global"
-	"StarDreamerCyberNook/utils"
+
 	"encoding/base64"
 	"io"
 	"os"
@@ -34,7 +34,7 @@ func ImageSuffixJudge(filename string) (string, bool) {
 		return suffix, false
 	}
 	suffix = _list[len(_list)-1]
-	if !utils.InList(suffix, global.Config.Upload.WhiteList) {
+	if !InList(suffix, global.Config.Upload.WhiteList) {
 		return suffix, false
 	}
 	return suffix, true

@@ -11,7 +11,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/minio/minio-go/v7"
@@ -46,7 +45,7 @@ func (CDNImgApi) ImageUploadView(c *gin.Context) {
 
 	// 后缀判断
 	filename := fileHeader.Filename
-	suffix, ok := imageSuffixJudge(filename)
+	suffix, ok := utils.ImageSuffixJudge(filename)
 	if !ok {
 		response.FailWithMsg("文件名非法:"+filename, c)
 		return
@@ -88,7 +87,7 @@ func (CDNImgApi) ImageUploadView(c *gin.Context) {
 		bytes.NewReader(byteData),
 		int64(len(byteData)),
 		minio.PutObjectOptions{
-			ContentType: getContentType(suffix),
+			ContentType: utils.GetContentType(suffix),
 		},
 	)
 	if err != nil {
@@ -232,34 +231,4 @@ func (CDNImgApi) ImageRemoveView(c *gin.Context) {
 	}
 
 	response.OkWithMsg(fmt.Sprintf("图片删除成功,共删除%d张", len(list)), c)
-}
-
-func imageSuffixJudge(filename string) (string, bool) {
-	_list := strings.Split(filename, ".")
-	var suffix string
-	if len(_list) == 1 {
-		return suffix, false
-	}
-	suffix = _list[len(_list)-1]
-	if !utils.InList(suffix, global.Config.Upload.WhiteList) {
-		return suffix, false
-	}
-	return suffix, true
-}
-
-func getContentType(suffix string) string {
-	switch strings.ToLower(suffix) {
-	case "jpg", "jpeg":
-		return "image/jpeg"
-	case "png":
-		return "image/png"
-	case "gif":
-		return "image/gif"
-	case "webp":
-		return "image/webp"
-	case "svg":
-		return "image/svg+xml"
-	default:
-		return "application/octet-stream"
-	}
 }
