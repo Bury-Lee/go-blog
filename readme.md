@@ -362,6 +362,30 @@ If you want to sync to "another database" instead of ES, replace the processing 
 3. Start canal-go consumer (execute conversion and write to DB/ES)
 4. Execute `insert/update/delete` in master database to verify if target end is synchronized
 
+## 🌐 NGINX Horizontal Scaling (Optional)
+
+After recent architecture adjustments, the service layer is now effectively stateless, and business data is centralized in `MySQL / Redis / Elasticsearch`.  
+Based on this design, you can use `NGINX` reverse proxy and load balancing to scale out horizontally.
+
+### ✅ Suitable Scenarios
+
+- A single instance is approaching CPU or connection limits, and you need smoother concurrency scaling
+- Multiple hosts or container instances are available, and you want one unified public entry point
+- You need gradual capacity expansion or node replacement without service interruption
+
+### 🔧 Implementation Notes
+
+1. Start multiple GoBlog instances (same version and config recommended, different ports)
+2. Register backend nodes in an NGINX `upstream`
+3. Forward inbound traffic to the `upstream` via `proxy_pass`
+4. Enable health checks, timeout retries, and keepalive policies as needed
+
+### 📈 Expected Benefits
+
+- Distributes request pressure across instances and increases overall throughput
+- Reduces single-node hotspots and improves stability during peak traffic
+- Supports rolling updates by node to lower release risk
+
 ## ❓ Common Issues
 
 | Issue | Solution |

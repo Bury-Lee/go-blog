@@ -11,6 +11,7 @@ import (
 	"StarDreamerCyberNook/api/comment_api"
 	"StarDreamerCyberNook/api/follow_api"
 	friendlink_and_friendpromote "StarDreamerCyberNook/api/friendLink_and_friendPromote"
+	"StarDreamerCyberNook/api/hearth_api"
 	"StarDreamerCyberNook/api/image_api"
 	"StarDreamerCyberNook/api/log_api"
 	site_message_api "StarDreamerCyberNook/api/message_api"
@@ -34,6 +35,7 @@ type Api struct { //在这里注册路由
 	FollowApi      follow_api.FollowApi
 	ChatApi        chat_api.ChatApi
 	AIApi          ai_api.AIApi
+	HearthApi      hearth_api.HearthApi //心跳接口
 
 	TestApi test_api.TestApi
 }

@@ -30,8 +30,10 @@ func InitRouter() *gin.Engine {
 	}
 	nr.Use(middleware.LogMiddleware)
 	nr.Use(middleware.ActLimitMiddleware) //防攻击中间件
-	SiteRouter(nr)                        //已测试完毕
-	LogRouter(nr)                         //由于条件问题,待测
+	HearthRouter(nr)                      //心跳路由注册函数
+
+	SiteRouter(nr) //已测试完毕
+	LogRouter(nr)  //由于条件问题,待测
 
 	if global.Config.ObjectStorage.Enable {
 		GlobalImageRouter(nr)
@@ -39,7 +41,6 @@ func InitRouter() *gin.Engine {
 		//如果对象存储未启用,则使用本地存储
 		LocalImageRouter(nr) //已测试完毕
 	}
-
 	BannerRouter(nr)   //已测试完毕
 	UserRouter(nr)     //已测试完毕
 	CaptcharRouter(nr) //已测试完毕
