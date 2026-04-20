@@ -141,4 +141,5 @@ site:
     QQLogin: true           # 是否启用QQ登录 (TODO: 尚未实现)
     usernamePassword: true  # 是否启用用户名密码登录
     emailLogin: true        # 是否启用邮箱登录 (建议保持开启)
+    CodeLogin: true         # 是否启用邮箱验证码登录(TODO: 尚未实现) 
     captcha: false          # 是否启用验证码
