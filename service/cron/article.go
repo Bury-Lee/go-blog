@@ -4,6 +4,7 @@ import (
 	"StarDreamerCyberNook/global"
 	"StarDreamerCyberNook/models"
 	"StarDreamerCyberNook/service/redis_service/redis_count"
+	"context"
 	"fmt"
 	"strings"
 
@@ -16,12 +17,20 @@ import (
 // 逻辑流程：拉取ID -> 读取数据 -> 拼接SQL -> 执行更新 -> 确认回写
 // 此处一次更新多个字段,对内存有更高的要求,如果内存不足可以牺牲性能,分多几批更新,一次弹出一个字段的更新
 func SyncArticle() {
+	//检查是否有锁,如果有则跳过本次启动
 	batchSize := 500
 	total := 0
 	batchIndex := 0
 
 	// 循环拉取批次
 	for {
+		//每次写入数据库前，先获取锁，确保只有一个节点在写入
+		ctx := context.Background()
+		Lock := global.RedisTimeCache.Get(ctx, "cron_lock").Val()
+		if Lock != global.Config.System.Addr() {
+			logrus.Info("定时任务锁已被占用，跳过本次任务")
+			break
+		}
 		batchIndex++
 		// 逻辑点A: 从Redis弹出一批脏ID
 		ids := redis_count.PopDirtyArticleIDs(batchSize)

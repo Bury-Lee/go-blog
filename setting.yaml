@@ -4,7 +4,7 @@ system:
   port:              # 服务端口
   env:                 # 运行环境 (dev: 开发, prod: 生产)
   run_mode:         # 运行模式 (debug: 调试模式, release: 发布模式)
-  cron: true             # 是否启用定时任务
+  cron: true             # 是否启用定时任务,分布式环境下建议仅保留几个开启,其他节点关闭定时任务
 
 # 日志配置
 log:

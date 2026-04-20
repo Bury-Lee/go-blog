@@ -4,6 +4,7 @@ import (
 	"StarDreamerCyberNook/global"
 	"StarDreamerCyberNook/models"
 	"StarDreamerCyberNook/service/redis_service/redis_count"
+	"context"
 	"fmt"
 	"strings"
 
@@ -19,6 +20,13 @@ func SyncComment() {
 	batchIndex := 0
 
 	for {
+		//每次写入数据库前，先获取锁，确保只有一个节点在写入
+		ctx := context.Background()
+		Lock := global.RedisTimeCache.Get(ctx, "cron_lock").Val()
+		if Lock != global.Config.System.Addr() {
+			logrus.Info("定时任务锁已被占用，跳过本次任务")
+			break
+		}
 		batchIndex++
 		ids := redis_count.PopDirtyCommentIDs(batchSize)
 		if len(ids) == 0 {
@@ -64,7 +72,6 @@ func SyncComment() {
 
 	if total == 0 {
 		logrus.Info("没有需要同步的评论数据")
-		return
 	}
 	logrus.Infof("评论数据同步完成，本次同步总数：%d", total)
 }
