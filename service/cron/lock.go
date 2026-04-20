@@ -22,7 +22,7 @@ func GetLock() {
 		TTL:  30 * time.Minute,
 	}).Result()
 
-	if err != nil {
+	if err != nil && err != redis.Nil {
 		logrus.Errorf("Redis 连接异常，获取锁失败: %v", err)
 		return
 	}

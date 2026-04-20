@@ -44,6 +44,7 @@ func main() {
 	}
 
 	router := router.InitRouter() //注册路由
+	// router.Run(global.Config.System.Addr())
 	server := core.InitServer(router)
 	err := server.ListenAndServe()
 	if err != nil {

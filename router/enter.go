@@ -25,7 +25,7 @@ func InitRouter() *gin.Engine {
 
 	if global.Config.System.RunMode == "debug" {
 		nr.Use(middleware.RequestLogMiddleware)
-		nr.Use(middleware.CORS)
+		// nr.Use(middleware.CORS)
 		TestRouter(nr)
 	}
 	nr.Use(middleware.LogMiddleware)
