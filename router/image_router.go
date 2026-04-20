@@ -18,8 +18,8 @@ func LocalImageRouter(r *gin.RouterGroup) { //图片路由注册函数
 	// r.DELETE("/imageDelet")//TODO:允许用户删除自己的图片,从jwts中获取参数,然后允许批量删除
 }
 
-func GlobalImageRouter(r *gin.RouterGroup) { //图片路由注册函数
-	api := api.App.CDNImgApi
+func OSSImageRouter(r *gin.RouterGroup) { //图片路由注册函数
+	api := api.App.OSSImgApi
 	r.GET("/image", api.GetImage)
 	r.POST("/image", middleware.ImgPostLimitMiddleware, middleware.AuthMiddleware, api.ImageUploadView)
 	r.GET("/images", middleware.AdminMiddleware, api.ImageList)

@@ -134,8 +134,7 @@ site:
 
   # 文章相关配置
   article:
-    enableExamination: true # 是否启用文章审核功能
-
+    enableExamination: true # 是否启用文章审核功能,当确保成员足够信任时关闭
   # 登录方式配置
   login:
     QQLogin: true           # 是否启用QQ登录 (TODO: 尚未实现)

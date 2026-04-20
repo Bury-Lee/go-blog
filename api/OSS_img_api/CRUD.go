@@ -1,4 +1,4 @@
-package CDN_img_api
+package OSS_img_api
 
 import (
 	"StarDreamerCyberNook/common"
@@ -29,7 +29,7 @@ type RemoveRequest struct {
 	IDlist []uint `json:"IDlist" binding:"required"` // 要删除的图片ID列表
 }
 
-func (CDNImgApi) ImageUploadView(c *gin.Context) {
+func (OSSImgApi) ImageUploadView(c *gin.Context) {
 	fileHeader, err := c.FormFile("file")
 	if err != nil {
 		response.FailWithError(err, c)
@@ -115,7 +115,7 @@ func (CDNImgApi) ImageUploadView(c *gin.Context) {
 // GetImage 查询图片
 // 参数: c - gin上下文
 // 说明: 根据ID查询图片并返回对象存储中的文件内容
-func (CDNImgApi) GetImage(c *gin.Context) {
+func (OSSImgApi) GetImage(c *gin.Context) {
 	id := c.Query("id")
 
 	var img models.ImageModel
@@ -159,7 +159,7 @@ func (CDNImgApi) GetImage(c *gin.Context) {
 // ImageList 管理员查询图片列表
 // 参数: c - gin上下文
 // 说明: 分页查询图片列表,支持文件名模糊搜索
-func (CDNImgApi) ImageList(c *gin.Context) {
+func (OSSImgApi) ImageList(c *gin.Context) {
 	var req common.PageInfo
 	if err := c.ShouldBind(&req); err != nil {
 		response.FailWithMsg("参数错误", c)
@@ -190,7 +190,7 @@ func (CDNImgApi) ImageList(c *gin.Context) {
 // ImageRemoveView 管理员批量删除图片
 // 参数: c - gin上下文
 // 说明: 根据ID列表删除对象存储文件并删除数据库记录
-func (CDNImgApi) ImageRemoveView(c *gin.Context) {
+func (OSSImgApi) ImageRemoveView(c *gin.Context) {
 	var req RemoveRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		response.FailWithMsg("参数错误", c)

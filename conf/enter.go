@@ -1,6 +1,6 @@
 package conf
 
-const Version = "1.0.0"
+const Version = "1.1.0"
 
 // 记录全局变量的定义及其初始化
 type Config struct {

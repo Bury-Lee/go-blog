@@ -36,7 +36,7 @@ func InitRouter() *gin.Engine {
 	LogRouter(nr)  //由于条件问题,待测
 
 	if global.Config.ObjectStorage.Enable {
-		GlobalImageRouter(nr)
+		OSSImageRouter(nr)
 	} else {
 		//如果对象存储未启用,则使用本地存储
 		LocalImageRouter(nr) //已测试完毕
