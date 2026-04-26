@@ -43,22 +43,24 @@ type TextModel struct {
 // TODO:文章的审核通过Python微服务移交给AI的api来处理，不想人工审核了，太麻烦了
 type ArticleModel struct {
 	Model
-	Title         string         `gorm:"size:32" json:"title"`           // 文章标题，最大32字符
-	Abstract      string         `gorm:"size:256" json:"abstract"`       // 文章摘要，最大256字符
-	Content       string         `json:"content"`                        // 文章内容
-	CategoryID    uint           `json:"categoryID"`                     //为0表示无分类                                   // 文章分类ID，关联分类表
-	CategoryModel *CategoryModel `gorm:"foreignKey:CategoryID" json:"-"` //这样可以吗? 以防万一用指针吧             // 分类信息，外键关联，不序列化
-	AIAbstract    string
-	TagList       []string  `gorm:"type:text;serializer:json" json:"tagList"` // 标签列表，JSON序列化存储 //serializer:json要删掉?似乎要换成自己定义的taglist数据类型
-	Cover         string    `gorm:"size:256" json:"cover"`                    // 文章封面图片URL
-	UserID        uint      `json:"userID"`                                   // 作者用户ID，关联用户表
-	UserModel     UserModel `gorm:"foreignKey:UserID" json:"-"`               // 作者信息，外键关联，不序列化
-	LookCount     int       `json:"lookCount"`                                // 浏览次数统计
-	DiggCount     int       `json:"diggCount"`                                // 点赞次数统计
-	CommentCount  int       `json:"commentCount"`                             // 评论数量统计
-	CollectCount  int       `json:"collectCount"`                             // 收藏次数统计//TODO:每个用户对于每篇文章只能收藏一次,不然搞多几个收藏夹就会一直刷收藏统计,所以这个收藏数直接用redis缓存就好了?不需要每次都更新数据库了,有并发问题
-	OpenComment   bool      `json:"openComment"`                              // 是否开启评论：true-开启 false-关闭
-	Status        Status    `json:"status"`                                   // 文章状态：0-草稿 1-审核中 2-已发布 3-已下线
+	Title         string         `gorm:"size:32" json:"title"`                     // 文章标题，最大32字符
+	Abstract      string         `gorm:"size:256" json:"abstract"`                 // 文章摘要，最大256字符
+	Content       string         `json:"content"`                                  // 文章内容
+	CategoryID    uint           `json:"categoryID"`                               //为0表示无分类                                   // 文章分类ID，关联分类表
+	CategoryModel *CategoryModel `gorm:"foreignKey:CategoryID" json:"-"`           //这样可以吗? 以防万一用指针吧             // 分类信息，外键关联，不序列化
+	TagList       []string       `gorm:"type:text;serializer:json" json:"tagList"` // 标签列表，JSON序列化存储 //serializer:json要删掉?似乎要换成自己定义的taglist数据类型
+	Cover         string         `gorm:"size:256" json:"cover"`                    // 文章封面图片URL
+	UserID        uint           `json:"userID"`                                   // 作者用户ID，关联用户表
+	UserModel     UserModel      `gorm:"foreignKey:UserID" json:"-"`               // 作者信息，外键关联，不序列化
+	LookCount     int            `json:"lookCount"`                                // 浏览次数统计
+	DiggCount     int            `json:"diggCount"`                                // 点赞次数统计
+	CommentCount  int            `json:"commentCount"`                             // 评论数量统计
+	CollectCount  int            `json:"collectCount"`                             // 收藏次数统计//TODO:每个用户对于每篇文章只能收藏一次,不然搞多几个收藏夹就会一直刷收藏统计,所以这个收藏数直接用redis缓存就好了?不需要每次都更新数据库了,有并发问题
+	OpenComment   bool           `json:"openComment"`                              // 是否开启评论：true-开启 false-关闭
+	Status        Status         `json:"status"`                                   // 文章状态：0-草稿 1-审核中 2-已发布 3-已下线
+
+	AIQuality  string `json:"aiQuality"`  // AI生成的内容质量评级,1-5分
+	AIAbstract string `json:"aiAbstract"` // AI生成的内容摘要
 }
 type Status int8 // 文章状态枚举类型
 

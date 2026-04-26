@@ -95,7 +95,7 @@ func (ArticleApi) ArticleCreateView(c *gin.Context) {
 
 		messages = append(messages, openai.ChatCompletionMessage{
 			Role:    openai.ChatMessageRoleSystem,
-			Content: global.SystemPromptArticle.String(),
+			Content: global.SystemPromptArticleReview.String(),
 		})
 
 		// 添加对话历史消息
@@ -120,6 +120,7 @@ func (ArticleApi) ArticleCreateView(c *gin.Context) {
 			return
 		}
 		switch res.Choices[0].Message.Content { //TODO:这里无论成功还是失败都应该插入消息,告知原因
+		//注:一般我们认为ai审核是很迅速的,可以在3秒内看到结果,所以不考虑发送消息通知
 		case "通过":
 			req.Stats = models.StatusPublished
 		case "拒绝":
@@ -141,6 +142,80 @@ func (ArticleApi) ArticleCreateView(c *gin.Context) {
 		Cover:       req.Cover,       // 封面图
 		OpenComment: req.OpenComment, // 是否开启评论
 		Status:      req.Stats,
+	}
+
+	//追加ai摘要和ai评级
+	if global.Config.AI.Enable {
+		ctx := context.Background()
+
+		{ //ai摘要
+			// 构建完整的消息列表
+			var messages []openai.ChatCompletionMessage
+
+			// 添加系统提示词作为第一条消息
+
+			messages = append(messages, openai.ChatCompletionMessage{
+				Role:    openai.ChatMessageRoleSystem,
+				Content: global.SystemPromptArticleAbstract.String(),
+			})
+
+			// 添加对话历史消息
+			messages = append(messages,
+				openai.ChatCompletionMessage{
+					Role:    openai.ChatMessageRoleUser,
+					Content: "文章标题:" + req.Title + "\n文章摘要:" + req.Abstract + "\n文章内容:" + req.Content,
+				})
+
+			// 添加用户输入作为最后一条消息
+
+			// 创建非流式请求
+			res, err := global.LocalAIClient.CreateChatCompletion(
+				ctx,
+				openai.ChatCompletionRequest{
+					Model:    global.Config.AI.Model,
+					Messages: messages,
+				},
+			)
+			if err != nil {
+				logrus.Errorf("ai自动创建摘要和评级失败: %s", err.Error())
+			} else {
+				article.AIAbstract = res.Choices[0].Message.Content
+			}
+		}
+		{ //ai评级
+			// 构建完整的消息列表
+			var messages []openai.ChatCompletionMessage
+
+			// 添加系统提示词作为第一条消息
+
+			messages = append(messages, openai.ChatCompletionMessage{
+				Role:    openai.ChatMessageRoleSystem,
+				Content: global.SystemPromptArticleAiQuality.String(),
+			})
+
+			// 添加对话历史消息
+			messages = append(messages,
+				openai.ChatCompletionMessage{
+					Role:    openai.ChatMessageRoleUser,
+					Content: "文章标题:" + req.Title + "\n文章摘要:" + req.Abstract + "\n文章内容:" + req.Content,
+				})
+
+			// 添加用户输入作为最后一条消息
+
+			// 创建非流式请求
+			res, err := global.LocalAIClient.CreateChatCompletion(
+				ctx,
+				openai.ChatCompletionRequest{
+					Model:    global.Config.AI.Model,
+					Messages: messages,
+				},
+			)
+			if err != nil {
+				logrus.Errorf("ai自动创建摘要和评级失败: %s", err.Error())
+			} else {
+				article.AIQuality = res.Choices[0].Message.Content
+			}
+		}
 	}
 	if err = global.DB.Create(&article).Error; err != nil {
 		response.FailWithMsg("文章创建失败", c)
