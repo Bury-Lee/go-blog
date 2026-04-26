@@ -5,5 +5,6 @@ type UserArticleHistoryModel struct { //同一文章可多次阅读,所以不使
 	UserID       uint         `gorm:"index" json:"userID"`           //用户ID
 	UserModel    UserModel    `gorm:"foreignKey:UserID" json:"-"`    //关联用户表,不返回给前端
 	ArticleID    uint         `gorm:"index" json:"articleID"`        //文章ID
+	ArticleName  string       `gorm:"index" json:"articleName"`      //文章名称
 	ArticleModel ArticleModel `gorm:"foreignKey:ArticleID" json:"-"` //关联文章表,不返回给前端
 }

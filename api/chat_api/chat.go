@@ -74,7 +74,6 @@ func (ChatApi) ChatSendView(c *gin.Context) { //查询会话是否存在,没有�
 			UniqueID:        fmt.Sprintf("%d%d", req.RevUserID, claim.UserID),
 			UserID:          req.RevUserID,
 			LastMessage:     chatModel,
-			LastMessageType: msgType,
 			LastMessageTime: time.Now(),
 			IsRead:          false,
 			UnreadCount:     1,
@@ -85,7 +84,6 @@ func (ChatApi) ChatSendView(c *gin.Context) { //查询会话是否存在,没有�
 		session.IsRead = false
 		session.UnreadCount += 1
 		session.LastMessage = chatModel
-		session.LastMessageType = msgType
 		session.LastMessageTime = time.Now()
 		global.DB.Save(&session)
 	}

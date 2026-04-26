@@ -9,6 +9,7 @@ import (
 )
 
 type PageInfo struct {
+	EndId uint   `form:"endId"`              //某页末尾的游标ID,使用后可以减轻数据库压力
 	Limit int    `form:"limit" default:"10"` //一页的数量,默认10条
 	Page  int    `form:"page" default:"1"`   //分页查询,默认第1页
 	Key   string `form:"key"`                //模糊匹配的参数
@@ -38,7 +39,7 @@ func (p *PageInfo) GetLimit() int {
 // 返回:int - 当前页码
 // 说明:页码范围在1到20之间,超出默认1
 func (p *PageInfo) GetPage() int {
-	if p.Page < 1 || p.Page > 20 {
+	if p.Page < 1 || p.Page > 30 {
 		return 1
 	}
 	return p.Page
@@ -60,42 +61,55 @@ type Options struct { //可用选项,目前有模糊匹配和预加载,以后可
 // 返回:err - 错误信息
 // 说明:支持基础查询,模糊匹配,定制化查询,预加载,排序分页
 func ListQuery[T any](model any, option Options) (list []T, count int, err error) {
-	//基础查询
 	query := global.DB.Model(model).Where(model)
-	//模糊匹配
+
+	// 模糊匹配
 	if len(option.Likes) > 0 && option.PageInfo.Key != "" {
-		likes := global.DB.Where("")
-		for _, column := range option.Likes {
-			likes.Or(fmt.Sprintf("%s like ? ", column),
-				fmt.Sprintf("%%%s%%", option.PageInfo.Key))
+		likes := global.DB
+		for i, column := range option.Likes {
+			if i == 0 {
+				likes = likes.Where(fmt.Sprintf("%s LIKE ?", column), "%"+option.PageInfo.Key+"%")
+			} else {
+				likes = likes.Or(fmt.Sprintf("%s LIKE ?", column), "%"+option.PageInfo.Key+"%")
+			}
 		}
 		query = query.Where(likes)
 	}
 
-	//定制化查询
+	// 定制查询
 	if option.Where != nil {
 		query = query.Where(option.Where)
 	}
 
+	// 预加载
 	for _, preLoad := range option.Preloads {
 		query = query.Preload(preLoad)
 	}
 
-	//查总数
-	var c int64 //TODO:考虑改为Uint64
+	// 排序（保证游标分页稳定）
+	if option.PageInfo.Order != "" {
+		query = query.Order(option.PageInfo.Order)
+	} else if option.DefaultOrder != "" {
+		query = query.Order(option.DefaultOrder)
+	} else {
+		query = query.Order("id DESC") // 默认兜底
+	}
+
+	limit := option.PageInfo.GetLimit()
+
+	if option.PageInfo.EndId > 0 {
+		query = query.Where("id < ?", option.PageInfo.EndId)
+
+		err = query.Limit(limit).Find(&list).Error
+		return list, 0, err
+	}
+
+	// 查总数
+	var c int64
 	query.Count(&c)
 	count = int(c)
 
-	limit := option.PageInfo.GetLimit()
 	offset := option.PageInfo.GetOffset()
-
-	if option.PageInfo.Order != "" {
-		query = query.Order(option.PageInfo.Order)
-	} else {
-		if option.DefaultOrder != "" {
-			query = query.Order(option.DefaultOrder)
-		}
-	}
 
 	err = query.Offset(offset).Limit(limit).Find(&list).Error
 	return list, count, err

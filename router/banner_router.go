@@ -13,7 +13,4 @@ func BannerRouter(r *gin.RouterGroup) {
 	r.DELETE("/banner", middleware.AdminMiddleware, api.BannerRemoveView)
 	r.POST("/banner", middleware.AdminMiddleware, api.BannerCreateView)
 	r.PUT("/banner/:id", middleware.AdminMiddleware, api.BannerUpdateView)
-	// 	r.DELETE("/banner", api.BannerRemoveView)
-	// 	r.POST("/banner", api.BannerCreateView)
-	// 	r.PUT("/banner/:id", api.BannerUpdateView)
 }

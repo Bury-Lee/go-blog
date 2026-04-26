@@ -1,6 +1,7 @@
 package cron_service
 
 import (
+	"StarDreamerCyberNook/global"
 	"time"
 
 	"github.com/robfig/cron/v3"
@@ -25,13 +26,17 @@ func Cron() {
 	// crontab.AddFunc("*/4 * * * * *", SyncComment)
 
 	// 每10分钟，0秒触发
-	crontab.AddFunc("0 */10 * * * *", GetLock) //30分钟的锁,每30分钟抢一次
+	crontab.AddFunc("0 */10 * * * *", GetLock) //10分钟的锁,每10分钟抢一次
 
 	// 每10分钟
 	crontab.AddFunc("0 1-59/10 * * * *", SyncArticle) //文章数据同步
 
 	// 每10分钟
 	crontab.AddFunc("0 6-59/10 * * * *", SyncComment) //评论数据同步
+
+	if global.Config.System.ScheduledCleanup {
+		crontab.AddFunc("0 */10 * * * *", SyncCleanHistory) //10分钟尝试清理一次浏览记录
+	}
 
 	crontab.Start()
 }

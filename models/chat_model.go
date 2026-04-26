@@ -54,9 +54,9 @@ type SessionModel struct {
 	UserID    uint      `json:"userId"`                                     //接收方的用户ID,既然这样,就只查询对方的会话信息就好了
 	UserModel UserModel `gorm:"foreignKey:UserID"  json:"-"`                // 用户模型,方便查询用户信息,如昵称,头像等
 
-	LastMessage     ChatModel       `json:"lastMessage"`     // 最后一条消息内容摘要
-	LastMessageType ChatMessageType `json:"lastMessageType"` // 消息类型
-	LastMessageTime time.Time       `json:"lastMessageTime"` // 最后一条消息时间
-	UnreadCount     int             `json:"unreadCount"`     // 未读消息数量
-	IsRead          bool            `json:"isRead"`          // 是否已读
+	LastMessageID   uint      `json:"lastMessageId"`
+	LastMessage     ChatModel `gorm:"foreignKey:LastMessageID" json:"lastMessage"`
+	LastMessageTime time.Time `json:"lastMessageTime"` // 最后一条消息时间
+	UnreadCount     int       `json:"unreadCount"`     // 未读消息数量
+	IsRead          bool      `json:"isRead"`          // 是否已读
 }

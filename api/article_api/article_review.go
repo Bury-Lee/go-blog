@@ -25,6 +25,7 @@ func (ArticleApi) ArticleReviewListView(c *gin.Context) {
 	}
 	option := common.Options{
 		PageInfo: req.PageInfo,
+		Likes:    []string{"title"},
 		Preloads: []string{"UserModel"},
 		Where:    global.DB.Where("status = ?", models.StatusDraft),
 	}

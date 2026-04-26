@@ -20,5 +20,7 @@ func UserRouter(r *gin.RouterGroup) {
 	r.PUT("/user/update", middleware.AuthMiddleware, app.UserInfoUpdateView)                                                                          //更新用户信息
 	r.PUT("/user/admin/update", middleware.AdminMiddleware, app.AdminUserInfoUpdateView)                                                              //管理员更新用户信息
 	r.POST("/user/token", app.RefreshAccessToken)                                                                                                     //刷新access token
-	//TODO:加入邮箱验证码登录
+	//TODO:加入邮箱验证码登录接口
+
+	r.GET("/user/list", app.UserListView)
 }
