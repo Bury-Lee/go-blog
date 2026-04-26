@@ -51,7 +51,7 @@ func (ArticleApi) ArticleCreateView(c *gin.Context) {
 		return
 	}
 
-	if !global.Config.Site.Article.DisableExamination && req.Stats == models.StatusPending {
+	if !global.Config.Site.Article.EnableExamination && req.Stats == models.StatusPending {
 		req.Stats = models.StatusPublished
 		//未启用审核且设置为审核中状态时跳过审核
 	}
@@ -84,7 +84,7 @@ func (ArticleApi) ArticleCreateView(c *gin.Context) {
 	// 正文内容图片转存
 	// 但是吧,如果图片过多时，同步做，接口耗时高,异步做又很麻烦...但是以后肯定要考虑变成异步的
 
-	if global.Config.AI.Enable && global.Config.Site.Article.DisableExamination { //启用ai审核
+	if global.Config.AI.Enable && global.Config.Site.Article.EnableExamination { //启用ai审核
 		reply, err := ai_service.CreateSingleReply(
 			"文章标题:"+req.Title+"\n文章摘要:"+req.Abstract+"\n文章内容:"+req.Content,
 			global.SystemPromptArticleReview.String(),

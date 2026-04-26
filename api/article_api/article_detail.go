@@ -17,9 +17,10 @@ import (
 
 type ArticleDetailResponse struct {
 	models.ArticleModel
-	UserName   string `json:"username"`
-	NickName   string `json:"nickname"`
-	UserAvatar string `json:"userAvatar"`
+	CategoryTitle *string `json:"categoryTitle"`
+	UserName      string  `json:"username"`
+	NickName      string  `json:"nickname"`
+	UserAvatar    string  `json:"userAvatar"`
 }
 
 func (ArticleApi) ArticleDetailView(c *gin.Context) {
@@ -73,7 +74,7 @@ func (ArticleApi) ArticleDetailView(c *gin.Context) {
 	// 管理员，能看到全部的文章
 
 	var article models.ArticleModel
-	err := global.DB.Preload("UserModel").Take(&article, req.ID).Error
+	err := global.DB.Preload("UserModel").Preload("CategoryModel").Take(&article, req.ID).Error
 	if err != nil {
 		response.FailWithMsg("文章不存在", c)
 		return
@@ -92,11 +93,16 @@ func (ArticleApi) ArticleDetailView(c *gin.Context) {
 		}
 	}
 
+	var categoryTitle *string
+	if article.CategoryModel != nil {
+		categoryTitle = &article.CategoryModel.Title
+	}
 	cached := ArticleDetailResponse{
-		ArticleModel: article,
-		UserName:     article.UserModel.UserName,
-		NickName:     article.UserModel.NickName,
-		UserAvatar:   article.UserModel.Avatar,
+		ArticleModel:  article,
+		CategoryTitle: categoryTitle,
+		UserName:      article.UserModel.UserName,
+		NickName:      article.UserModel.NickName,
+		UserAvatar:    article.UserModel.Avatar,
 	}
 
 	// 计数只在响应阶段叠加,不写回详情缓存

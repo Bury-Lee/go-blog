@@ -46,7 +46,7 @@ type ArticleModel struct {
 	Title         string         `gorm:"size:32" json:"title"`                     // 文章标题，最大32字符
 	Abstract      string         `gorm:"size:256" json:"abstract"`                 // 文章摘要，最大256字符
 	Content       string         `json:"content"`                                  // 文章内容
-	CategoryID    *uint          `json:"categoryID"`                               //为0表示无分类                                   // 文章分类ID，关联分类表
+	CategoryID    *uint          `json:"categoryID"`                               // 文章分类ID，关联分类表
 	CategoryModel *CategoryModel `gorm:"foreignKey:CategoryID" json:"-"`           //这样可以吗? 以防万一用指针吧             // 分类信息，外键关联，不序列化
 	TagList       []string       `gorm:"type:text;serializer:json" json:"tagList"` // 标签列表，JSON序列化存储 //serializer:json要删掉?似乎要换成自己定义的taglist数据类型
 	Cover         string         `gorm:"size:256" json:"cover"`                    // 文章封面图片URL

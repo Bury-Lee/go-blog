@@ -239,6 +239,7 @@ func (ArticleApi) ArticleSearchView(c *gin.Context) {
 				item := ArticleSearchListResponse{
 					ArticleModel: cached.ArticleModel,
 					AdminTop:     articleTopMap[cached.ID], // 设置是否置顶
+					CategoryTitle: cached.CategoryTitle,    // 复用详情缓存中的分类标题
 					UserNickname: cached.NickName,          // 设置用户名
 					UserAvatar:   cached.UserAvatar,        // 设置用户头像
 				}

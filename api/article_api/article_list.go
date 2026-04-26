@@ -32,7 +32,7 @@ type ArticleListRequest struct {
 	common.PageInfo
 	Type       string        `form:"type" binding:"required"`
 	UserID     uint          `form:"userID"`
-	CategoryID uint          `form:"categoryID"`
+	CategoryID *uint         `form:"categoryID"`
 	Status     models.Status `form:"status"`
 }
 
@@ -123,6 +123,7 @@ func (ArticleApi) ArticleListView(c *gin.Context) {
 	var options = common.Options{
 		Likes:        []string{"title"},
 		PageInfo:     req.PageInfo,
+		Preloads:     []string{"UserModel", "CategoryModel"}, //预加载用户和分类
 		DefaultOrder: "created_at desc",
 	}
 	if len(TopArticleIDList) > 0 {
@@ -131,7 +132,7 @@ func (ArticleApi) ArticleListView(c *gin.Context) {
 
 	_list, count, _ := common.ListQuery[models.ArticleModel](models.ArticleModel{
 		UserID:     req.UserID,
-		CategoryID: &req.CategoryID,
+		CategoryID: req.CategoryID,
 		Status:     req.Status,
 	}, options)
 

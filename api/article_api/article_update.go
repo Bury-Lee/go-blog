@@ -20,7 +20,7 @@ type ArticleUpdateRequest struct {
 	Title       string   `json:"title" binding:"required"`
 	Abstract    string   `json:"abstract"` //要考虑一个问题,如果用户想设置为空简介,那么就设为"该文章未设置简介"
 	Content     string   `json:"content" binding:"required"`
-	CategoryID  uint     `json:"categoryID"`
+	CategoryID  *uint    `json:"categoryID"`
 	TagList     []string `json:"tagList"`
 	Cover       string   `json:"cover"`
 	OpenComment bool     `json:"openComment"`
@@ -54,8 +54,8 @@ func (ArticleApi) ArticleUpdateView(c *gin.Context) {
 
 	// 判断分类id是不是自己创建的
 	var category models.CategoryModel
-	if req.CategoryID != 0 {
-		err = global.DB.Take(&category, "id = ? and user_id = ?", req.CategoryID, user.ID).Error
+	if req.CategoryID != nil && *req.CategoryID != 0 {
+		err = global.DB.Take(&category, "id = ? and user_id = ?", *req.CategoryID, user.ID).Error
 		if err != nil {
 			response.FailWithMsg("文章分类不存在", c)
 			return
@@ -76,16 +76,21 @@ func (ArticleApi) ArticleUpdateView(c *gin.Context) {
 	} else {
 		req.Abstract = "该文章未设置简介"
 	}
+
 	mps := map[string]any{
 		"title":        req.Title,
 		"abstract":     req.Abstract,
 		"content":      req.Content,
-		"category_id":  req.CategoryID,
 		"tag_list":     req.TagList,
 		"cover":        req.Cover,
 		"open_comment": req.OpenComment,
 	}
-	if article.Status == models.StatusPublished && !global.Config.Site.Article.DisableExamination {
+	if req.CategoryID == nil || *req.CategoryID == 0 {
+		mps["category_id"] = nil
+	} else {
+		mps["category_id"] = *req.CategoryID
+	}
+	if article.Status == models.StatusPublished && !global.Config.Site.Article.EnableExamination {
 		// 如果是已发布的文章，进行编辑，那么就要改成待审核
 		mps["status"] = models.StatusPending
 	}
@@ -105,7 +110,7 @@ func (ArticleApi) ArticleUpdateView(c *gin.Context) {
 				if err != nil {
 					logrus.Errorf("ai自动创建摘要和评级失败: %s", err.Error())
 				} else {
-					article.AIAbstract = res
+					mps["ai_abstract"] = res
 				}
 			}
 			{ //ai评级
@@ -113,7 +118,7 @@ func (ArticleApi) ArticleUpdateView(c *gin.Context) {
 				if err != nil {
 					logrus.Errorf("ai自动创建摘要和评级失败: %s", err.Error())
 				} else {
-					article.AIQuality = res
+					mps["ai_quality"] = res
 				}
 			}
 
@@ -208,8 +213,10 @@ func (ArticleApi) ArticleUpdateView2(c *gin.Context) {
 				response.FailWithMsg("文章分类不存在", c)
 				return
 			}
+			mps["category_id"] = *req.CategoryID
+		} else {
+			mps["category_id"] = nil
 		}
-		mps["category_id"] = *req.CategoryID
 	}
 
 	xssFilter := xss_filter.NewXSSFilter()
@@ -250,7 +257,7 @@ func (ArticleApi) ArticleUpdateView2(c *gin.Context) {
 	contentChanged := req.Title != nil || req.Abstract != nil || req.Content != nil
 
 	if contentChanged {
-		if article.Status == models.StatusPublished && !global.Config.Site.Article.DisableExamination {
+		if article.Status == models.StatusPublished && !global.Config.Site.Article.EnableExamination {
 			// 如果是已发布的文章，进行内容编辑，那么就要改成待审核
 			mps["status"] = models.StatusPending
 		}

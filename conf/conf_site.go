@@ -48,7 +48,7 @@ func (this *About) SetVersion() {
 
 // Article 文章设置
 type Article struct {
-	DisableExamination bool `yaml:"enableExamination" json:"enableExamination"` // 是否启用文章审核
+	EnableExamination bool `yaml:"enableExamination" json:"enableExamination"` // 是否启用文章审核
 }
 
 // Login 登录
