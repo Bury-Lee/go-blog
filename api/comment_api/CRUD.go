@@ -6,15 +6,14 @@ import (
 	"StarDreamerCyberNook/global"
 	"StarDreamerCyberNook/models"
 	"StarDreamerCyberNook/models/enum"
+	"StarDreamerCyberNook/service/ai_service"
 	"StarDreamerCyberNook/service/message_service"
 	"StarDreamerCyberNook/service/redis_service/redis_count"
 	jwts "StarDreamerCyberNook/utils/jwts"
 	utils_other "StarDreamerCyberNook/utils/other"
-	"context"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
-	"github.com/sashabaranov/go-openai"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )
@@ -63,47 +62,23 @@ func (CommentApi) CommentCreateView(c *gin.Context) {
 		如果说要查询评论的历史信息,把上下文评论也查询出来加入到审核内容中,又很麻烦而且显得不合理,也会给数据库带来比较大的压力
 	*/
 	if global.Config.AI.Enable { //启用ai审核
-		ctx := context.Background()
-
-		// 构建完整的消息列表
-		var messages []openai.ChatCompletionMessage
-
-		// 添加系统提示词作为第一条消息
-
-		messages = append(messages, openai.ChatCompletionMessage{
-			Role:    openai.ChatMessageRoleSystem,
-			Content: global.SystemPromptComment.String(),
-		})
-
-		// 添加对话历史消息
-		messages = append(messages,
-			openai.ChatCompletionMessage{
-				Role:    openai.ChatMessageRoleUser,
-				Content: "评论内容:" + req.Content,
-			})
-
-		// 添加用户输入作为最后一条消息
-
-		// 创建非流式请求
-		res, err := global.LocalAIClient.CreateChatCompletion(
-			ctx,
-			openai.ChatCompletionRequest{
-				Model:    global.Config.AI.Model,
-				Messages: messages,
-			},
+		reply, err := ai_service.CreateSingleReply(
+			"评论内容:"+req.Content,
+			global.SystemPromptComment.String(),
 		)
 		if err != nil {
 			response.FailWithMsg("ai审核失败,已经自动创建为待审核状态: "+err.Error(), c)
 			return
 		}
-		switch res.Choices[0].Message.Content { //TODO:这里无论成功还是失败都应该插入消息,告知原因
+		switch reply { //TODO:这里无论成功还是失败都应该插入消息,告知原因
 		case "通过":
 			//通过就正常执行流程
 		case "拒绝":
 			response.FailWithMsg("评论可能含有违规信息,已拒绝", c)
 			return
 		default:
-			logrus.Errorf("ai审核出错,回复内容:%s,评论详情:%s\n,评论发布", res.Choices[0].Message.Content, fmt.Sprintf("%#v", req))
+			logrus.Errorf("ai审核出错,回复内容:%s,评论详情:%s\n,评论不发布", reply, fmt.Sprintf("%#v", req))
+			return
 		}
 	}
 

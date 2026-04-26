@@ -46,6 +46,8 @@ func (AIApi) Chat(c *gin.Context) {
 
 	ctx := context.Background()
 
+	//由于这个函数的特殊性,需要保留原本的逻辑,不使用ai的service
+
 	// 构建完整的消息列表
 	var messages []openai.ChatCompletionMessage
 
@@ -67,11 +69,13 @@ func (AIApi) Chat(c *gin.Context) {
 	messages = append(messages, userMessage)
 
 	// 创建非流式请求
-	resp, err := global.LocalAIClient.CreateChatCompletion(
+	resp, err := global.AIClient.CreateChatCompletion(
 		ctx,
 		openai.ChatCompletionRequest{
-			Model:    req.Model,
-			Messages: messages,
+			Model:       global.Config.AI.Model,
+			Temperature: global.Config.AI.Temperature,
+			MaxTokens:   global.Config.AI.MaxTokens,
+			Messages:    messages,
 		},
 	)
 

@@ -20,6 +20,7 @@ A blog/community backend project based on `Gin + GORM + Redis + Elasticsearch`, 
 - **Complete Search Capabilities**: Full-text article search, highlighting, and multi-dimensional sorting based on `Elasticsearch`
 - **High Concurrency Friendly**: Views, likes, collections, and comment counts are written to Redis first, then synchronized to the database in batches by scheduled tasks
 - **AI Integration**: Site AI assistant and content moderation for articles, comments, and nicknames
+- **Multi-model AI Support**: Now supports multiple AIs (OpenAI interface compatible), added AI article summary and AI article rating features, and supports outputting AI responses in debug mode
 - **Complete Operations Features**: Site configuration, SEO, banners, friend links, promotion slots, and log management
 
 > 📖 **Feature Documentation**: [Blog Feature Documentation](docs/功能文档.md)

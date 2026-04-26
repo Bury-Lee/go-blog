@@ -7,16 +7,15 @@ import (
 	"StarDreamerCyberNook/middleware"
 	"StarDreamerCyberNook/models"
 	"StarDreamerCyberNook/models/enum"
+	"StarDreamerCyberNook/service/ai_service"
 	"StarDreamerCyberNook/utils"
 	Hash "StarDreamerCyberNook/utils/hash"
 	jwts "StarDreamerCyberNook/utils/jwts"
 	utils_other "StarDreamerCyberNook/utils/other"
-	"context"
 	"fmt"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/sashabaranov/go-openai"
 	"github.com/sirupsen/logrus"
 )
 
@@ -43,35 +42,12 @@ func (UserApi) RegisterEmailView(c *gin.Context) {
 
 	//如果启用ai审核
 	if global.Config.AI.Enable { //启用ai审核
-		ctx := context.Background()
-		// 构建完整的消息列表
-		var messages []openai.ChatCompletionMessage
-		// 添加系统提示词作为第一条消息
-		messages = append(messages, openai.ChatCompletionMessage{
-			Role:    openai.ChatMessageRoleSystem,
-			Content: global.SystemPromptUser.String(),
-		})
-
-		// 添加增量更新的值
-		messages = append(messages,
-			openai.ChatCompletionMessage{
-				Role:    openai.ChatMessageRoleUser,
-				Content: "用户昵称:" + req.NickName,
-			})
-
-		// 创建非流式请求
-		res, err := global.LocalAIClient.CreateChatCompletion(
-			ctx,
-			openai.ChatCompletionRequest{
-				Model:    global.Config.AI.Model,
-				Messages: messages,
-			},
-		)
+		res, err := ai_service.CreateSingleReply(req.NickName, global.SystemPromptUser.String())
 		if err != nil {
 			logrus.Errorf("ai审核失败: %s", err.Error())
 			//出错自动降级为非ai流程
 		}
-		switch res.Choices[0].Message.Content {
+		switch res {
 		case "通过":
 			//通过,更新用户信息
 		case "拒绝":
@@ -79,7 +55,7 @@ func (UserApi) RegisterEmailView(c *gin.Context) {
 			response.FailWithMsg("违规昵称,请重试", c)
 			return
 		default:
-			logrus.Errorf("ai审核结果未知: %s,用户:%+v", res.Choices[0].Message.Content, req)
+			logrus.Errorf("ai审核结果未知: %s,用户:%+v", res, req)
 			response.FailWithMsg("违规昵称,请重试", c) //也许也可以考虑放行?
 			return
 		}

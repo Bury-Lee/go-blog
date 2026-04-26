@@ -13,20 +13,17 @@ func InitAI() *openai.Client {
 		return nil
 	}
 
-	if global.Config.AI.Model == "local" {
-		conf := openai.DefaultConfig("")
-		conf.BaseURL = global.Config.AI.Host
-		client := openai.NewClientWithConfig(conf)
-		logrus.Info("模型已加载")
-		return client
-	}
+	conf := openai.DefaultConfig(global.Config.AI.ApiKey) // ✅ 用 ApiKey
+	conf.BaseURL = global.Config.AI.Host
+	conf.APIType = openai.APIType(global.Config.AI.APIType)
 
-	//TODO:加入可用性检测
+	client := openai.NewClientWithConfig(conf)
+	logrus.Info("模型已加载")
 
-	//TODO:根据不同厂家返回不同的AI模型客户端
-
+	// 设置系统提示词
 	if global.Config.AI.NickName != "" || global.Config.Site.Project.Title != "" {
-		words := "你是" + global.Config.AI.NickName + "，" + global.Config.Site.Project.Title + " 网站的官方看板娘。" +
+		words := "你是" + global.Config.AI.NickName + "，" +
+			global.Config.Site.Project.Title + " 网站的官方看板娘。" +
 			"性格设定：活泼可爱、略带科技感、对用户友好。\n" +
 			"回答要求：\n" +
 			"- 简洁明了，控制在50字以内\n" +
@@ -38,5 +35,9 @@ func InitAI() *openai.Client {
 	} else {
 		logrus.Infof("未配置ai昵称和网站名称,已启用默认设置")
 	}
-	return nil
+
+	if client == nil {
+		logrus.Warn("ai连接失败!")
+	}
+	return client
 }

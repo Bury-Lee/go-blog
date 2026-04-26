@@ -19,7 +19,7 @@ func main() {
 	global.DB = core.InitDB()                                     //初始化数据库
 	global.RedisTimeCache, global.RedisHotPool = core.InitRedis() //初始化redis
 	global.ES = core.InitElasticSearch()                          //初始化elasticsearch
-	global.LocalAIClient = core.InitAI()                          //初始化AI模型
+	global.AIClient = core.InitAI()                               //初始化AI模型
 	if global.Config.ObjectStorage.Enable {
 		logrus.Infof("对象存储已启用,存储桶:%s", global.Config.ObjectStorage.Bucket)
 		global.StorageClient = core.InitClient()

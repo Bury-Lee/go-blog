@@ -5,13 +5,12 @@ import (
 	"StarDreamerCyberNook/global"
 	"StarDreamerCyberNook/models"
 	"StarDreamerCyberNook/models/enum"
+	"StarDreamerCyberNook/service/ai_service"
 	xss_filter "StarDreamerCyberNook/utils/XSSfilter"
 	jwts "StarDreamerCyberNook/utils/jwts"
-	"context"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
-	"github.com/sashabaranov/go-openai"
 	"github.com/sirupsen/logrus"
 )
 
@@ -19,7 +18,7 @@ type ArticleCreateRequest struct {
 	Title       string        `json:"title" binding:"required"`   // 文章标题，最大32字符
 	Abstract    string        `json:"abstract"`                   // 文章摘要，最大256字符
 	Content     string        `json:"content" binding:"required"` // 文章内容
-	CategoryID  uint          `json:"categoryID"`                 // 文章分类ID，关联分类表
+	CategoryID  *uint         `json:"categoryID"`                 // 文章分类ID，关联分类表
 	TagList     []string      `json:"tagList"`                    // 标签列表，JSON序列化存储 //serializer:json要删掉?似乎要换成自己定义的taglist数据类型
 	Cover       string        `json:"cover"`                      // 文章封面图片URL
 	OpenComment bool          `json:"openComment"`                // 是否开启评论：true-开启 false-关闭
@@ -59,8 +58,8 @@ func (ArticleApi) ArticleCreateView(c *gin.Context) {
 
 	//判断分类id是否为自己创建
 	var category models.CategoryModel
-	if req.CategoryID != 0 {
-		err := global.DB.Take(&category, "id = ? and user_id = ?", req.CategoryID, User.ID).Error
+	if req.CategoryID != nil && *req.CategoryID != 0 {
+		err := global.DB.Take(&category, "id = ? and user_id = ?", *req.CategoryID, User.ID).Error
 		if err != nil {
 			response.FailWithMsg("分类不存在", c)
 			return
@@ -86,47 +85,23 @@ func (ArticleApi) ArticleCreateView(c *gin.Context) {
 	// 但是吧,如果图片过多时，同步做，接口耗时高,异步做又很麻烦...但是以后肯定要考虑变成异步的
 
 	if global.Config.AI.Enable && global.Config.Site.Article.DisableExamination { //启用ai审核
-		ctx := context.Background()
-
-		// 构建完整的消息列表
-		var messages []openai.ChatCompletionMessage
-
-		// 添加系统提示词作为第一条消息
-
-		messages = append(messages, openai.ChatCompletionMessage{
-			Role:    openai.ChatMessageRoleSystem,
-			Content: global.SystemPromptArticleReview.String(),
-		})
-
-		// 添加对话历史消息
-		messages = append(messages,
-			openai.ChatCompletionMessage{
-				Role:    openai.ChatMessageRoleUser,
-				Content: "文章标题:" + req.Title + "\n文章摘要:" + req.Abstract + "\n文章内容:" + req.Content,
-			})
-
-		// 添加用户输入作为最后一条消息
-
-		// 创建非流式请求
-		res, err := global.LocalAIClient.CreateChatCompletion(
-			ctx,
-			openai.ChatCompletionRequest{
-				Model:    global.Config.AI.Model,
-				Messages: messages,
-			},
+		reply, err := ai_service.CreateSingleReply(
+			"文章标题:"+req.Title+"\n文章摘要:"+req.Abstract+"\n文章内容:"+req.Content,
+			global.SystemPromptArticleReview.String(),
 		)
 		if err != nil {
-			response.FailWithMsg("ai审核失败,已经自动创建为待审核状态: "+err.Error(), c)
+			logrus.Error("ai审核失败:" + err.Error())
+			response.FailWithMsg("ai审核失败,已经自动创建为待审核状态", c)
 			return
 		}
-		switch res.Choices[0].Message.Content { //TODO:这里无论成功还是失败都应该插入消息,告知原因
+		switch reply { //TODO:这里无论成功还是失败都应该插入消息,告知原因
 		//注:一般我们认为ai审核是很迅速的,可以在3秒内看到结果,所以不考虑发送消息通知
 		case "通过":
 			req.Stats = models.StatusPublished
 		case "拒绝":
 			req.Stats = models.StatusDraft
 		default:
-			logrus.Errorf("ai审核出错,回复内容:%s,文章详情:%s\n已自动换为待审核状态", res.Choices[0].Message.Content, fmt.Sprintf("%#v", req))
+			logrus.Errorf("ai审核出错,回复内容:%s,文章详情:%s\n已自动换为待审核状态", reply, fmt.Sprintf("%#v", req))
 			req.Stats = models.StatusPending
 		}
 	}
@@ -146,74 +121,28 @@ func (ArticleApi) ArticleCreateView(c *gin.Context) {
 
 	//追加ai摘要和ai评级
 	if global.Config.AI.Enable {
-		ctx := context.Background()
-
 		{ //ai摘要
 			// 构建完整的消息列表
-			var messages []openai.ChatCompletionMessage
-
-			// 添加系统提示词作为第一条消息
-
-			messages = append(messages, openai.ChatCompletionMessage{
-				Role:    openai.ChatMessageRoleSystem,
-				Content: global.SystemPromptArticleAbstract.String(),
-			})
-
-			// 添加对话历史消息
-			messages = append(messages,
-				openai.ChatCompletionMessage{
-					Role:    openai.ChatMessageRoleUser,
-					Content: "文章标题:" + req.Title + "\n文章摘要:" + req.Abstract + "\n文章内容:" + req.Content,
-				})
-
-			// 添加用户输入作为最后一条消息
-
-			// 创建非流式请求
-			res, err := global.LocalAIClient.CreateChatCompletion(
-				ctx,
-				openai.ChatCompletionRequest{
-					Model:    global.Config.AI.Model,
-					Messages: messages,
-				},
+			reply, err := ai_service.CreateSingleReply(
+				"文章标题:"+req.Title+"\n文章摘要:"+req.Abstract+"\n文章内容:"+req.Content,
+				global.SystemPromptArticleAbstract.String(),
 			)
 			if err != nil {
 				logrus.Errorf("ai自动创建摘要和评级失败: %s", err.Error())
 			} else {
-				article.AIAbstract = res.Choices[0].Message.Content
+				article.AIAbstract = reply
 			}
 		}
 		{ //ai评级
 			// 构建完整的消息列表
-			var messages []openai.ChatCompletionMessage
-
-			// 添加系统提示词作为第一条消息
-
-			messages = append(messages, openai.ChatCompletionMessage{
-				Role:    openai.ChatMessageRoleSystem,
-				Content: global.SystemPromptArticleAiQuality.String(),
-			})
-
-			// 添加对话历史消息
-			messages = append(messages,
-				openai.ChatCompletionMessage{
-					Role:    openai.ChatMessageRoleUser,
-					Content: "文章标题:" + req.Title + "\n文章摘要:" + req.Abstract + "\n文章内容:" + req.Content,
-				})
-
-			// 添加用户输入作为最后一条消息
-
-			// 创建非流式请求
-			res, err := global.LocalAIClient.CreateChatCompletion(
-				ctx,
-				openai.ChatCompletionRequest{
-					Model:    global.Config.AI.Model,
-					Messages: messages,
-				},
+			reply, err := ai_service.CreateSingleReply(
+				"文章标题:"+req.Title+"\n文章摘要:"+req.Abstract+"\n文章内容:"+req.Content,
+				global.SystemPromptArticleAiQuality.String(),
 			)
 			if err != nil {
 				logrus.Errorf("ai自动创建摘要和评级失败: %s", err.Error())
 			} else {
-				article.AIQuality = res.Choices[0].Message.Content
+				article.AIQuality = reply
 			}
 		}
 	}

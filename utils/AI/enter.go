@@ -30,7 +30,7 @@ type AIRequest struct {
 // ChatWithAI 接收AIRequest结构体，返回AIResponse
 func ChatWithAI(request AIRequest) AIResponse { //保留函数
 	// 配置客户端
-	client := global.LocalAIClient
+	client := global.AIClient
 	ctx := context.Background()
 
 	// 构建消息列表

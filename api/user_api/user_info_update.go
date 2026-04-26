@@ -4,13 +4,12 @@ import (
 	"StarDreamerCyberNook/common/response"
 	"StarDreamerCyberNook/global"
 	"StarDreamerCyberNook/models"
+	"StarDreamerCyberNook/service/ai_service"
 	jwts "StarDreamerCyberNook/utils/jwts"
 	utils_other "StarDreamerCyberNook/utils/other"
-	"context"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
-	"github.com/sashabaranov/go-openai"
 	"github.com/sirupsen/logrus"
 )
 
@@ -43,53 +42,25 @@ func (UserApi) UserInfoUpdateView(c *gin.Context) {
 	}
 	//ai审核环节
 	if global.Config.AI.Enable { //启用ai审核
-		ctx := context.Background()
-
-		// 构建完整的消息列表
-		var messages []openai.ChatCompletionMessage
-
-		// 添加系统提示词作为第一条消息
-
-		messages = append(messages, openai.ChatCompletionMessage{
-			Role:    openai.ChatMessageRoleSystem,
-			Content: global.SystemPromptUser.String(),
-		})
-
-		// 添加增量更新的值
+		content := ""
 		if req.Abstract != nil {
-			messages = append(messages,
-				openai.ChatCompletionMessage{
-					Role:    openai.ChatMessageRoleUser,
-					Content: "用户简介:" + *req.Abstract,
-				})
+			content += "\n用户简介:" + *req.Abstract
 		}
 		if req.NickName != nil {
-			messages = append(messages,
-				openai.ChatCompletionMessage{
-					Role:    openai.ChatMessageRoleUser,
-					Content: "用户昵称:" + *req.NickName,
-				})
+			content += "\n用户昵称:" + *req.NickName
 		}
 		if req.LikeTags != nil {
-			messages = append(messages,
-				openai.ChatCompletionMessage{
-					Role:    openai.ChatMessageRoleUser,
-					Content: "用户喜欢的标签:" + fmt.Sprintf("%v", *req.LikeTags),
-				})
+			content += "\n用户喜欢的标签:" + fmt.Sprintf("%v", *req.LikeTags)
 		}
-		// 创建非流式请求
-		res, err := global.LocalAIClient.CreateChatCompletion(
-			ctx,
-			openai.ChatCompletionRequest{
-				Model:    global.Config.AI.Model,
-				Messages: messages,
-			},
-		)
+		if req.ContactInfo != nil {
+			content += "\n用户联系方式:" + fmt.Sprintf("%v", *req.ContactInfo)
+		}
+		res, err := ai_service.CreateSingleReply(content, global.SystemPromptUser.String())
 		if err != nil {
 			logrus.Errorf("ai审核失败: %s", err.Error())
 			//出错自动降级为非ai流程
 		}
-		switch res.Choices[0].Message.Content { //TODO:这里无论成功还是失败都应该插入消息,告知原因
+		switch res { //TODO:这里无论成功还是失败都应该插入消息,告知原因
 		case "通过":
 			//通过,更新用户信息
 		case "拒绝":
@@ -97,7 +68,7 @@ func (UserApi) UserInfoUpdateView(c *gin.Context) {
 			response.FailWithMsg("存在违规信息,用户信息未更新", c)
 			return
 		default:
-			logrus.Errorf("ai审核结果未知: %s,用户:%+v", res.Choices[0].Message.Content, req)
+			logrus.Errorf("ai审核结果未知: %s,用户:%+v", res, req)
 			response.FailWithMsg("审核结果未知,用户信息未更新", c) //也许也可以考虑放行?
 			return
 		}

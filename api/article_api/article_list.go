@@ -131,7 +131,7 @@ func (ArticleApi) ArticleListView(c *gin.Context) {
 
 	_list, count, _ := common.ListQuery[models.ArticleModel](models.ArticleModel{
 		UserID:     req.UserID,
-		CategoryID: req.CategoryID,
+		CategoryID: &req.CategoryID,
 		Status:     req.Status,
 	}, options)
 
@@ -163,7 +163,7 @@ func (ArticleApi) ArticleListView(c *gin.Context) {
 			UserNickName: model.UserModel.NickName,
 			Avatar:       model.UserModel.Avatar,
 		}
-		if model.CategoryID != 0 && model.CategoryModel != nil {
+		if model.CategoryID != nil && model.CategoryModel != nil {
 			data.CategoryTitle = &model.CategoryModel.Title
 		}
 		list = append(list, data)
