@@ -1,0 +1,3124 @@
+{
+  "Api": [
+    {
+      "name": "SiteApi",
+      "type": "site_api.SiteApi",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "LogApi",
+      "type": "log_api.LogApi",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "ImageApi",
+      "type": "image_api.ImageApi",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "BannerApi",
+      "type": "banner_api.BannerApi",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "FriendApi",
+      "type": "friendlink_and_friendpromote.FriendApi",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "CaptchaApi",
+      "type": "captcha_api.CaptchaApi",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "UserApi",
+      "type": "user_api.UserApi",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "ArticleApi",
+      "type": "article_api.ArticleApi",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "CommentApi",
+      "type": "comment_api.CommentApi",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "SiteMessageApi",
+      "type": "site_message_api.MessageApi",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "FollowApi",
+      "type": "follow_api.FollowApi",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "ChatApi",
+      "type": "chat_api.ChatApi",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "AIApi",
+      "type": "ai_api.AIApi",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "HearthApi",
+      "type": "hearth_api.HearthApi",
+      "tags": "",
+      "comment": "心跳接口"
+    },
+    {
+      "name": "OSSImgApi",
+      "type": "OSS_img_api.OSSImgApi",
+      "tags": "",
+      "comment": "OSS图片接口"
+    },
+    {
+      "name": "TestApi",
+      "type": "test_api.TestApi",
+      "tags": "",
+      "comment": ""
+    }
+  ],
+  "UserAIRequest": [
+    {
+      "name": "Messages",
+      "type": "[]openai.ChatCompletionMessage",
+      "tags": "json:\"messages\"",
+      "comment": "对话历史消息"
+    },
+    {
+      "name": "UserInput",
+      "type": "string",
+      "tags": "json:\"user_input\"",
+      "comment": "用户输入"
+    },
+    {
+      "name": "ImageID",
+      "type": "uint",
+      "tags": "json:\"image_ID\"",
+      "comment": "图片ID（可选）//TODO:加入图片的支持功能"
+    },
+    {
+      "name": "Model",
+      "type": "string",
+      "tags": "json:\"model\"",
+      "comment": "模型名称（可选，默认使用全局配置）"
+    }
+  ],
+  "AIResponse": [
+    {
+      "name": "Success",
+      "type": "bool",
+      "tags": "json:\"success\"",
+      "comment": ""
+    },
+    {
+      "name": "Content",
+      "type": "string",
+      "tags": "json:\"content\"",
+      "comment": ""
+    },
+    {
+      "name": "Error",
+      "type": "string",
+      "tags": "json:\"error\"",
+      "comment": ""
+    }
+  ],
+  "AIApi": [],
+  "CategoryCreateRequest": [
+    {
+      "name": "ID",
+      "type": "uint",
+      "tags": "json:\"id\"",
+      "comment": "id为0时为创建，否则为修改"
+    },
+    {
+      "name": "Title",
+      "type": "string",
+      "tags": "json:\"title\" binding:\"required,max=32\"",
+      "comment": ""
+    }
+  ],
+  "CategoryListRequest": [
+    {
+      "name": "common.PageInfo",
+      "type": "common.PageInfo",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "UserID",
+      "type": "uint",
+      "tags": "form:\"userID\"",
+      "comment": ""
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "tags": "form:\"type\" binding:\"required\"",
+      "comment": "self 查自己 other 查别人 admin 后台"
+    }
+  ],
+  "CategoryListResponse": [
+    {
+      "name": "models.CategoryModel",
+      "type": "models.CategoryModel",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "ArticleCount",
+      "type": "int",
+      "tags": "json:\"articleCount\"",
+      "comment": ""
+    },
+    {
+      "name": "Nickname",
+      "type": "string",
+      "tags": "json:\"nickname,omitempty\"",
+      "comment": ""
+    },
+    {
+      "name": "Avatar",
+      "type": "string",
+      "tags": "json:\"avatar,omitempty\"",
+      "comment": ""
+    }
+  ],
+  "ArticleCollectRequest": [
+    {
+      "name": "ArticleID",
+      "type": "uint",
+      "tags": "json:\"articleID\" binding:\"required\"",
+      "comment": ""
+    },
+    {
+      "name": "CollectID",
+      "type": "uint",
+      "tags": "json:\"collectID\"",
+      "comment": ""
+    }
+  ],
+  "CollectCreateRequest": [
+    {
+      "name": "Title",
+      "type": "string",
+      "tags": "json:\"title\" binding:\"required,max=32\" s:\"title\"",
+      "comment": ""
+    },
+    {
+      "name": "Abstract",
+      "type": "string",
+      "tags": "json:\"abstract\" s:\"abstract\"",
+      "comment": ""
+    },
+    {
+      "name": "Cover",
+      "type": "string",
+      "tags": "json:\"cover\" s:\"cover\"",
+      "comment": ""
+    }
+  ],
+  "CollectUpdateRequest": [
+    {
+      "name": "ID",
+      "type": "uint",
+      "tags": "json:\"id\" binding:\"required\"",
+      "comment": "更新时需要传id参数"
+    },
+    {
+      "name": "Title",
+      "type": "*string",
+      "tags": "json:\"title\" ",
+      "comment": ""
+    },
+    {
+      "name": "Abstract",
+      "type": "*string",
+      "tags": "json:\"abstract\"",
+      "comment": ""
+    },
+    {
+      "name": "Cover",
+      "type": "*string",
+      "tags": "json:\"cover\"",
+      "comment": ""
+    }
+  ],
+  "CollectListViewRequest": [
+    {
+      "name": "common.PageInfo",
+      "type": "common.PageInfo",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "ID",
+      "type": "uint",
+      "tags": "form:\"id\"",
+      "comment": ""
+    }
+  ],
+  "CollectArticleListViewRequest": [
+    {
+      "name": "common.PageInfo",
+      "type": "common.PageInfo",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "Likes",
+      "type": "[]string",
+      "tags": "form:\"likes\"",
+      "comment": ""
+    },
+    {
+      "name": "ID",
+      "type": "uint",
+      "tags": "form:\"id\"",
+      "comment": ""
+    }
+  ],
+  "ArticleCreateRequest": [
+    {
+      "name": "Title",
+      "type": "string",
+      "tags": "json:\"title\" binding:\"required\"",
+      "comment": "文章标题，最大32字符"
+    },
+    {
+      "name": "Abstract",
+      "type": "string",
+      "tags": "json:\"abstract\"",
+      "comment": "文章摘要，最大256字符"
+    },
+    {
+      "name": "Content",
+      "type": "string",
+      "tags": "json:\"content\" binding:\"required\"",
+      "comment": "文章内容"
+    },
+    {
+      "name": "CategoryID",
+      "type": "*uint",
+      "tags": "json:\"categoryID\"",
+      "comment": "文章分类ID，关联分类表"
+    },
+    {
+      "name": "TagList",
+      "type": "[]string",
+      "tags": "json:\"tagList\"",
+      "comment": "标签列表，JSON序列化存储 //serializer:json要删掉?似乎要换成自己定义的taglist数据类型"
+    },
+    {
+      "name": "Cover",
+      "type": "string",
+      "tags": "json:\"cover\"",
+      "comment": "文章封面图片URL"
+    },
+    {
+      "name": "OpenComment",
+      "type": "bool",
+      "tags": "json:\"openComment\"",
+      "comment": "是否开启评论：true-开启 false-关闭"
+    },
+    {
+      "name": "Stats",
+      "type": "models.Status",
+      "tags": "json:\"status\"",
+      "comment": "状态,普通用户只能设置为草稿或者审核中,管理员可设置为任意值"
+    }
+  ],
+  "ArticleDetailResponse": [
+    {
+      "name": "models.ArticleModel",
+      "type": "models.ArticleModel",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "CategoryTitle",
+      "type": "*string",
+      "tags": "json:\"categoryTitle\"",
+      "comment": ""
+    },
+    {
+      "name": "UserName",
+      "type": "string",
+      "tags": "json:\"username\"",
+      "comment": ""
+    },
+    {
+      "name": "NickName",
+      "type": "string",
+      "tags": "json:\"nickname\"",
+      "comment": ""
+    },
+    {
+      "name": "UserAvatar",
+      "type": "string",
+      "tags": "json:\"userAvatar\"",
+      "comment": ""
+    }
+  ],
+  "ArticleLookRequest": [
+    {
+      "name": "ArticleID",
+      "type": "uint",
+      "tags": "json:\"articleID\" binding:\"required\"",
+      "comment": ""
+    },
+    {
+      "name": "TimeSecond",
+      "type": "int",
+      "tags": "json:\"timeSecond\"",
+      "comment": "读文章一共用了多久,预备字段,也许以后可以用于做喜好分析"
+    }
+  ],
+  "ArticleLookListRequest": [
+    {
+      "name": "common.PageInfo",
+      "type": "common.PageInfo",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "UserID",
+      "type": "uint",
+      "tags": "form:\"userID\"",
+      "comment": "为0时是查询自己的浏览记录,否则是指定用户的浏览记录"
+    }
+  ],
+  "ArticleLookListResponse": [
+    {
+      "name": "ID",
+      "type": "uint",
+      "tags": "json:\"id\"",
+      "comment": "浏览记录的id"
+    },
+    {
+      "name": "LookDate",
+      "type": "time.Time",
+      "tags": "json:\"lookDate\"",
+      "comment": "浏览的时间"
+    },
+    {
+      "name": "Title",
+      "type": "string",
+      "tags": "json:\"title\"",
+      "comment": ""
+    },
+    {
+      "name": "Cover",
+      "type": "string",
+      "tags": "json:\"cover\"",
+      "comment": ""
+    },
+    {
+      "name": "Nickname",
+      "type": "string",
+      "tags": "json:\"nickname\"",
+      "comment": ""
+    },
+    {
+      "name": "Avatar",
+      "type": "string",
+      "tags": "json:\"avatar\"",
+      "comment": ""
+    },
+    {
+      "name": "UserID",
+      "type": "uint",
+      "tags": "json:\"userID\"",
+      "comment": ""
+    },
+    {
+      "name": "ArticleID",
+      "type": "uint",
+      "tags": "json:\"articleID\"",
+      "comment": ""
+    }
+  ],
+  "ArticleListRequest": [
+    {
+      "name": "common.PageInfo",
+      "type": "common.PageInfo",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "tags": "form:\"type\" binding:\"required\"",
+      "comment": ""
+    },
+    {
+      "name": "UserID",
+      "type": "uint",
+      "tags": "form:\"userID\"",
+      "comment": ""
+    },
+    {
+      "name": "CategoryID",
+      "type": "*uint",
+      "tags": "form:\"categoryID\"",
+      "comment": ""
+    },
+    {
+      "name": "Status",
+      "type": "models.Status",
+      "tags": "form:\"status\"",
+      "comment": ""
+    }
+  ],
+  "ArticleListResponse": [
+    {
+      "name": "models.ArticleModel",
+      "type": "models.ArticleModel",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "UserTop",
+      "type": "bool",
+      "tags": "json:\"userTop\"",
+      "comment": ""
+    },
+    {
+      "name": "AdminTop",
+      "type": "bool",
+      "tags": "json:\"adminTop\"",
+      "comment": ""
+    },
+    {
+      "name": "CategoryTitle",
+      "type": "*string",
+      "tags": "json:\"categoryTitle\"",
+      "comment": ""
+    },
+    {
+      "name": "UserNickName",
+      "type": "string",
+      "tags": "json:\"userNickName\"",
+      "comment": ""
+    },
+    {
+      "name": "Avatar",
+      "type": "string",
+      "tags": "json:\"avatar\"",
+      "comment": ""
+    }
+  ],
+  "ArticleReviewListViewRequest": [
+    {
+      "name": "common.PageInfo",
+      "type": "common.PageInfo",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "UserID",
+      "type": "uint",
+      "tags": "form:\"userID\"",
+      "comment": "可以指定选择谁的文章"
+    }
+  ],
+  "ArticleReviewRequest": [
+    {
+      "name": "ArticleID",
+      "type": "uint",
+      "tags": "json:\"articleID\" binding:\"required\"",
+      "comment": ""
+    },
+    {
+      "name": "Status",
+      "type": "models.Status",
+      "tags": "json:\"status\" binding:\"required\"",
+      "comment": "审核状态,2为通过,1,3为不通过"
+    },
+    {
+      "name": "Msg",
+      "type": "string",
+      "tags": "json:\"msg\"",
+      "comment": "为4的时候，传递进来"
+    }
+  ],
+  "ArticleSearchRequest": [
+    {
+      "name": "common.PageInfo",
+      "type": "common.PageInfo",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "Tag",
+      "type": "string",
+      "tags": "form:\"tag\"",
+      "comment": "按标签筛选"
+    },
+    {
+      "name": "Type",
+      "type": "int8",
+      "tags": "form:\"type\"",
+      "comment": "排序类型: 0 最新发布 1 猜你喜欢    2最多回复 3最多点赞 4最多收藏"
+    }
+  ],
+  "ArticleBaseInfo": [
+    {
+      "name": "ID",
+      "type": "uint",
+      "tags": "json:\"id\"",
+      "comment": ""
+    },
+    {
+      "name": "Title",
+      "type": "string",
+      "tags": "json:\"title\"",
+      "comment": ""
+    },
+    {
+      "name": "Abstract",
+      "type": "string",
+      "tags": "json:\"abstract\"",
+      "comment": ""
+    }
+  ],
+  "ArticleSearchListResponse": [
+    {
+      "name": "models.ArticleModel",
+      "type": "models.ArticleModel",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "AdminTop",
+      "type": "bool",
+      "tags": "json:\"adminTop\"",
+      "comment": "是否是管理员置顶"
+    },
+    {
+      "name": "CategoryTitle",
+      "type": "*string",
+      "tags": "json:\"categoryTitle\"",
+      "comment": "所属分类标题"
+    },
+    {
+      "name": "UserNickname",
+      "type": "string",
+      "tags": "json:\"userNickname\"",
+      "comment": "发布用户昵称"
+    },
+    {
+      "name": "UserAvatar",
+      "type": "string",
+      "tags": "json:\"userAvatar\"",
+      "comment": "发布用户头像"
+    }
+  ],
+  "ArticleTopRequest": [
+    {
+      "name": "TopType",
+      "type": "string",
+      "tags": "json:\"topType\"",
+      "comment": ",置顶类型，用户置顶还是管理员置顶,不填写时默认为用户置顶"
+    },
+    {
+      "name": "ArticleID",
+      "type": "uint",
+      "tags": "json:\"articleID\" binding:\"required\"",
+      "comment": "文章ID"
+    }
+  ],
+  "AdminArticleTopRequest": [
+    {
+      "name": "UserID",
+      "type": "uint",
+      "tags": "json:\"userID\"",
+      "comment": ""
+    },
+    {
+      "name": "ArticleID",
+      "type": "uint",
+      "tags": "json:\"articleID\"",
+      "comment": ""
+    }
+  ],
+  "ArticleUpdateRequest": [
+    {
+      "name": "ID",
+      "type": "uint",
+      "tags": "json:\"id\" binding:\"required\"",
+      "comment": ""
+    },
+    {
+      "name": "Title",
+      "type": "string",
+      "tags": "json:\"title\" binding:\"required\"",
+      "comment": ""
+    },
+    {
+      "name": "Abstract",
+      "type": "string",
+      "tags": "json:\"abstract\"",
+      "comment": "要考虑一个问题,如果用户想设置为空简介,那么就设为\"该文章未设置简介\""
+    },
+    {
+      "name": "Content",
+      "type": "string",
+      "tags": "json:\"content\" binding:\"required\"",
+      "comment": ""
+    },
+    {
+      "name": "CategoryID",
+      "type": "*uint",
+      "tags": "json:\"categoryID\"",
+      "comment": ""
+    },
+    {
+      "name": "TagList",
+      "type": "[]string",
+      "tags": "json:\"tagList\"",
+      "comment": ""
+    },
+    {
+      "name": "Cover",
+      "type": "string",
+      "tags": "json:\"cover\"",
+      "comment": ""
+    },
+    {
+      "name": "OpenComment",
+      "type": "bool",
+      "tags": "json:\"openComment\"",
+      "comment": ""
+    }
+  ],
+  "ArticleUpdateRequest2": [
+    {
+      "name": "ID",
+      "type": "uint",
+      "tags": "json:\"id\" binding:\"required\"",
+      "comment": ""
+    },
+    {
+      "name": "Title",
+      "type": "*string",
+      "tags": "json:\"title\"",
+      "comment": ""
+    },
+    {
+      "name": "Abstract",
+      "type": "*string",
+      "tags": "json:\"abstract\"",
+      "comment": "要考虑一个问题,如果用户想设置为空简介,那么就设为\"该文章未设置简介\""
+    },
+    {
+      "name": "Content",
+      "type": "*string",
+      "tags": "json:\"content\"",
+      "comment": ""
+    },
+    {
+      "name": "CategoryID",
+      "type": "*uint",
+      "tags": "json:\"categoryID\"",
+      "comment": ""
+    },
+    {
+      "name": "TagList",
+      "type": "*[]string",
+      "tags": "json:\"tagList\"",
+      "comment": ""
+    },
+    {
+      "name": "Cover",
+      "type": "*string",
+      "tags": "json:\"cover\"",
+      "comment": ""
+    },
+    {
+      "name": "OpenComment",
+      "type": "*bool",
+      "tags": "json:\"openComment\"",
+      "comment": ""
+    }
+  ],
+  "ArticleApi": [],
+  "BannerApi": [],
+  "BannerCreateRequest": [
+    {
+      "name": "Cover",
+      "type": "string",
+      "tags": "json:\"cover\"",
+      "comment": ""
+    },
+    {
+      "name": "Href",
+      "type": "string",
+      "tags": "json:\"href\"",
+      "comment": ""
+    },
+    {
+      "name": "IsShow",
+      "type": "bool",
+      "tags": "json:\"isShow\"",
+      "comment": ""
+    }
+  ],
+  "CaptchaApi": [],
+  "CaptchaRequest": [
+    {
+      "name": "Target",
+      "type": "string",
+      "tags": "json:\"target\" form:\"target\" query:\"target\"",
+      "comment": "目标业务"
+    }
+  ],
+  "CaptchaResponse": [
+    {
+      "name": "CaptchaID",
+      "type": "string",
+      "tags": "json:\"captchaID\"",
+      "comment": "验证码会话标识ID"
+    },
+    {
+      "name": "Captcha",
+      "type": "string",
+      "tags": "json:\"captcha\"",
+      "comment": "验证码"
+    }
+  ],
+  "NoStore": [],
+  "ChatSendRequest": [
+    {
+      "name": "Msg",
+      "type": "models.ChatMsg",
+      "tags": "json:\"msg\"",
+      "comment": ""
+    },
+    {
+      "name": "RevUserID",
+      "type": "uint",
+      "tags": "json:\"revUserID\"",
+      "comment": "接收用户ID"
+    }
+  ],
+  "ChatListRequest": [
+    {
+      "name": "common.PageInfo",
+      "type": "common.PageInfo",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "UserID",
+      "type": "uint",
+      "tags": "form:\"userID\" binding:\"required\"",
+      "comment": "查我和他的聊天记录"
+    }
+  ],
+  "ChatListResponse": [
+    {
+      "name": "models.ChatModel",
+      "type": "models.ChatModel",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "SendUserNickname",
+      "type": "string",
+      "tags": "json:\"sendUserNickname\"",
+      "comment": ""
+    },
+    {
+      "name": "SendUserAvatar",
+      "type": "string",
+      "tags": "json:\"sendUserAvatar\"",
+      "comment": ""
+    },
+    {
+      "name": "RevUserNickname",
+      "type": "string",
+      "tags": "json:\"revUserNickname\"",
+      "comment": ""
+    },
+    {
+      "name": "RevUserAvatar",
+      "type": "string",
+      "tags": "json:\"revUserAvatar\"",
+      "comment": ""
+    },
+    {
+      "name": "IsMe",
+      "type": "bool",
+      "tags": "json:\"isMe\"",
+      "comment": "是自己发的吗"
+    }
+  ],
+  "SessionListRequest": [
+    {
+      "name": "common.PageInfo",
+      "type": "common.PageInfo",
+      "tags": "",
+      "comment": ""
+    }
+  ],
+  "ChatApi": [],
+  "CommentCreateRequest": [
+    {
+      "name": "Content",
+      "type": "string",
+      "tags": "json:\"content\" binding:\"required\"",
+      "comment": ""
+    },
+    {
+      "name": "ArticleID",
+      "type": "uint",
+      "tags": "json:\"articleID\" binding:\"required\"",
+      "comment": ""
+    },
+    {
+      "name": "ParentID",
+      "type": "uint",
+      "tags": "json:\"parentID\"",
+      "comment": "父评论ID"
+    }
+  ],
+  "CommentDetailRequest": [
+    {
+      "name": "common.PageInfo",
+      "type": "common.PageInfo",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "ArticleID",
+      "type": "uint",
+      "tags": "form:\"articleID\" binding:\"required\"",
+      "comment": "文章ID"
+    }
+  ],
+  "CommentListRequest": [
+    {
+      "name": "common.PageInfo",
+      "type": "common.PageInfo",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "Root",
+      "type": "uint",
+      "tags": "form:\"root\" binding:\"required\"",
+      "comment": "根评论ID"
+    }
+  ],
+  "CommentApi": [],
+  "FollowApi": [],
+  "FollowUserRequest": [
+    {
+      "name": "FocusUserID",
+      "type": "uint",
+      "tags": "json:\"focusUserID\" binding:\"required\"",
+      "comment": ""
+    }
+  ],
+  "FollowerListRequest": [
+    {
+      "name": "common.PageInfo",
+      "type": "common.PageInfo",
+      "tags": "",
+      "comment": "匿名嵌入分页信息"
+    },
+    {
+      "name": "UserID",
+      "type": "uint",
+      "tags": "form:\"userID\"",
+      "comment": "被查询的用户ID。如果为0，则查询当前登录用户的粉丝列表；否则查询指定用户的粉丝列表。"
+    }
+  ],
+  "FriendUserListRequest": [
+    {
+      "name": "common.PageInfo",
+      "type": "common.PageInfo",
+      "tags": "",
+      "comment": ""
+    }
+  ],
+  "FriendUserListResponse": [
+    {
+      "name": "FocusUserID",
+      "type": "uint",
+      "tags": "json:\"focusUserID\"",
+      "comment": ""
+    },
+    {
+      "name": "FocusUserNickName",
+      "type": "string",
+      "tags": "json:\"focusUserNickname\"",
+      "comment": ""
+    },
+    {
+      "name": "FocusUserAvatar",
+      "type": "string",
+      "tags": "json:\"focusUserAvatar\"",
+      "comment": ""
+    },
+    {
+      "name": "FocusUserAbstract",
+      "type": "string",
+      "tags": "json:\"focusUserAbstract\"",
+      "comment": ""
+    },
+    {
+      "name": "CreatedAt",
+      "type": "time.Time",
+      "tags": "json:\"createdAt\"",
+      "comment": ""
+    }
+  ],
+  "FollowUserListRequest": [
+    {
+      "name": "common.PageInfo",
+      "type": "common.PageInfo",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "UserID",
+      "type": "uint",
+      "tags": "form:\"userID\"",
+      "comment": "查用户的关注"
+    }
+  ],
+  "FollowUserListResponse": [
+    {
+      "name": "FocusUserID",
+      "type": "uint",
+      "tags": "json:\"focusUserID\"",
+      "comment": ""
+    },
+    {
+      "name": "FocusUserNickName",
+      "type": "string",
+      "tags": "json:\"focusUserNickname\"",
+      "comment": ""
+    },
+    {
+      "name": "FocusUserAvatar",
+      "type": "string",
+      "tags": "json:\"focusUserAvatar\"",
+      "comment": ""
+    },
+    {
+      "name": "FocusUserAbstract",
+      "type": "string",
+      "tags": "json:\"focusUserAbstract\"",
+      "comment": ""
+    },
+    {
+      "name": "CreatedAt",
+      "type": "time.Time",
+      "tags": "json:\"createdAt\"",
+      "comment": ""
+    }
+  ],
+  "FriendApi": [],
+  "FriendLinkCreateRequest": [
+    {
+      "name": "Name",
+      "type": "string",
+      "tags": "json:\"name\"",
+      "comment": ""
+    },
+    {
+      "name": "URL",
+      "type": "string",
+      "tags": "json:\"url\"",
+      "comment": ""
+    },
+    {
+      "name": "Logo",
+      "type": "string",
+      "tags": "json:\"logo\"",
+      "comment": ""
+    },
+    {
+      "name": "IsShow",
+      "type": "bool",
+      "tags": "json:\"is_show\"",
+      "comment": ""
+    },
+    {
+      "name": "SortOrder",
+      "type": "int",
+      "tags": "json:\"sort_order\"",
+      "comment": ""
+    },
+    {
+      "name": "Remark",
+      "type": "string",
+      "tags": "json:\"remark\"",
+      "comment": ""
+    }
+  ],
+  "FriendPromotionCreateRequest": [
+    {
+      "name": "Title",
+      "type": "string",
+      "tags": "json:\"title\"",
+      "comment": ""
+    },
+    {
+      "name": "FriendName",
+      "type": "string",
+      "tags": "json:\"friend_name\"",
+      "comment": ""
+    },
+    {
+      "name": "Avatar",
+      "type": "string",
+      "tags": "json:\"avatar\"",
+      "comment": ""
+    },
+    {
+      "name": "Category",
+      "type": "string",
+      "tags": "json:\"category\"",
+      "comment": ""
+    },
+    {
+      "name": "Description",
+      "type": "string",
+      "tags": "json:\"description\"",
+      "comment": ""
+    },
+    {
+      "name": "PreviewImages",
+      "type": "string",
+      "tags": "json:\"preview_images\"",
+      "comment": ""
+    },
+    {
+      "name": "ContactInfo",
+      "type": "[]string",
+      "tags": "json:\"contact_info\"",
+      "comment": ""
+    },
+    {
+      "name": "IsShow",
+      "type": "bool",
+      "tags": "json:\"is_show\"",
+      "comment": ""
+    },
+    {
+      "name": "SortOrder",
+      "type": "int",
+      "tags": "json:\"sort_order\"",
+      "comment": ""
+    },
+    {
+      "name": "Position",
+      "type": "string",
+      "tags": "json:\"position\"",
+      "comment": ""
+    },
+    {
+      "name": "Remark",
+      "type": "string",
+      "tags": "json:\"remark\"",
+      "comment": ""
+    }
+  ],
+  "HearthApi": [],
+  "ImageApi": [],
+  "ImageListResponse": [
+    {
+      "name": "models.ImageModel",
+      "type": "models.ImageModel",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "WebPath",
+      "type": "string",
+      "tags": "json:\"webPath\"",
+      "comment": "Web访问路径"
+    }
+  ],
+  "RemoveRequest": [
+    {
+      "name": "IDList",
+      "type": "[]uint",
+      "tags": "json:\"IDList\" binding:\"required\"",
+      "comment": "ID列表，需要删除的记录ID数组"
+    }
+  ],
+  "LogApi": [],
+  "LogListRequest": [
+    {
+      "name": "common.PageInfo",
+      "type": "common.PageInfo",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "LogType",
+      "type": "enum.LogType",
+      "tags": "form:\"logType\"",
+      "comment": ""
+    },
+    {
+      "name": "Level",
+      "type": "enum.LogLevel",
+      "tags": "form:\"level\"",
+      "comment": ""
+    },
+    {
+      "name": "IP",
+      "type": "string",
+      "tags": "form:\"ip\"",
+      "comment": ""
+    },
+    {
+      "name": "LoginStatus",
+      "type": "bool",
+      "tags": "form:\"loginStatus\"",
+      "comment": ""
+    },
+    {
+      "name": "ServiceName",
+      "type": "string",
+      "tags": "form:\"serviceName\"",
+      "comment": ""
+    },
+    {
+      "name": "UserID",
+      "type": "uint",
+      "tags": "form:\"userID\"",
+      "comment": ""
+    }
+  ],
+  "LogListResponse": [
+    {
+      "name": "models.LogModel",
+      "type": "models.LogModel",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "UserNickName",
+      "type": "string",
+      "tags": "json:\"userNickName\"",
+      "comment": ""
+    },
+    {
+      "name": "UserAvatar",
+      "type": "string",
+      "tags": "json:\"userAvatar\"",
+      "comment": ""
+    }
+  ],
+  "MessageApi": [],
+  "SiteMessageConfUpdateRequest": [
+    {
+      "name": "ID",
+      "type": "uint",
+      "tags": "json:\"id\"",
+      "comment": ""
+    },
+    {
+      "name": "UserID",
+      "type": "uint",
+      "tags": "json:\"userID\"",
+      "comment": "TODO:迟点检查一下"
+    },
+    {
+      "name": "User",
+      "type": "models.UserModel",
+      "tags": "gorm:\"foreignKey:UserID\" json:\"user\"",
+      "comment": "关联的用户表"
+    },
+    {
+      "name": "OpenCommentMessage",
+      "type": "*bool",
+      "tags": "json:\"openCommentMessage\" u:\"open_comment_message\"",
+      "comment": "是否开启评论通知"
+    },
+    {
+      "name": "OpenReplyMessage",
+      "type": "*bool",
+      "tags": "json:\"openReplyMessage\" u:\"open_reply_message\"",
+      "comment": "是否开启回复通知"
+    },
+    {
+      "name": "OpenDiggMessage",
+      "type": "*bool",
+      "tags": "json:\"openDiggMessage\" u:\"open_digg_message\"",
+      "comment": "是否开启点赞通知"
+    },
+    {
+      "name": "OpenCollectMessage",
+      "type": "*bool",
+      "tags": "json:\"openCollectMessage\" u:\"open_collect_message\"",
+      "comment": "是否开启收藏通知"
+    },
+    {
+      "name": "OpenPrivateMessage",
+      "type": "*bool",
+      "tags": "json:\"openPrivateMessage\" u:\"open_private_message\"",
+      "comment": "是否开启私信通知"
+    }
+  ],
+  "MessageCount": [
+    {
+      "name": "MessageType",
+      "type": "models.MessageType",
+      "tags": "json:\"message_type\"",
+      "comment": "查询的字段名"
+    },
+    {
+      "name": "Count",
+      "type": "uint8",
+      "tags": "json:\"count\"",
+      "comment": "COUNT(*) 的结果"
+    }
+  ],
+  "SiteMessageListViewRequest": [
+    {
+      "name": "common.PageInfo",
+      "type": "common.PageInfo",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "Type",
+      "type": "models.MessageType",
+      "tags": "form:\"type\" binding:\"required\"",
+      "comment": "查询的消息类型"
+    }
+  ],
+  "MessageRemoveRequest": [
+    {
+      "name": "MessageID",
+      "type": "[]uint",
+      "tags": "json:\"messageID\"",
+      "comment": "消息ID//其实使用model.RemoveRequest也是可以的"
+    }
+  ],
+  "OneKeyReadRequest": [
+    {
+      "name": "CommentMessage",
+      "type": "bool",
+      "tags": "json:\"commentMessage\"",
+      "comment": "评论消息"
+    },
+    {
+      "name": "DiggAndCollectMessage",
+      "type": "bool",
+      "tags": "json:\"diggAndCollectMessage\"",
+      "comment": "点赞收藏消息"
+    },
+    {
+      "name": "PrivateMessage",
+      "type": "bool",
+      "tags": "json:\"privateMessage\"",
+      "comment": "私信消息"
+    },
+    {
+      "name": "SystemMessage",
+      "type": "bool",
+      "tags": "json:\"systemMessage\"",
+      "comment": "系统消息"
+    }
+  ],
+  "OSSImgApi": [],
+  "SiteApi": [],
+  "SiteInfo": [
+    {
+      "name": "Name",
+      "type": "string",
+      "tags": "uri:\"name\"",
+      "comment": ""
+    }
+  ],
+  "SiteUpdate": [
+    {
+      "name": "Name",
+      "type": "string",
+      "tags": "uri:\"name\" binding:\"required\"",
+      "comment": ""
+    }
+  ],
+  "WebsiteApi": [],
+  "TestApi": [],
+  "request": [
+    {
+      "name": "Content",
+      "type": "string",
+      "tags": "json:\"content\"",
+      "comment": ""
+    }
+  ],
+  "AdminUserInfoUpdateRequest": [
+    {
+      "name": "UserID",
+      "type": "uint",
+      "tags": "json:\"userID\" binding:\"required\"",
+      "comment": ""
+    },
+    {
+      "name": "Username",
+      "type": "*string",
+      "tags": "json:\"username\" s-u:\"username\"",
+      "comment": ""
+    },
+    {
+      "name": "Nickname",
+      "type": "*string",
+      "tags": "json:\"nickname\" s-u:\"nickname\"",
+      "comment": ""
+    },
+    {
+      "name": "Avatar",
+      "type": "*string",
+      "tags": "json:\"avatar\" s-u:\"avatar\"",
+      "comment": ""
+    },
+    {
+      "name": "Abstract",
+      "type": "*string",
+      "tags": "json:\"abstract\" s-u:\"abstract\"",
+      "comment": ""
+    },
+    {
+      "name": "Role",
+      "type": "*enum.RoleType",
+      "tags": "json:\"role\" s-u:\"role\"",
+      "comment": ""
+    }
+  ],
+  "UserApi": [],
+  "LoginRequest": [
+    {
+      "name": "Type",
+      "type": "string",
+      "tags": "json:\"type\" binding:\"required\"",
+      "comment": "登录类型,用户名或邮箱登录//TODO:qq登录"
+    },
+    {
+      "name": "Val",
+      "type": "string",
+      "tags": "json:\"val\" binding:\"required\"",
+      "comment": ""
+    },
+    {
+      "name": "Pwd",
+      "type": "string",
+      "tags": "json:\"pwd\" binding:\"required\"",
+      "comment": ""
+    }
+  ],
+  "RegisterEmailRequest": [
+    {
+      "name": "EmailID",
+      "type": "string",
+      "tags": "json:\"emailID\" binding:\"required\"",
+      "comment": "邮箱验证记录的唯一标识ID"
+    },
+    {
+      "name": "EmailCode",
+      "type": "string",
+      "tags": "json:\"emailCode\" binding:\"required\"",
+      "comment": "邮箱收到的验证码"
+    },
+    {
+      "name": "Pwd",
+      "type": "string",
+      "tags": "json:\"password\" binding:\"required\"",
+      "comment": "用户设置的登录密码"
+    },
+    {
+      "name": "NickName",
+      "type": "string",
+      "tags": "json:\"nickName\"",
+      "comment": "用户昵称（可选）"
+    }
+  ],
+  "SendEmailRequest": [
+    {
+      "name": "Type",
+      "type": "string",
+      "tags": "json:\"type\" binding:\"required\"",
+      "comment": "注册,重置密码,重置邮箱"
+    },
+    {
+      "name": "Email",
+      "type": "string",
+      "tags": "json:\"email\" binding:\"required\"",
+      "comment": "注册邮箱"
+    }
+  ],
+  "SendEmailResponse": [
+    {
+      "name": "EmailID",
+      "type": "string",
+      "tags": "json:\"emailID\"",
+      "comment": "新邮箱的验证码ID"
+    },
+    {
+      "name": "ResetEmailID",
+      "type": "string",
+      "tags": "json:\"resetEmailID,omitempty\"",
+      "comment": "原邮箱的验证码ID，仅在重置邮箱时返回"
+    }
+  ],
+  "UpdatePasswordRequest": [
+    {
+      "name": "NewPwd",
+      "type": "string",
+      "tags": "json:\"pwd\" binding:\"required\"",
+      "comment": ""
+    }
+  ],
+  "UserBaseInfoResponse": [
+    {
+      "name": "UserID",
+      "type": "uint",
+      "tags": "json:\"userID\"",
+      "comment": "用户ID，唯一标识"
+    },
+    {
+      "name": "Age",
+      "type": "int",
+      "tags": "json:\"age\"",
+      "comment": "用户年龄"
+    },
+    {
+      "name": "NickName",
+      "type": "string",
+      "tags": "json:\"nickName\"",
+      "comment": "用户昵称"
+    },
+    {
+      "name": "Avatar",
+      "type": "string",
+      "tags": "json:\"avatar\"",
+      "comment": "用户头像URL"
+    },
+    {
+      "name": "LastLoginTime",
+      "type": "time.Time",
+      "tags": "json:\"lastLoginTime\"",
+      "comment": "最后登录时间，可能为空"
+    },
+    {
+      "name": "Region",
+      "type": "string",
+      "tags": "json:\"region\"",
+      "comment": "用户所在地区"
+    },
+    {
+      "name": "ExistDay",
+      "type": "int",
+      "tags": "json:\"existDay\"",
+      "comment": "存在时间"
+    },
+    {
+      "name": "ArticleCount",
+      "type": "int64",
+      "tags": "json:\"articleCount\"",
+      "comment": "用户发布的文章数量"
+    },
+    {
+      "name": "FansCount",
+      "type": "int64",
+      "tags": "json:\"fansCount\"",
+      "comment": "粉丝数量"
+    },
+    {
+      "name": "FollowCount",
+      "type": "int64",
+      "tags": "json:\"followCount\"",
+      "comment": "关注数量"
+    }
+  ],
+  "UserDetailResponse": [
+    {
+      "name": "models.Model",
+      "type": "models.Model",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "UserName",
+      "type": "string",
+      "tags": " json:\"username\"",
+      "comment": "用户名"
+    },
+    {
+      "name": "NickName",
+      "type": "string",
+      "tags": " json:\"nickname\"",
+      "comment": "昵称"
+    },
+    {
+      "name": "Avatar",
+      "type": "string",
+      "tags": " json:\"avatar\"",
+      "comment": "头像"
+    },
+    {
+      "name": "Abstract",
+      "type": "string",
+      "tags": " json:\"abstract\"",
+      "comment": "简介"
+    },
+    {
+      "name": "Age",
+      "type": "int",
+      "tags": "json:\"Age\"",
+      "comment": "年龄"
+    },
+    {
+      "name": "LikeTags",
+      "type": "[]string",
+      "tags": " json:\"likeTags\"",
+      "comment": "兴趣标签"
+    },
+    {
+      "name": "ContactInfo",
+      "type": "map[string]string",
+      "tags": " json:\"contactInfo\"",
+      "comment": ""
+    },
+    {
+      "name": "Role",
+      "type": "enum.RoleType",
+      "tags": "json:\"role\"",
+      "comment": ""
+    },
+    {
+      "name": "UpdateUsernameDate",
+      "type": "*time.Time",
+      "tags": "json:\"updateUsernameDate\"",
+      "comment": "上次修改用户名的时间,因为可能没改过,避免无法区分nil,使用指针"
+    },
+    {
+      "name": "OpenCollect",
+      "type": "bool",
+      "tags": "json:\"openCollect\"",
+      "comment": "公开我的收藏"
+    },
+    {
+      "name": "OpenFollow",
+      "type": "bool",
+      "tags": "json:\"openFollow\"",
+      "comment": "公开我的关注"
+    },
+    {
+      "name": "OpenFans",
+      "type": "bool",
+      "tags": "json:\"openFans\"",
+      "comment": "公开我的粉丝"
+    },
+    {
+      "name": "HomeStyleID",
+      "type": "uint",
+      "tags": "json:\"homeStyleID\"",
+      "comment": "主页样式的id"
+    }
+  ],
+  "UserInfoUpdateRequest": [
+    {
+      "name": "Avatar",
+      "type": "*string",
+      "tags": "json:\"avatar\" s-u:\"avatar\"",
+      "comment": ""
+    },
+    {
+      "name": "Abstract",
+      "type": "*string",
+      "tags": "json:\"abstract\" s-u:\"abstract\"",
+      "comment": ""
+    },
+    {
+      "name": "LikeTags",
+      "type": "*[]string",
+      "tags": "json:\"likeTags\" s-u:\"like_tags\"",
+      "comment": ""
+    },
+    {
+      "name": "NickName",
+      "type": "*string",
+      "tags": "json:\"nickName\" s-u:\"nick_name\"",
+      "comment": "昵称"
+    },
+    {
+      "name": "Age",
+      "type": "*int",
+      "tags": "json:\"Age\" s-u:\"age\"",
+      "comment": "年龄"
+    },
+    {
+      "name": "ContactInfo",
+      "type": "*map[string]string",
+      "tags": "json:\"contactInfo\" s-u:\"contact_info\"",
+      "comment": "联系方式，JSON格式存储"
+    },
+    {
+      "name": "OpenCollect",
+      "type": "*bool",
+      "tags": "json:\"openCollect\" s-u-c:\"open_collect\"",
+      "comment": "公开我的收藏"
+    },
+    {
+      "name": "OpenFollow",
+      "type": "*bool",
+      "tags": "json:\"openFollow\" s-u-c:\"open_follow\"",
+      "comment": "公开我的关注"
+    },
+    {
+      "name": "OpenFans",
+      "type": "*bool",
+      "tags": "json:\"openFans\" s-u-c:\"open_fans\"",
+      "comment": "公开我的粉丝"
+    },
+    {
+      "name": "HomeStyleID",
+      "type": "*uint",
+      "tags": "json:\"homeStyleID\" s-u-c:\"home_style_id\"",
+      "comment": "主页样式的id"
+    }
+  ],
+  "UserListRequest": [
+    {
+      "name": "common.PageInfo",
+      "type": "common.PageInfo",
+      "tags": "",
+      "comment": ""
+    }
+  ],
+  "UserLoginListRequest": [
+    {
+      "name": "common.PageInfo",
+      "type": "common.PageInfo",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "UserID",
+      "type": "uint",
+      "tags": "form:\"userId\"",
+      "comment": ""
+    },
+    {
+      "name": "Ip",
+      "type": "string",
+      "tags": "form:\"ip\"",
+      "comment": ""
+    },
+    {
+      "name": "Addr",
+      "type": "string",
+      "tags": "form:\"addr\"",
+      "comment": ""
+    },
+    {
+      "name": "StartTime",
+      "type": "string",
+      "tags": "form:\"startTime\"",
+      "comment": "起止时间的 年月日时分秒格式"
+    },
+    {
+      "name": "EndTime",
+      "type": "string",
+      "tags": "form:\"endTime\"",
+      "comment": ""
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "tags": "form:\"type\" binding:\"required\"",
+      "comment": "用户：只能查自己的  管理员 ：能查全部. 使用字符串,更加稳定可控"
+    }
+  ],
+  "UserLoginListResponse": [
+    {
+      "name": "models.UserLoginModel",
+      "type": "models.UserLoginModel",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "UserNickname",
+      "type": "string",
+      "tags": "json:\"userNickname,omitempty\"",
+      "comment": ""
+    },
+    {
+      "name": "UserAvatar",
+      "type": "string",
+      "tags": "json:\"userAvatar,omitempty\"",
+      "comment": ""
+    }
+  ],
+  "ArticleDiggModel": [
+    {
+      "name": "Model",
+      "type": "Model",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "UserID",
+      "type": "uint",
+      "tags": "gorm:\"uniqueIndex:idx_article_model_userid\" json:\"userID\"",
+      "comment": "用户ID"
+    },
+    {
+      "name": "ArticleID",
+      "type": "uint",
+      "tags": "gorm:\"uniqueIndex:idx_article_model_articleid\" json:\"articleID\"",
+      "comment": "文章ID"
+    },
+    {
+      "name": "UserModel",
+      "type": "UserModel",
+      "tags": "gorm:\"foreignKey:UserID\" json:\"-\"",
+      "comment": "用户信息（关联）"
+    },
+    {
+      "name": "ArticleModel",
+      "type": "ArticleModel",
+      "tags": "gorm:\"foreignKey:ArticleID\" json:\"-\"",
+      "comment": "文章信息（关联）"
+    },
+    {
+      "name": "CreatedAt",
+      "type": "time.Time",
+      "tags": "json:\"createdAt\"",
+      "comment": "点赞时间"
+    }
+  ],
+  "TextModel": [
+    {
+      "name": "Model",
+      "type": "Model",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "ArticleID",
+      "type": "uint",
+      "tags": "json:\"articleID\"",
+      "comment": ""
+    },
+    {
+      "name": "Head",
+      "type": "string",
+      "tags": "json:\"head\"",
+      "comment": ""
+    },
+    {
+      "name": "Body",
+      "type": "string",
+      "tags": "json:\"body\"",
+      "comment": ""
+    }
+  ],
+  "ArticleModel": [
+    {
+      "name": "Model",
+      "type": "Model",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "Title",
+      "type": "string",
+      "tags": "gorm:\"size:32\" json:\"title\"",
+      "comment": "文章标题，最大32字符"
+    },
+    {
+      "name": "Abstract",
+      "type": "string",
+      "tags": "gorm:\"size:256\" json:\"abstract\"",
+      "comment": "文章摘要，最大256字符"
+    },
+    {
+      "name": "Content",
+      "type": "string",
+      "tags": "json:\"content\"",
+      "comment": "文章内容"
+    },
+    {
+      "name": "CategoryID",
+      "type": "*uint",
+      "tags": "json:\"categoryID\"",
+      "comment": "文章分类ID，关联分类表"
+    },
+    {
+      "name": "CategoryModel",
+      "type": "*CategoryModel",
+      "tags": "gorm:\"foreignKey:CategoryID\" json:\"-\"",
+      "comment": "这样可以吗? 以防万一用指针吧             // 分类信息，外键关联，不序列化"
+    },
+    {
+      "name": "TagList",
+      "type": "[]string",
+      "tags": "gorm:\"type:text;serializer:json\" json:\"tagList\"",
+      "comment": "标签列表，JSON序列化存储 //serializer:json要删掉?似乎要换成自己定义的taglist数据类型"
+    },
+    {
+      "name": "Cover",
+      "type": "string",
+      "tags": "gorm:\"size:256\" json:\"cover\"",
+      "comment": "文章封面图片URL"
+    },
+    {
+      "name": "UserID",
+      "type": "uint",
+      "tags": "json:\"userID\"",
+      "comment": "作者用户ID，关联用户表"
+    },
+    {
+      "name": "UserModel",
+      "type": "UserModel",
+      "tags": "gorm:\"foreignKey:UserID\" json:\"-\"",
+      "comment": "作者信息，外键关联，不序列化"
+    },
+    {
+      "name": "LookCount",
+      "type": "int",
+      "tags": "json:\"lookCount\"",
+      "comment": "浏览次数统计"
+    },
+    {
+      "name": "DiggCount",
+      "type": "int",
+      "tags": "json:\"diggCount\"",
+      "comment": "点赞次数统计"
+    },
+    {
+      "name": "CommentCount",
+      "type": "int",
+      "tags": "json:\"commentCount\"",
+      "comment": "评论数量统计"
+    },
+    {
+      "name": "CollectCount",
+      "type": "int",
+      "tags": "json:\"collectCount\"",
+      "comment": "收藏次数统计//TODO:每个用户对于每篇文章只能收藏一次,不然搞多几个收藏夹就会一直刷收藏统计,所以这个收藏数直接用redis缓存就好了?不需要每次都更新数据库了,有并发问题"
+    },
+    {
+      "name": "OpenComment",
+      "type": "bool",
+      "tags": "json:\"openComment\"",
+      "comment": "是否开启评论：true-开启 false-关闭"
+    },
+    {
+      "name": "Status",
+      "type": "Status",
+      "tags": "json:\"status\"",
+      "comment": "文章状态：0-草稿 1-审核中 2-已发布 3-已下线"
+    },
+    {
+      "name": "AIQuality",
+      "type": "string",
+      "tags": "json:\"aiQuality\"",
+      "comment": "AI生成的内容质量评级,1-5分"
+    },
+    {
+      "name": "AIAbstract",
+      "type": "string",
+      "tags": "json:\"aiAbstract\"",
+      "comment": "AI生成的内容摘要"
+    }
+  ],
+  "BannerModel": [
+    {
+      "name": "Model",
+      "type": "Model",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "IsShow",
+      "type": "bool",
+      "tags": "json:\"isShow\"",
+      "comment": "是否展示：true-展示 false-隐藏"
+    },
+    {
+      "name": "Cover",
+      "type": "string",
+      "tags": "json:\"cover\"",
+      "comment": "轮播图片链接"
+    },
+    {
+      "name": "Href",
+      "type": "string",
+      "tags": "json:\"href\"",
+      "comment": "跳转链接地址"
+    }
+  ],
+  "CategoryModel": [
+    {
+      "name": "Model",
+      "type": "Model",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "Title",
+      "type": "string",
+      "tags": "gorm:\"size:32\" json:\"title\"",
+      "comment": "分类标题，最大32字符"
+    },
+    {
+      "name": "UserID",
+      "type": "uint",
+      "tags": "json:\"userID\"",
+      "comment": "所属用户ID"
+    },
+    {
+      "name": "UserModel",
+      "type": "UserModel",
+      "tags": "gorm:\"foreignKey:UserID\" json:\"-\"",
+      "comment": "所属用户信息，外键关联"
+    },
+    {
+      "name": "ArticleList",
+      "type": "[]ArticleModel",
+      "tags": "gorm:\"foreignKey:CategoryID\" json:\"-\"",
+      "comment": "关联文章，外键关联，不序列化"
+    }
+  ],
+  "ChatModel": [
+    {
+      "name": "Model",
+      "type": "Model",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "SendUserID",
+      "type": "uint",
+      "tags": "json:\"sendUserID\"",
+      "comment": "发送用户ID"
+    },
+    {
+      "name": "SendUserModel",
+      "type": "UserModel",
+      "tags": "gorm:\"foreignKey:SendUserID\"  json:\"-\"",
+      "comment": "发送用户模型"
+    },
+    {
+      "name": "RevUserID",
+      "type": "uint",
+      "tags": "json:\"revUserID\"",
+      "comment": "接收用户ID"
+    },
+    {
+      "name": "RevUserModel",
+      "type": "UserModel",
+      "tags": "gorm:\"foreignKey:RevUserID\"  json:\"-\"",
+      "comment": "接收用户模型"
+    },
+    {
+      "name": "MsgType",
+      "type": "ChatMessageType",
+      "tags": "json:\"msgType\"",
+      "comment": "消息类型,预备以后扩展"
+    },
+    {
+      "name": "Msg",
+      "type": "ChatMsg",
+      "tags": "gorm:\"type:text;serializer:json\" json:\"msg\"",
+      "comment": "消息内容"
+    }
+  ],
+  "UserChatActionModel": [
+    {
+      "name": "Model",
+      "type": "Model",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "UserID",
+      "type": "uint",
+      "tags": "json:\"userID\"",
+      "comment": "操作者ID"
+    },
+    {
+      "name": "ChatID",
+      "type": "uint",
+      "tags": "json:\"chatID\"",
+      "comment": "聊天记录ID"
+    },
+    {
+      "name": "IsRead",
+      "type": "bool",
+      "tags": "json:\"isRead\"",
+      "comment": "是否已读"
+    },
+    {
+      "name": "IsDelete",
+      "type": "bool",
+      "tags": "json:\"isDelete\"",
+      "comment": "是否删除"
+    }
+  ],
+  "TextMsg": [
+    {
+      "name": "Content",
+      "type": "string",
+      "tags": "json:\"content\"",
+      "comment": ""
+    }
+  ],
+  "ImageMsg": [
+    {
+      "name": "Src",
+      "type": "string",
+      "tags": "json:\"src\"",
+      "comment": ""
+    }
+  ],
+  "MarkdownMsg": [
+    {
+      "name": "Content",
+      "type": "string",
+      "tags": "json:\"content\"",
+      "comment": ""
+    }
+  ],
+  "ChatMsg": [
+    {
+      "name": "TextMsg",
+      "type": "*TextMsg",
+      "tags": "json:\"textMsg,omitempty\" gorm:\"serializer:json\"",
+      "comment": ""
+    },
+    {
+      "name": "ImageMsg",
+      "type": "*ImageMsg",
+      "tags": "json:\"imageMsg,omitempty\" gorm:\"serializer:json\"",
+      "comment": ""
+    },
+    {
+      "name": "MarkdownMsg",
+      "type": "*MarkdownMsg",
+      "tags": "json:\"markdownMsg,omitempty\" gorm:\"serializer:json\"",
+      "comment": ""
+    }
+  ],
+  "SessionModel": [
+    {
+      "name": "Model",
+      "type": "Model",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "UniqueID",
+      "type": "string",
+      "tags": "json:\"uniqueId\" gorm:\"index:idx_unique_id,unique\"",
+      "comment": "唯一索引,组织方式为我对你的会话,所以ID就是我的用户ID+对方用户ID,组织成这样.可以改为定长字符串"
+    },
+    {
+      "name": "UserID",
+      "type": "uint",
+      "tags": "json:\"userId\"",
+      "comment": "接收方的用户ID,既然这样,就只查询对方的会话信息就好了"
+    },
+    {
+      "name": "UserModel",
+      "type": "UserModel",
+      "tags": "gorm:\"foreignKey:UserID\"  json:\"-\"",
+      "comment": "用户模型,方便查询用户信息,如昵称,头像等"
+    },
+    {
+      "name": "LastMessageID",
+      "type": "uint",
+      "tags": "json:\"lastMessageId\"",
+      "comment": ""
+    },
+    {
+      "name": "LastMessage",
+      "type": "ChatModel",
+      "tags": "gorm:\"foreignKey:LastMessageID\" json:\"lastMessage\"",
+      "comment": ""
+    },
+    {
+      "name": "LastMessageTime",
+      "type": "time.Time",
+      "tags": "json:\"lastMessageTime\"",
+      "comment": "最后一条消息时间"
+    },
+    {
+      "name": "UnreadCount",
+      "type": "int",
+      "tags": "json:\"unreadCount\"",
+      "comment": "未读消息数量"
+    },
+    {
+      "name": "IsRead",
+      "type": "bool",
+      "tags": "json:\"isRead\"",
+      "comment": "是否已读"
+    }
+  ],
+  "CollectModel": [
+    {
+      "name": "Model",
+      "type": "Model",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "Title",
+      "type": "string",
+      "tags": "gorm:\"size:64\" json:\"title\"",
+      "comment": "收藏夹名称"
+    },
+    {
+      "name": "Abstract",
+      "type": "string",
+      "tags": "gorm:\"size:512\" json:\"abstract\"",
+      "comment": "收藏夹简介"
+    },
+    {
+      "name": "Cover",
+      "type": "string",
+      "tags": "gorm:\"size:512\" json:\"cover\"",
+      "comment": "收藏夹封面图片URL"
+    },
+    {
+      "name": "ArticleList",
+      "type": "[]UserArticleCollectModel",
+      "tags": "gorm:\"foreignKey:CollectID\" json:\"articleList\"",
+      "comment": "收藏夹内文章ID列表"
+    },
+    {
+      "name": "UserID",
+      "type": "uint",
+      "tags": "json:\"userID\"",
+      "comment": "收藏夹所属用户ID"
+    },
+    {
+      "name": "UserModel",
+      "type": "UserModel",
+      "tags": "gorm:\"foreignKey:UserID\" json:\"-\"",
+      "comment": "收藏夹所属用户信息"
+    },
+    {
+      "name": "IsDefault",
+      "type": "bool",
+      "tags": "json:\"isDefault\"",
+      "comment": "是否为默认收藏夹"
+    }
+  ],
+  "CommentDiggModel": [
+    {
+      "name": "Model",
+      "type": "Model",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "UserID",
+      "type": "uint",
+      "tags": "gorm:\"index:idx_comment_digg_user_comment,unique,priority:1\" json:\"userID\"",
+      "comment": "用户ID"
+    },
+    {
+      "name": "CommentID",
+      "type": "uint",
+      "tags": "gorm:\"index:idx_comment_digg_user_comment,unique,priority:2\" json:\"commentID\"",
+      "comment": "评论ID"
+    },
+    {
+      "name": "UserModel",
+      "type": "UserModel",
+      "tags": "gorm:\"foreignKey:UserID\" json:\"-\"",
+      "comment": "用户信息（关联）"
+    },
+    {
+      "name": "CommentModel",
+      "type": "CommentModel",
+      "tags": "gorm:\"foreignKey:CommentID\" json:\"-\"",
+      "comment": "评论信息（关联）"
+    }
+  ],
+  "CommentModel": [
+    {
+      "name": "Model",
+      "type": "Model",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "Content",
+      "type": "string",
+      "tags": "gorm:\"size:1024\" json:\"content\"",
+      "comment": "评论内容，长度限制宽松"
+    },
+    {
+      "name": "UserID",
+      "type": "uint",
+      "tags": "json:\"userID\"",
+      "comment": "评论用户ID"
+    },
+    {
+      "name": "UserModel",
+      "type": "UserModel",
+      "tags": "gorm:\"foreignKey:UserID\" json:\"user\"",
+      "comment": "评论用户信息，外键关联"
+    },
+    {
+      "name": "ArticleID",
+      "type": "uint",
+      "tags": "gorm:\"index\" json:\"articleID\"",
+      "comment": "评论文章ID"
+    },
+    {
+      "name": "ArticleModel",
+      "type": "ArticleModel",
+      "tags": "gorm:\"foreignKey:ArticleID\" json:\"-\"",
+      "comment": "评论文章信息，外键关联"
+    },
+    {
+      "name": "ParentPath",
+      "type": "string",
+      "tags": "gorm:\"type:varchar(512);index;CHARACTER SET ascii COLLATE ascii_bin\" json:\"path\"",
+      "comment": "评论路径，用于快速定位评论层级"
+    },
+    {
+      "name": "/*",
+      "type": "/*",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "注:在入库之后,path存储的父级评论路径,而ID才是自己的标识,类似于文件系统的路径",
+      "type": "注:在入库之后,path存储的父级评论路径,而ID才是自己的标识,类似于文件系统的路径",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "使用/作为分隔符,将父级评论路径和自己的ID拼接起来",
+      "type": "使用/作为分隔符,将父级评论路径和自己的ID拼接起来",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "为\"\"时表示这是根目录,也就是一级评论",
+      "type": "为\"\"时表示这是根目录,也就是一级评论",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "*/",
+      "type": "*/",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "RootParentID",
+      "type": "*uint",
+      "tags": "json:\"rootParentID\"",
+      "comment": "根评论ID，用于快速定位顶级评论"
+    },
+    {
+      "name": "RootParent",
+      "type": "*CommentModel",
+      "tags": "gorm:\"foreignKey:RootParentID\" json:\"-\"",
+      "comment": "预备字段, 根评论信息，外键关联"
+    },
+    {
+      "name": "DiggCount",
+      "type": "int",
+      "tags": "json:\"diggCount\"",
+      "comment": "评论点赞数统计"
+    }
+  ],
+  "Model": [
+    {
+      "name": "ID",
+      "type": "uint",
+      "tags": "gorm:\"primarykey\" json:\"id\"",
+      "comment": "主键ID"
+    },
+    {
+      "name": "CreatedAt",
+      "type": "time.Time",
+      "tags": "json:\"createdAt\"",
+      "comment": "创建时间"
+    },
+    {
+      "name": "UpdatedAt",
+      "type": "time.Time",
+      "tags": "json:\"updatedAt\"",
+      "comment": "更新时间"
+    }
+  ],
+  "UserFollowModel": [
+    {
+      "name": "Model",
+      "type": "Model",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "UserID",
+      "type": "uint",
+      "tags": "json:\"userID\"",
+      "comment": "用户id"
+    },
+    {
+      "name": "UserModel",
+      "type": "UserModel",
+      "tags": "gorm:\"foreignKey:UserID\" json:\"-\"",
+      "comment": ""
+    },
+    {
+      "name": "FocusUserID",
+      "type": "uint",
+      "tags": "json:\"focusUserID\"",
+      "comment": "关注的其他用户的ID"
+    },
+    {
+      "name": "FocusUserModel",
+      "type": "UserModel",
+      "tags": "gorm:\"foreignKey:FocusUserID\" json:\"-\"",
+      "comment": ""
+    },
+    {
+      "name": "Friend",
+      "type": "bool",
+      "tags": "json:\"friend\"",
+      "comment": "是否是好友,初始创建时一定得是false"
+    }
+  ],
+  "FriendLink": [
+    {
+      "name": "Model",
+      "type": "Model",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "Name",
+      "type": "string",
+      "tags": "gorm:\"size:100;not null;\" json:\"name\"",
+      "comment": "名称"
+    },
+    {
+      "name": "URL",
+      "type": "string",
+      "tags": "gorm:\"size:255;\" json:\"url\"",
+      "comment": "链接地址"
+    },
+    {
+      "name": "Logo",
+      "type": "string",
+      "tags": "gorm:\"size:255;default:'';\" json:\"logo\"",
+      "comment": "Logo 图片地址 (可选)"
+    },
+    {
+      "name": "IsShow",
+      "type": "bool",
+      "tags": "gorm:\"default:true\" json:\"is_show\"",
+      "comment": "是否启用/显示"
+    },
+    {
+      "name": "SortOrder",
+      "type": "int",
+      "tags": "gorm:\"default:0\" json:\"sort_order\"",
+      "comment": "排序权重（数字越小越靠前）"
+    },
+    {
+      "name": "Remark",
+      "type": "string",
+      "tags": "gorm:\"size:2048;default:''\" json:\"remark\"",
+      "comment": "简短描述或备注"
+    }
+  ],
+  "FriendPromotion": [
+    {
+      "name": "Model",
+      "type": "Model",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "Title",
+      "type": "string",
+      "tags": "gorm:\"size:100;not null;\" json:\"title\"",
+      "comment": "标题/业务名称"
+    },
+    {
+      "name": "FriendName",
+      "type": "string",
+      "tags": "gorm:\"size:50;not null;\" json:\"friend_name\"",
+      "comment": "朋友昵称/姓名"
+    },
+    {
+      "name": "Avatar",
+      "type": "string",
+      "tags": "gorm:\"size:500;\" json:\"avatar\"",
+      "comment": "头像（个人形象）"
+    },
+    {
+      "name": "Category",
+      "type": "string",
+      "tags": "gorm:\"size:30;\" json:\"category\"",
+      "comment": "业务类型: 画师/摄影/开发/设计/音乐/其他"
+    },
+    {
+      "name": "Description",
+      "type": "string",
+      "tags": "gorm:\"type:text;\" json:\"description\"",
+      "comment": "详细介绍（支持长文本）"
+    },
+    {
+      "name": "PreviewImages",
+      "type": "string",
+      "tags": "gorm:\"type:text;\" json:\"preview_images\"",
+      "comment": "作品预览图，JSON数组 [\"url1\",\"url2\"]"
+    },
+    {
+      "name": "ContactInfo",
+      "type": "[]string",
+      "tags": "gorm:\"type:text;serializer:json\" json:\"contact_info\"",
+      "comment": ""
+    },
+    {
+      "name": "IsShow",
+      "type": "bool",
+      "tags": "gorm:\"default:true\" json:\"is_show\"",
+      "comment": "是否展示"
+    },
+    {
+      "name": "SortOrder",
+      "type": "int",
+      "tags": "gorm:\"default:0\" json:\"sort_order\"",
+      "comment": "排序"
+    },
+    {
+      "name": "Position",
+      "type": "string",
+      "tags": "gorm:\"size:20;default:'page'\" json:\"position\"",
+      "comment": "位置: home(首页推荐)/page(友链页)/both"
+    },
+    {
+      "name": "Remark",
+      "type": "string",
+      "tags": "gorm:\"size:255;\" json:\"remark\"",
+      "comment": "备注（合作时间、关系等）"
+    }
+  ],
+  "GlobalNotificationModel": [
+    {
+      "name": "Model",
+      "type": "Model",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "Title",
+      "type": "string",
+      "tags": "gorm:\"size:64\" json:\"title\"",
+      "comment": "通知标题"
+    },
+    {
+      "name": "Icon",
+      "type": "string",
+      "tags": "gorm:\"size:512\" json:\"icon\"",
+      "comment": "通知图标URL"
+    },
+    {
+      "name": "Content",
+      "type": "string",
+      "tags": "gorm:\"size:128\" json:\"content\"",
+      "comment": "通知内容"
+    },
+    {
+      "name": "Href",
+      "type": "string",
+      "tags": "gorm:\"size:512\" json:\"href\"",
+      "comment": "跳转链接，用户点击通知后跳转"
+    }
+  ],
+  "ImageModel": [
+    {
+      "name": "Model",
+      "type": "Model",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "Filename",
+      "type": "string",
+      "tags": "gorm:\"size:64\" json:\"filename\"",
+      "comment": "文件名，后续可根据需要扩展长度"
+    },
+    {
+      "name": "Path",
+      "type": "string",
+      "tags": "gorm:\"size:256;index:idx_path\" json:\"path\"",
+      "comment": "文件存储路径，添加索引优化查询"
+    },
+    {
+      "name": "Size",
+      "type": "int64",
+      "tags": "json:\"size\"",
+      "comment": "文件大小（字节）"
+    },
+    {
+      "name": "Hash",
+      "type": "string",
+      "tags": "gorm:\"size:32\" json:\"hash\"",
+      "comment": "文件哈希值，用于去重检测"
+    }
+  ],
+  "LogModel": [
+    {
+      "name": "Model",
+      "type": "Model",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "LogType",
+      "type": "enum.LogType",
+      "tags": "json:\"logType\"",
+      "comment": "日志类型枚举"
+    },
+    {
+      "name": "Title",
+      "type": "string",
+      "tags": "gorm:\"size:64\" json:\"title\"",
+      "comment": "日志标题"
+    },
+    {
+      "name": "Content",
+      "type": "string",
+      "tags": "json:\"content\"",
+      "comment": "日志内容"
+    },
+    {
+      "name": "Level",
+      "type": "enum.LogLevel",
+      "tags": "json:\"level\"",
+      "comment": "日志级别枚举"
+    },
+    {
+      "name": "UserID",
+      "type": "uint",
+      "tags": "json:\"userID\"",
+      "comment": "关联用户ID"
+    },
+    {
+      "name": "UserModel",
+      "type": "UserModel",
+      "tags": "gorm:\"foreignKey:UserID\" json:\"-\"",
+      "comment": "关联用户信息"
+    },
+    {
+      "name": "IP",
+      "type": "string",
+      "tags": "gorm:\"size:32\" json:\"ip\"",
+      "comment": "IP地址"
+    },
+    {
+      "name": "Addr",
+      "type": "string",
+      "tags": "gorm:\"size:64\" json:\"addr\"",
+      "comment": "地理位置"
+    },
+    {
+      "name": "IsRead",
+      "type": "bool",
+      "tags": "json:\"isRead\"",
+      "comment": "是否已读"
+    },
+    {
+      "name": "LoginStatus",
+      "type": "bool",
+      "tags": "json:\"loginStatus\"",
+      "comment": "登录状态"
+    },
+    {
+      "name": "LoginType",
+      "type": "enum.LoginType",
+      "tags": "json:\"loginType\"",
+      "comment": "登录类型枚举"
+    },
+    {
+      "name": "ServiceName",
+      "type": "string",
+      "tags": "gorm:\"size:32\" json:\"serviceName\"",
+      "comment": "服务名称"
+    }
+  ],
+  "MessageModel": [
+    {
+      "name": "Model",
+      "type": "Model",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "Type",
+      "type": "MessageType",
+      "tags": "json:\"type\"",
+      "comment": ""
+    },
+    {
+      "name": "RevUserID",
+      "type": "uint",
+      "tags": "json:\"revUserID\"",
+      "comment": "接收人的id"
+    },
+    {
+      "name": "ActionUserID",
+      "type": "uint",
+      "tags": "json:\"ActionUserID\"",
+      "comment": "发送人的id"
+    },
+    {
+      "name": "ActionUserNickname",
+      "type": "string",
+      "tags": "json:\"actionUserNickname\"",
+      "comment": "发送人昵称"
+    },
+    {
+      "name": "ActionUserAvatar",
+      "type": "string",
+      "tags": "json:\"actionUserAvatar\"",
+      "comment": "发送人头像"
+    },
+    {
+      "name": "Title",
+      "type": "string",
+      "tags": "json:\"title\"",
+      "comment": "消息标题"
+    },
+    {
+      "name": "Content",
+      "type": "string",
+      "tags": "json:\"content\"",
+      "comment": "消息内容"
+    },
+    {
+      "name": "ArticleID",
+      "type": "uint",
+      "tags": "json:\"articleID\"",
+      "comment": "文章id"
+    },
+    {
+      "name": "ArticleTitle",
+      "type": "string",
+      "tags": "json:\"articleTitle\"",
+      "comment": "文章标题"
+    },
+    {
+      "name": "CommentID",
+      "type": "uint",
+      "tags": "json:\"commentID\"",
+      "comment": "评论id"
+    },
+    {
+      "name": "LinkTitle",
+      "type": "string",
+      "tags": "json:\"linkTitle\"",
+      "comment": "链接标题"
+    },
+    {
+      "name": "LinkHref",
+      "type": "string",
+      "tags": "json:\"linkHref\"",
+      "comment": "链接href"
+    },
+    {
+      "name": "IsRead",
+      "type": "bool",
+      "tags": "json:\"isRead\"",
+      "comment": "是否已读"
+    }
+  ],
+  "IDRequest": [
+    {
+      "name": "ID",
+      "type": "uint",
+      "tags": "uri:\"id\" binding:\"required\"",
+      "comment": "记录ID，通过URI路径参数传递"
+    }
+  ],
+  "UserArticleCollectModel": [
+    {
+      "name": "UserID",
+      "type": "uint",
+      "tags": "gorm:\"uniqueIndex:idx_user_article_collect_userid\" json:\"userID\"",
+      "comment": "用户id"
+    },
+    {
+      "name": "UserModel",
+      "type": "UserModel",
+      "tags": "gorm:\"foreignKey:UserID\" json:\"-\"",
+      "comment": "收藏者"
+    },
+    {
+      "name": "ArticleID",
+      "type": "uint",
+      "tags": "gorm:\"uniqueIndex:idx_user_article_collect_articleid\" json:\"articleID\"",
+      "comment": "文章id"
+    },
+    {
+      "name": "ArticleModel",
+      "type": "ArticleModel",
+      "tags": "gorm:\"foreignKey:ArticleID\" json:\"-\"",
+      "comment": "被收藏的文章"
+    },
+    {
+      "name": "CollectID",
+      "type": "uint",
+      "tags": "gorm:\"uniqueIndex:idx_collect\" json:\"collectID\"",
+      "comment": "收藏夹的id"
+    },
+    {
+      "name": "CollectModel",
+      "type": "CollectModel",
+      "tags": "gorm:\"foreignKey:CollectID\" json:\"collectModel\"",
+      "comment": "属于哪一个收藏夹"
+    },
+    {
+      "name": "CreatedAt",
+      "type": "time.Time",
+      "tags": "json:\"createdAt\"",
+      "comment": "收藏的时间"
+    }
+  ],
+  "UserArticleHistoryModel": [
+    {
+      "name": "Model",
+      "type": "Model",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "UserID",
+      "type": "uint",
+      "tags": "gorm:\"index\" json:\"userID\"",
+      "comment": "用户ID"
+    },
+    {
+      "name": "UserModel",
+      "type": "UserModel",
+      "tags": "gorm:\"foreignKey:UserID\" json:\"-\"",
+      "comment": "关联用户表,不返回给前端"
+    },
+    {
+      "name": "ArticleID",
+      "type": "uint",
+      "tags": "gorm:\"index\" json:\"articleID\"",
+      "comment": "文章ID"
+    },
+    {
+      "name": "ArticleName",
+      "type": "string",
+      "tags": "gorm:\"index\" json:\"articleName\"",
+      "comment": "文章名称"
+    },
+    {
+      "name": "ArticleModel",
+      "type": "ArticleModel",
+      "tags": "gorm:\"foreignKey:ArticleID\" json:\"-\"",
+      "comment": "关联文章表,不返回给前端"
+    }
+  ],
+  "UserLoginModel": [
+    {
+      "name": "Model",
+      "type": "Model",
+      "tags": "",
+      "comment": "基础模型，包含ID、创建时间、更新时间等字段"
+    },
+    {
+      "name": "UserID",
+      "type": "uint",
+      "tags": "gorm:\"index\" json:\"userID\"",
+      "comment": "用户ID，关联用户表主键,加个索引更快一些"
+    },
+    {
+      "name": "UserModel",
+      "type": "UserModel",
+      "tags": "gorm:\"foreignKey:UserID\" json:\"-\"",
+      "comment": "用户关联模型，通过UserID外键关联，JSON序列化时忽略"
+    },
+    {
+      "name": "IP",
+      "type": "string",
+      "tags": "gorm:\"size:32\" json:\"ip\"",
+      "comment": "登录IP地址，最大长度32字符"
+    },
+    {
+      "name": "Addr",
+      "type": "string",
+      "tags": "gorm:\"size:64\" json:\"addr\"",
+      "comment": "登录地址位置，最大长度64字符"
+    },
+    {
+      "name": "UserAgent",
+      "type": "string",
+      "tags": "gorm:\"size:128\" json:\"userAgent\"",
+      "comment": "用户代理信息，记录浏览器/设备信息，最大长度128字符"
+    }
+  ],
+  "UserModel": [
+    {
+      "name": "Model",
+      "type": "Model",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "UserName",
+      "type": "string",
+      "tags": "gorm:\"size:32;uniqueIndex\" json:\"username\"",
+      "comment": "用户名，唯一索引"
+    },
+    {
+      "name": "NickName",
+      "type": "string",
+      "tags": "gorm:\"size:32\" json:\"nickname\"",
+      "comment": "昵称"
+    },
+    {
+      "name": "Avatar",
+      "type": "string",
+      "tags": "gorm:\"size:512\" json:\"avatar\"",
+      "comment": "头像URL"
+    },
+    {
+      "name": "Abstract",
+      "type": "string",
+      "tags": "gorm:\"size:512\" json:\"abstract\"",
+      "comment": "个人简介"
+    },
+    {
+      "name": "RegisterSource",
+      "type": "enum.RegisterSource",
+      "tags": "json:\"registerSource\"",
+      "comment": "注册来源枚举"
+    },
+    {
+      "name": "Age",
+      "type": "int",
+      "tags": "json:\"Age\"",
+      "comment": "年龄"
+    },
+    {
+      "name": "Password",
+      "type": "string",
+      "tags": "gorm:\"size:64\" json:\"-\"",
+      "comment": "哈希密码，不序列化到JSON"
+    },
+    {
+      "name": "ContactInfo",
+      "type": "map[string]string",
+      "tags": "gorm:\"type:json;serializer:json\" json:\"contactInfo\"",
+      "comment": "联系方式，JSON格式存储"
+    },
+    {
+      "name": "Email",
+      "type": "string",
+      "tags": "gorm:\"size:128;uniqueIndex\" json:\"email\"",
+      "comment": "邮箱，唯一索引"
+    },
+    {
+      "name": "OpenID",
+      "type": "string",
+      "tags": "gorm:\"size:128\" json:\"openID\"",
+      "comment": "第三方登录唯一ID"
+    },
+    {
+      "name": "Role",
+      "type": "enum.RoleType",
+      "tags": "json:\"role\"",
+      "comment": "用户角色枚举：1-管理员,2-VIP用户,3-普通用户,4-游客,5-封禁用户"
+    },
+    {
+      "name": "UserConfModel",
+      "type": "*UserConfModel",
+      "tags": "gorm:\"foreignKey:UserID\" json:\"-\"",
+      "comment": "用户配置信息，外键关联"
+    },
+    {
+      "name": "LikeTags",
+      "type": "[]string",
+      "tags": "gorm:\"type:text;serializer:json\" json:\"likeTags\"",
+      "comment": "兴趣标签列表，JSON格式存储"
+    },
+    {
+      "name": "LastLoginTime",
+      "type": "time.Time",
+      "tags": "json:\"lastLoginTime\"",
+      "comment": "上次登录时间"
+    },
+    {
+      "name": "IP",
+      "type": "string",
+      "tags": "gorm:\"size:64\" json:\"IP\"",
+      "comment": "IP属地"
+    }
+  ],
+  "UserConfModel": [
+    {
+      "name": "UserID",
+      "type": "uint",
+      "tags": "gorm:\"primaryKey;unique\" json:\"userID\"",
+      "comment": "用户ID，唯一索引"
+    },
+    {
+      "name": "UserModel",
+      "type": "UserModel",
+      "tags": "gorm:\"foreignKey:UserID\" json:\"-\"",
+      "comment": "关联的用户信息"
+    },
+    {
+      "name": "UpdateUsernameDate",
+      "type": "*time.Time",
+      "tags": "json:\"updateUsernameDate\"",
+      "comment": "上次修改用户名时间，使用指针区分是否修改过"
+    },
+    {
+      "name": "OpenCollect",
+      "type": "bool",
+      "tags": "json:\"openCollect\"",
+      "comment": "公开我的收藏"
+    },
+    {
+      "name": "OpenFollow",
+      "type": "bool",
+      "tags": "json:\"openFollow\"",
+      "comment": "公开我的关注"
+    },
+    {
+      "name": "OpenFans",
+      "type": "bool",
+      "tags": "json:\"openFans\"",
+      "comment": "公开我的粉丝"
+    },
+    {
+      "name": "OpenHistory",
+      "type": "bool",
+      "tags": "json:\"openHistory\"",
+      "comment": "公开我的浏览记录"
+    },
+    {
+      "name": "HomeStyleID",
+      "type": "uint",
+      "tags": "json:\"homeStyleID\"",
+      "comment": "主页样式ID"
+    }
+  ],
+  "UserMessageConfModel": [
+    {
+      "name": "UserID",
+      "type": "uint",
+      "tags": "gorm:\"primaryKey;unique\" json:\"userID\"",
+      "comment": "用户id"
+    },
+    {
+      "name": "UserModel",
+      "type": "UserModel",
+      "tags": "gorm:\"foreignKey:UserID\" json:\"userModel\"",
+      "comment": "用户信息"
+    },
+    {
+      "name": "OpenCommentMessage",
+      "type": "bool",
+      "tags": "json:\"openCommentMessage\"",
+      "comment": "是否开启评论通知"
+    },
+    {
+      "name": "OpenReplyMessage",
+      "type": "bool",
+      "tags": "json:\"openReplyMessage\"",
+      "comment": "是否开启回复通知"
+    },
+    {
+      "name": "OpenDiggMessage",
+      "type": "bool",
+      "tags": "json:\"openDiggMessage\"",
+      "comment": "是否开启点赞\t通知"
+    },
+    {
+      "name": "OpenCollectMessage",
+      "type": "bool",
+      "tags": "json:\"openCollectMessage\"",
+      "comment": "是否开启收藏通知"
+    },
+    {
+      "name": "OpenPrivateMessage",
+      "type": "bool",
+      "tags": "json:\"openPrivateMessage\"",
+      "comment": "是否开启私信通知"
+    }
+  ],
+  "UserTopArticleModel": [
+    {
+      "name": "Model",
+      "type": "Model",
+      "tags": "",
+      "comment": ""
+    },
+    {
+      "name": "UserID",
+      "type": "uint",
+      "tags": "gorm:\"uniqueIndex:idx_user_top_article_userid\" json:\"userID\"",
+      "comment": ""
+    },
+    {
+      "name": "ArticleID",
+      "type": "uint",
+      "tags": "gorm:\"uniqueIndex:idx_user_top_article_articleid\" json:\"articleID\"",
+      "comment": ""
+    },
+    {
+      "name": "UserModel",
+      "type": "UserModel",
+      "tags": "gorm:\"foreignKey:UserID\" json:\"-\"",
+      "comment": ""
+    },
+    {
+      "name": "ArticleModel",
+      "type": "ArticleModel",
+      "tags": "gorm:\"foreignKey:ArticleID\" json:\"-\"",
+      "comment": ""
+    }
+  ]
+}

@@ -1,0 +1,785 @@
+[
+  {
+    "method": "POST",
+    "path": "/chat",
+    "handler": "Chat",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "POST",
+    "path": "/article",
+    "handler": "ArticleCreateView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "PUT",
+    "path": "/article",
+    "handler": "ArticleUpdateView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "PUT",
+    "path": "/article/inc",
+    "handler": "ArticleUpdateView2",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "GET",
+    "path": "/article",
+    "handler": "ArticleListView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "GET",
+    "path": "/article/search",
+    "handler": "ArticleSearchView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "GET",
+    "path": "/article/:id",
+    "handler": "ArticleDetailView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "POST",
+    "path": "/article/top/:id",
+    "handler": "ArticleTopView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "DELETE",
+    "path": "/article/top",
+    "handler": "ArticleCancleTopView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "DELETE",
+    "path": "/article/admingTop",
+    "handler": "AdminArticleDeleteView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "GET",
+    "path": "/article/review",
+    "handler": "ArticleReviewListView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "POST",
+    "path": "/article/review/:id",
+    "handler": "ArticleReviewView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "POST",
+    "path": "/article/look",
+    "handler": "ArticleLookView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "POST",
+    "path": "/article/digg/:id",
+    "handler": "ArticleDiggView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "DELETE",
+    "path": "/article",
+    "handler": "ArticleRemoveUserView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "DELETE",
+    "path": "/article/admin",
+    "handler": "ArticleRemoveView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "GET",
+    "path": "/article/history",
+    "handler": "ArticleLookListView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "DELETE",
+    "path": "/article/history",
+    "handler": "ArticleLookRemoveView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "POST",
+    "path": "/article/category",
+    "handler": "CategoryCreateView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "GET",
+    "path": "/article/category",
+    "handler": "CategoryListView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "DELETE",
+    "path": "/article/category",
+    "handler": "CategoryRemoveView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "POST",
+    "path": "/article/collect",
+    "handler": "ArticleCollectView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "GET",
+    "path": "/article/collect/folder",
+    "handler": "CollectListView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "GET",
+    "path": "/article/collect/list",
+    "handler": "CollectArticleListView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "POST",
+    "path": "/article/collect/folder",
+    "handler": "CollectCreateView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "PUT",
+    "path": "/article/collect/folder",
+    "handler": "CollectUpdateView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "DELETE",
+    "path": "/article/collect/folder",
+    "handler": "CollectRemoveView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "GET",
+    "path": "/banner",
+    "handler": "BannerListView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "DELETE",
+    "path": "/banner",
+    "handler": "BannerRemoveView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "POST",
+    "path": "/banner",
+    "handler": "BannerCreateView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "PUT",
+    "path": "/banner/:id",
+    "handler": "BannerUpdateView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "GET",
+    "path": "/captcha",
+    "handler": "CaptchaView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "POST",
+    "path": "/chat/send",
+    "handler": "ChatSendView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "GET",
+    "path": "/chat/get",
+    "handler": "ChatListView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "GET",
+    "path": "/chat/session",
+    "handler": "SessionListView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "POST",
+    "path": "/comment",
+    "handler": "CommentCreateView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "DELETE",
+    "path": "/comment/:id",
+    "handler": "CommentDeleteView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "GET",
+    "path": "/comment",
+    "handler": "CommentListlView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "GET",
+    "path": "/commentChild",
+    "handler": "CommentChildListView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "POST",
+    "path": "/comment/digg/:id",
+    "handler": "CommentDiggView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "GET",
+    "path": "/friendLink",
+    "handler": "FriendLinkListView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "DELETE",
+    "path": "/friendLink",
+    "handler": "FriendLinkRemoveView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "POST",
+    "path": "/friendLink",
+    "handler": "FriendLinkCreateView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "PUT",
+    "path": "/friendLink/:id",
+    "handler": "FriendLinkUpdateView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "GET",
+    "path": "/friendPromotion",
+    "handler": "FriendPromotionListView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "DELETE",
+    "path": "/friendPromotion",
+    "handler": "FriendPromotionRemoveView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "POST",
+    "path": "/friendPromotion",
+    "handler": "FriendPromotionCreateView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "PUT",
+    "path": "/friendPromotion/:id",
+    "handler": "FriendPromotionUpdateView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "GET",
+    "path": "/heartbeat",
+    "handler": "Hearth",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "GET",
+    "path": "/image",
+    "handler": "GetImage",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "POST",
+    "path": "/image",
+    "handler": "ImageUploadView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "GET",
+    "path": "/images",
+    "handler": "ImageList",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "DELETE",
+    "path": "/image",
+    "handler": "ImageRemoveView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "GET",
+    "path": "/image",
+    "handler": "GetImage",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "POST",
+    "path": "/image",
+    "handler": "ImageUploadView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "GET",
+    "path": "/images",
+    "handler": "ImageList",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "DELETE",
+    "path": "/image",
+    "handler": "ImageRemoveView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "GET",
+    "path": "/logs",
+    "handler": "LogListView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "GET",
+    "path": "/logs/:id",
+    "handler": "LogReadView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "DELETE",
+    "path": "/logs",
+    "handler": "LogRemoveView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "GET",
+    "path": "/msg/conf",
+    "handler": "SiteMessageConfView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "POST",
+    "path": "/msg/conf/update",
+    "handler": "SiteMessageConfUpdateView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "GET",
+    "path": "/msg/check",
+    "handler": "SiteMessageCheckView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "POST",
+    "path": "/msg/clear",
+    "handler": "OneKeyClearView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "GET",
+    "path": "/msg",
+    "handler": "SiteMessageListView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "DELETE",
+    "path": "/msg",
+    "handler": "MessageRemoveView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "GET",
+    "path": "/site/qq_login",
+    "handler": "SiteInfoQQView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "GET",
+    "path": "/site/:name",
+    "handler": "SiteInfoView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "PUT",
+    "path": "/site/:name",
+    "handler": "SiteUpdateView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "GET",
+    "path": "/test",
+    "handler": "TestView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "POST",
+    "path": "/print",
+    "handler": "Print",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "GET",
+    "path": "/user/follow/list",
+    "handler": "FollowUserListView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "GET",
+    "path": "/user/follower/list",
+    "handler": "FollowerListView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "POST",
+    "path": "/user/follow",
+    "handler": "FollowUserView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "POST",
+    "path": "/user/follow/unfollow",
+    "handler": "UnFollowUserView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "POST",
+    "path": "/user/send_email",
+    "handler": "SendEmailView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "POST",
+    "path": "/user/email",
+    "handler": "RegisterEmailView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "POST",
+    "path": "/user/login",
+    "handler": "Login",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "DELETE",
+    "path": "/user/logout",
+    "handler": "LogoutView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "GET",
+    "path": "/user/detail",
+    "handler": "UserDetailView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "GET",
+    "path": "/user/info/:id",
+    "handler": "CheckUserBaseInfoView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "GET",
+    "path": "/user/loginlog",
+    "handler": "UserLoginListView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "PUT",
+    "path": "/user/resetEmail",
+    "handler": "ResetEmailView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "PUT",
+    "path": "/user/update",
+    "handler": "UserInfoUpdateView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "PUT",
+    "path": "/user/admin/update",
+    "handler": "AdminUserInfoUpdateView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "POST",
+    "path": "/user/token",
+    "handler": "RefreshAccessToken",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  },
+  {
+    "method": "GET",
+    "path": "/user/list",
+    "handler": "UserListView",
+    "file": "",
+    "req_struct": "",
+    "req_fields": [],
+    "response_info": ""
+  }
+]
