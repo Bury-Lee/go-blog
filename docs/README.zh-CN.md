@@ -141,8 +141,8 @@ log:
 ai:
   enable: false
   model: local
-  # temperature: 0.7 # 预留字段
-  # max_tokens: 1024 # 预留字段
+  temperature: 0.7 # 预留字段
+  max_tokens: 1024 # 预留字段
   host: http://localhost:1234/v1
   ApiKey: 123456 
   nickName: 昵称
@@ -203,7 +203,6 @@ db:
   #   host: 127.0.0.1
   #   port: 3306
   #   db: db
-  #   debug: false # 是否启用调试（打印完整日志）
   #   source: mysql
 
 site:
