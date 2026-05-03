@@ -18,15 +18,16 @@ log:
 ai:
   enable: true             # 是否启用AI功能
   model:               # AI模型类型 (local: 本地模型)(其实可能目前也仅支持本地模型)
-  # temperature: 0.7        # AI生成温度参数 (预留字段)
-  # max_tokens: 1024        # 最大token数量 (预留字段)
+  temperature: 0.7        # AI生成温度参数 
+  max_tokens: 1024        # 最大token数量 
   
   host:     # AI服务地址
   ApiKey: 123456         # AI服务密钥
   nickName:             # AI助手昵称
   avatar:     # AI助手头像URL
+  APIType: openai
 
-# 邮件服务配置
+ # 邮件服务配置
 email:
   domain:                   # 邮件服务器域名
   port:                     # 邮件服务器端口

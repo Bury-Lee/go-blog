@@ -13,7 +13,7 @@ func InitAI() *openai.Client {
 		return nil
 	}
 
-	conf := openai.DefaultConfig(global.Config.AI.ApiKey) // ✅ 用 ApiKey
+	conf := openai.DefaultConfig(global.Config.AI.ApiKey)
 	conf.BaseURL = global.Config.AI.Host
 	conf.APIType = openai.APIType(global.Config.AI.APIType)
 
