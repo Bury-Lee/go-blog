@@ -68,7 +68,7 @@ func (BannerApi) BannerListView(c *gin.Context) {
 	var req common.PageInfo
 	c.ShouldBind(&req)
 
-	list, count, _ := common.ListQuery[models.BannerModel](&models.BannerModel{
+	list, count, _ := common.ListQuery(models.BannerModel{
 		IsShow: true,
 	}, common.Options{
 		PageInfo: req,

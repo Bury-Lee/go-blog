@@ -114,7 +114,7 @@ func (ArticleApi) CategoryListView(c *gin.Context) {
 		return
 	}
 
-	_list, count, _ := common.ListQuery[models.CategoryModel](models.CategoryModel{
+	_list, count, _ := common.ListQuery(models.CategoryModel{
 		UserID: req.UserID,
 	}, common.Options{
 		PageInfo: req.PageInfo,

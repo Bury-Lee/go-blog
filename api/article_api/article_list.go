@@ -130,7 +130,7 @@ func (ArticleApi) ArticleListView(c *gin.Context) {
 		options.DefaultOrder = fmt.Sprintf("%s, created_at desc", sql.ConvertSliceOrderSql(TopArticleIDList))
 	}
 
-	_list, count, _ := common.ListQuery[models.ArticleModel](models.ArticleModel{
+	_list, count, _ := common.ListQuery(models.ArticleModel{
 		UserID:     req.UserID,
 		CategoryID: req.CategoryID,
 		Status:     req.Status,

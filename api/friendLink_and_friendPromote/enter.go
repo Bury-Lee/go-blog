@@ -60,7 +60,7 @@ func (FriendApi) FriendLinkListView(c *gin.Context) {
 	var req common.PageInfo
 	c.ShouldBind(&req)
 
-	list, count, _ := common.ListQuery[models.FriendLink](&models.FriendLink{
+	list, count, _ := common.ListQuery(models.FriendLink{
 		IsShow: true,
 	}, common.Options{
 		PageInfo: req,
@@ -117,7 +117,7 @@ func (FriendApi) FriendPromotionListView(c *gin.Context) {
 	var req common.PageInfo
 	c.ShouldBind(&req)
 
-	list, count, _ := common.ListQuery[models.FriendPromotion](&models.FriendPromotion{
+	list, count, _ := common.ListQuery(models.FriendPromotion{
 		IsShow: true,
 	}, common.Options{
 		PageInfo: req,

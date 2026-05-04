@@ -117,7 +117,7 @@ func TestListQuery(t *testing.T) {
 		options := Options{
 			PageInfo: PageInfo{Page: 1, Limit: 2},
 		}
-		list, count, err := ListQuery[TestModel](&TestModel{}, options)
+		list, count, err := ListQuery(TestModel{}, options)
 		if err != nil {
 			t.Fatalf("查询失败: %v", err)
 		}
@@ -134,7 +134,7 @@ func TestListQuery(t *testing.T) {
 			PageInfo: PageInfo{Page: 1, Limit: 10, Key: "li"},
 			Likes:    []string{"name"},
 		}
-		list, count, err := ListQuery[TestModel](&TestModel{}, options)
+		list, count, err := ListQuery(TestModel{}, options)
 		if err != nil {
 			t.Fatalf("查询失败: %v", err)
 		}
@@ -150,7 +150,7 @@ func TestListQuery(t *testing.T) {
 		options := Options{
 			PageInfo: PageInfo{Page: 1, Limit: 10, Order: "age desc"},
 		}
-		list, count, err := ListQuery[TestModel](&TestModel{}, options)
+		list, count, err := ListQuery(TestModel{}, options)
 		if err != nil {
 			t.Fatalf("查询失败: %v", err)
 		}
@@ -167,7 +167,7 @@ func TestListQuery(t *testing.T) {
 			PageInfo: PageInfo{Page: 1, Limit: 10},
 			Where:    global.DB.Where("age > ?", 25),
 		}
-		list, count, err := ListQuery[TestModel](&TestModel{}, options)
+		list, count, err := ListQuery(TestModel{}, options)
 		if err != nil {
 			t.Fatalf("查询失败: %v", err)
 		}

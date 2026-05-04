@@ -60,7 +60,7 @@ type Options struct { //可用选项,目前有模糊匹配和预加载,以后可
 // 返回:count - 满足条件的总记录数
 // 返回:err - 错误信息
 // 说明:支持基础查询,模糊匹配,定制化查询,预加载,排序分页
-func ListQuery[T any](model any, option Options) (list []T, count int, err error) {
+func ListQuery[T any](model T, option Options) (list []T, count int, err error) {
 	query := global.DB.Model(model).Where(model)
 
 	// 模糊匹配

@@ -237,11 +237,11 @@ func (ArticleApi) ArticleSearchView(c *gin.Context) {
 
 				// 组装缓存数据为搜索结果格式
 				item := ArticleSearchListResponse{
-					ArticleModel: cached.ArticleModel,
-					AdminTop:     articleTopMap[cached.ID], // 设置是否置顶
-					CategoryTitle: cached.CategoryTitle,    // 复用详情缓存中的分类标题
-					UserNickname: cached.NickName,          // 设置用户名
-					UserAvatar:   cached.UserAvatar,        // 设置用户头像
+					ArticleModel:  cached.ArticleModel,
+					AdminTop:      articleTopMap[cached.ID], // 设置是否置顶
+					CategoryTitle: cached.CategoryTitle,     // 复用详情缓存中的分类标题
+					UserNickname:  cached.NickName,          // 设置用户名
+					UserAvatar:    cached.UserAvatar,        // 设置用户头像
 				}
 
 				// 使用ES返回的高亮标题和摘要覆盖缓存中的内容
@@ -264,7 +264,7 @@ func (ArticleApi) ArticleSearchView(c *gin.Context) {
 	// 如果有缓存未命中的文章，从数据库查询
 	if len(cacheMissIDList) > 0 {
 		where := global.DB.Where("id in ?", cacheMissIDList)
-		_list, _, err := common.ListQuery[models.ArticleModel](models.ArticleModel{}, common.Options{
+		_list, _, err := common.ListQuery(models.ArticleModel{}, common.Options{
 			Where:        where,
 			Preloads:     []string{"CategoryModel", "UserModel"},    // 预加载分类和用户信息
 			DefaultOrder: sql.ConvertSliceOrderSql(cacheMissIDList), // 按照cacheMissIDList的顺序进行排序
