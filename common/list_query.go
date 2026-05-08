@@ -39,7 +39,7 @@ func (p *PageInfo) GetLimit() int {
 // 返回:int - 当前页码
 // 说明:页码范围在1到20之间,超出默认1
 func (p *PageInfo) GetPage() int {
-	if p.Page < 1 || p.Page > 30 {
+	if p.Page < 1 || p.Page > 20 {
 		return 1
 	}
 	return p.Page
@@ -59,58 +59,69 @@ type Options struct { //可用选项,目前有模糊匹配和预加载,以后可
 // 返回:list - 查询结果列表
 // 返回:count - 满足条件的总记录数
 // 返回:err - 错误信息
-// 说明:支持基础查询,模糊匹配,定制化查询,预加载,排序分页
+// 说明:支持基础查询,模糊匹配,定制化查询,预加载,排序分页,游标分页
 func ListQuery[T any](model T, option Options) (list []T, count int, err error) {
-	query := global.DB.Model(model).Where(model)
+	// 基础查询
+	baseQuery := global.DB.Model(model).Where(model)
 
 	// 模糊匹配
 	if len(option.Likes) > 0 && option.PageInfo.Key != "" {
-		likes := global.DB
+		likeCond := global.DB.Session(&gorm.Session{NewDB: true})
 		for i, column := range option.Likes {
 			if i == 0 {
-				likes = likes.Where(fmt.Sprintf("%s LIKE ?", column), "%"+option.PageInfo.Key+"%")
+				likeCond = likeCond.Where(fmt.Sprintf("%s LIKE ?", column), "%"+option.PageInfo.Key+"%")
 			} else {
-				likes = likes.Or(fmt.Sprintf("%s LIKE ?", column), "%"+option.PageInfo.Key+"%")
+				likeCond = likeCond.Or(fmt.Sprintf("%s LIKE ?", column), "%"+option.PageInfo.Key+"%")
 			}
 		}
-		query = query.Where(likes)
+		baseQuery = baseQuery.Where(likeCond)
 	}
 
-	// 定制查询
+	// 定制化查询
 	if option.Where != nil {
-		query = query.Where(option.Where)
+		baseQuery = baseQuery.Where(option.Where)
 	}
 
 	// 预加载
 	for _, preLoad := range option.Preloads {
-		query = query.Preload(preLoad)
+		baseQuery = baseQuery.Preload(preLoad)
 	}
 
-	// 排序（保证游标分页稳定）
+	// 构建最终查询（用于实际数据查询）
+	finalQuery := baseQuery.Session(&gorm.Session{})
+
+	// 排序（游标分页时需要唯一排序保证稳定性）
 	if option.PageInfo.Order != "" {
-		query = query.Order(option.PageInfo.Order)
+		finalQuery = finalQuery.Order(option.PageInfo.Order).Order("id DESC")
 	} else if option.DefaultOrder != "" {
-		query = query.Order(option.DefaultOrder)
+		finalQuery = finalQuery.Order(option.DefaultOrder).Order("id DESC")
 	} else {
-		query = query.Order("id DESC") // 默认兜底
+		finalQuery = finalQuery.Order("id DESC")
 	}
 
 	limit := option.PageInfo.GetLimit()
 
+	// 游标分页模式（使用EndId）
 	if option.PageInfo.EndId > 0 {
-		query = query.Where("id < ?", option.PageInfo.EndId)
+		finalQuery = finalQuery.Where("id < ?", option.PageInfo.EndId)
 
-		err = query.Limit(limit).Find(&list).Error
-		return list, 0, err
+		// 查询总数（基于原始条件，不包含游标过滤）
+		var total int64
+		countQuery := baseQuery.Session(&gorm.Session{})
+		countQuery.Count(&total)
+		count = int(total)
+
+		err = finalQuery.Limit(limit).Find(&list).Error
+		return list, count, err
 	}
 
-	// 查总数
-	var c int64
-	query.Count(&c)
-	count = int(c)
+	// 普通分页模式
+	var total int64
+	countQuery := baseQuery.Session(&gorm.Session{})
+	countQuery.Count(&total)
+	count = int(total)
 
 	offset := option.PageInfo.GetOffset()
-
-	err = query.Offset(offset).Limit(limit).Find(&list).Error
+	err = finalQuery.Offset(offset).Limit(limit).Find(&list).Error
 	return list, count, err
 }
