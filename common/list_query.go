@@ -115,6 +115,8 @@ func ListQuery[T any](model T, option Options) (list []T, count int, err error) 
 		return list, count, err
 	}
 
+	//TODO:统计太耗时且无用了,考虑改进
+
 	// 普通分页模式
 	var total int64
 	countQuery := baseQuery.Session(&gorm.Session{})

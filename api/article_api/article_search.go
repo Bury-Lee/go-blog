@@ -6,6 +6,7 @@ import (
 	"StarDreamerCyberNook/global"
 	"StarDreamerCyberNook/models"
 	"StarDreamerCyberNook/models/enum"
+	"StarDreamerCyberNook/utils"
 	jwts "StarDreamerCyberNook/utils/jwts"
 	"StarDreamerCyberNook/utils/sql"
 	"context"
@@ -15,7 +16,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/olivere/elastic/v7"
 	"github.com/sirupsen/logrus"
-	"gorm.io/gorm"
 )
 
 // ArticleSearchRequest 搜索请求结构体，包含分页信息、标签和排序类型
@@ -41,13 +41,6 @@ type ArticleSearchListResponse struct {
 	UserAvatar    string  `json:"userAvatar"`    // 发布用户头像
 }
 
-// ArticleSearchView 搜索文章的API处理函数
-// 主要逻辑：
-// 1. 解析请求参数（分页、关键词、标签、排序类型）
-// 2. 构建Elasticsearch查询DSL
-// 3. 执行搜索并获取结果（含高亮）
-// 4. 获取对应的完整文章数据（从数据库）
-// 5. 合并数据并返回搜索结果
 func (ArticleApi) ArticleSearchView(c *gin.Context) {
 	// 1. 解析并验证请求参数
 	var req ArticleSearchRequest
@@ -64,31 +57,158 @@ func (ArticleApi) ArticleSearchView(c *gin.Context) {
 		3: "digg_count",    // 最多点赞：按点赞数排序
 		4: "collect_count", // 最多收藏：按收藏数排序
 	}
-	var dbSortMap = map[int8]string{
-		0: "created_at",    // 最新发布
-		1: "created_at",    // 降级时没有ES评分，按发布时间兜底
-		2: "comment_count", // 最多回复
-		3: "digg_count",    // 最多点赞
-		4: "collect_count", // 最多收藏
-	}
+
 	sortKey, ok := esSortMap[req.Type]
 	if !ok { // 如果传入的Type不在map中，则返回错误
 		response.FailWithMsg("搜索类型错误", c)
 		return
 	}
-	dbSortKey := dbSortMap[req.Type]
 
-	articleTopMap, topArticleIDList := getAdminTopArticleInfo()
+	// 获取管理员置顶文章信息
+	articleTopMap := map[uint]bool{}
+	var topArticleIDList []uint
+	{
+		var userIDList []uint
+		global.DB.Model(models.UserModel{}).Where("role = ?", enum.AdminRole).Select("id").Scan(&userIDList)
+		if len(userIDList) > 0 {
+			global.DB.Model(models.UserTopArticleModel{}).Where("user_id in ?", userIDList).Select("article_id").Scan(&topArticleIDList)
+			for _, articleID := range topArticleIDList {
+				articleTopMap[articleID] = true
+			}
+		}
+	}
 
 	// ES不可用时，使用数据库全文搜索表降级
 	if global.ES == nil {
-		list, count, err := articleSearchFallback(c, req, dbSortKey, articleTopMap)
-		if err != nil {
-			logrus.Errorf("降级搜索失败 %s", err)
-			response.FailWithMsg("查询失败", c)
+		// 降级搜索
+
+		var Options common.Options
+		Options.PageInfo = req.PageInfo
+		Options.Likes = []string{"title", "abstract"}
+
+		List, count, err := common.ListQuery(&models.ArticleSearchModel{}, Options)
+
+		var total int64
+		if count == 0 {
+			response.OkWithList([]ArticleSearchListResponse{}, 0, c)
 			return
 		}
-		response.OkWithList(list, count, c)
+
+		var articleIDList []uint
+		searchArticleMap := map[uint]ArticleBaseInfo{}
+		for _, SearchModel := range List {
+			articleIDList = append(articleIDList, SearchModel.ArticleID)
+			searchArticleMap[SearchModel.ID] = ArticleBaseInfo{
+				ID:       SearchModel.ID,
+				Title:    SearchModel.Title,
+				Abstract: SearchModel.Abstract,
+			}
+		}
+
+		// ---- 获取搜索结果详情 ----
+		{
+			// 1. 准备Redis缓存键名
+			keyList := []string{}
+			for _, article := range List {
+				idStr := strconv.FormatUint(uint64(article.ID), 10)
+				keyList = append(keyList, "ArticleID"+idStr) // 缓存键格式：ArticleID{文章ID}
+			}
+
+			ctx := context.Background()
+			// 2. 批量从Redis获取缓存数据
+			res, cacheErr := global.RedisHotPool.MGet(ctx, keyList...).Result()
+
+			var cacheMissIDList []uint                              // 未命中缓存的文章ID列表
+			cacheHitMap := make(map[uint]ArticleSearchListResponse) // 缓存命中的结果映射
+
+			// 3. 处理Redis返回的数据
+			if cacheErr == nil {
+				for index, cacheData := range res {
+					// 3.1 缓存未命中
+					if cacheData == nil {
+						cacheMissIDList = append(cacheMissIDList, articleIDList[index])
+						continue
+					}
+
+					// 3.2 解析缓存的JSON数据
+					var cached ArticleDetailResponse
+					err = json.Unmarshal([]byte(cacheData.(string)), &cached)
+					if err != nil {
+						logrus.Warnf("缓存数据解析错误: %s", err)
+						cacheMissIDList = append(cacheMissIDList, articleIDList[index])
+						continue
+					}
+
+					// 3.3 构建响应对象
+					item := ArticleSearchListResponse{
+						ArticleModel:  cached.ArticleModel,
+						AdminTop:      articleTopMap[cached.ID], // 是否管理员置顶
+						CategoryTitle: cached.CategoryTitle,     // 分类标题
+						UserNickname:  cached.NickName,          // 用户昵称
+						UserAvatar:    cached.UserAvatar,        // 用户头像
+					}
+					// 补充搜索相关的标题和摘要（可能与原文章不同）
+					if article, ok := searchArticleMap[cached.ID]; ok {
+						item.Title = article.Title       // 使用搜索匹配时的标题
+						item.Abstract = article.Abstract // 使用搜索匹配时的摘要
+					}
+					cacheHitMap[cached.ID] = item
+				}
+			} else {
+				// Redis出错时，降级为全部从数据库查询
+				cacheMissIDList = articleIDList
+			}
+
+			// 4. 处理未命中缓存的文章（从数据库查询）
+			if len(cacheMissIDList) > 0 {
+				// 4.1 构建查询条件
+				where := global.DB.Where("id in ?", cacheMissIDList)
+				modelList, _, err := common.ListQuery(models.ArticleModel{}, common.Options{
+					Where:        where,
+					Preloads:     []string{"CategoryModel", "UserModel"},    // 预加载关联表
+					DefaultOrder: sql.ConvertSliceOrderSql(cacheMissIDList), // 保持与传入ID顺序一致
+				})
+				if err != nil {
+					logrus.Errorf("降级搜索失败 %s", err)
+					response.FailWithMsg("搜索失败", c)
+					return
+				}
+
+				// 4.2 将数据库查询结果转换为响应格式
+				for _, model := range modelList {
+					item := ArticleSearchListResponse{
+						ArticleModel: model,
+						AdminTop:     articleTopMap[model.ID],
+						UserNickname: model.UserModel.NickName,
+						UserAvatar:   model.UserModel.Avatar,
+					}
+					// 处理可能为nil的分类
+					if model.CategoryModel != nil {
+						item.CategoryTitle = &model.CategoryModel.Title
+					}
+					// 补充搜索匹配的内容
+					if article, ok := searchArticleMap[model.ID]; ok {
+						item.Title = article.Title
+						item.Abstract = article.Abstract
+					}
+					cacheHitMap[model.ID] = item
+				}
+			}
+
+			// 5. 按原始顺序组装最终结果
+			list := make([]ArticleSearchListResponse, 0, len(articleIDList))
+			for _, id := range articleIDList {
+				if item, ok := cacheHitMap[id]; ok {
+					// 5.1 高亮处理关键词
+					item.Abstract = utils.HighlightKeyword(item.Abstract, req.Key)
+					item.Title = utils.HighlightKeyword(item.Title, req.Key)
+					item.Content = utils.HighlightKeyword(item.Content, req.Key)
+					list = append(list, item)
+				}
+			}
+			// 6. 返回搜索结果
+			response.OkWithList(list, int(total), c)
+		}
 		return
 	}
 
@@ -126,7 +246,18 @@ func (ArticleApi) ArticleSearchView(c *gin.Context) {
 	// 如果是"猜你喜欢"（Type=1），则加入用户兴趣标签查询
 	if req.Type == 1 {
 		// 尝试从JWT Token中解析用户信息
-		likeTags, err := getCurrentUserLikeTags(c)
+		likeTags, err := func() ([]string, error) {
+			claims, err := jwts.ParseTokenByGin(c)
+			if err != nil || claims == nil {
+				return nil, nil
+			}
+			var user models.UserModel
+			err = global.DB.Select("id", "like_tags").Take(&user, claims.UserID).Error
+			if err != nil {
+				return nil, err
+			}
+			return user.LikeTags, nil
+		}()
 		if err != nil {
 			response.FailWithMsg("用户信息不存在", c)
 			return
@@ -149,6 +280,7 @@ func (ArticleApi) ArticleSearchView(c *gin.Context) {
 	highlight := elastic.NewHighlight()
 	highlight.Field("title")
 	highlight.Field("abstract")
+	highlight.Field("content") //TODO:不知道会不会出现bug
 
 	// 执行Elasticsearch搜索
 	result, err := global.ES.
@@ -203,232 +335,92 @@ func (ArticleApi) ArticleSearchView(c *gin.Context) {
 		return
 	}
 
-	list, err := getArticleSearchList(articleIDList, articleTopMap, searchArticleMap)
-	if err != nil {
-		logrus.Errorf("查询文章详情失败 %s", err)
-		response.FailWithMsg("查询失败", c)
-		return
-	}
-
-	//TODO:以后加入带点赞数和评论数的响应字段
-	// 返回成功响应，包含文章列表和总数
-	response.OkWithList(list, int(count), c)
-}
-
-// getAdminTopArticleInfo 获取管理员置顶文章信息
-// 返回:articleTopMap - 置顶文章映射
-// 返回:topArticleIDList - 置顶文章ID列表
-// 说明:先查管理员ID，再查管理员置顶文章
-func getAdminTopArticleInfo() (articleTopMap map[uint]bool, topArticleIDList []uint) {
-	var userIDList []uint
-	articleTopMap = map[uint]bool{}
-
-	global.DB.Model(models.UserModel{}).Where("role = ?", enum.AdminRole).Select("id").Scan(&userIDList)
-	if len(userIDList) == 0 {
-		return articleTopMap, topArticleIDList
-	}
-
-	global.DB.Model(models.UserTopArticleModel{}).Where("user_id in ?", userIDList).Select("article_id").Scan(&topArticleIDList)
-	for _, articleID := range topArticleIDList {
-		articleTopMap[articleID] = true
-	}
-	return articleTopMap, topArticleIDList
-}
-
-// getCurrentUserLikeTags 获取当前用户兴趣标签
-// 参数:c - gin上下文
-// 返回:likeTags - 兴趣标签列表
-// 返回:err - 错误信息
-// 说明:未登录返回空切片，已登录时读取用户like_tags
-func getCurrentUserLikeTags(c *gin.Context) (likeTags []string, err error) {
-	claims, err := jwts.ParseTokenByGin(c)
-	if err != nil || claims == nil {
-		return nil, nil
-	}
-
-	var user models.UserModel
-	err = global.DB.Select("id", "like_tags").Take(&user, claims.UserID).Error
-	if err != nil {
-		return nil, err
-	}
-	return user.LikeTags, nil
-}
-
-// buildJSONTagLikeQuery 构建JSON标签模糊查询
-// 参数:column - 标签字段名
-// 参数:tags - 标签列表
-// 返回:query - GORM查询条件
-// 说明:JSON序列化后按带引号的标签匹配，避免子串误匹配
-func buildJSONTagLikeQuery(column string, tags []string) *gorm.DB {
-	query := global.DB.Session(&gorm.Session{NewDB: true})
-	for index, tag := range tags {
-		likeValue := "%\"" + tag + "\"%"
-		if index == 0 {
-			query = query.Where(column+" LIKE ?", likeValue)
-			continue
+	// ---- 获取搜索结果详情 ----
+	{
+		keyList := []string{}
+		for _, id := range articleIDList {
+			idStr := strconv.FormatUint(uint64(id), 10)
+			keyList = append(keyList, "ArticleID"+idStr)
 		}
-		query = query.Or(column+" LIKE ?", likeValue)
-	}
-	return query
-}
 
-// articleSearchFallback 降级搜索文章
-// 参数:c - gin上下文
-// 参数:req - 搜索请求
-// 参数:sortKey - 排序字段
-// 参数:articleTopMap - 置顶文章映射
-// 返回:list - 搜索结果列表
-// 返回:count - 总数
-// 返回:err - 错误信息
-// 说明:用ArticleSearchModel定位文章ID，优先读Redis，未命中再查数据库
-func articleSearchFallback(c *gin.Context, req ArticleSearchRequest, sortKey string, articleTopMap map[uint]bool) (list []ArticleSearchListResponse, count int, err error) {
-	query := global.DB.Model(&models.ArticleModel{}).Where("status = ?", models.StatusPublished)
+		ctx := context.Background()
+		res, cacheErr := global.RedisHotPool.MGet(ctx, keyList...).Result()
 
-	if req.Key != "" {
-		likeValue := "%" + req.Key + "%"
-		subQuery := global.DB.Model(&models.ArticleSearchModel{}).
-			Select("DISTINCT article_id").
-			Where(global.DB.Where("title LIKE ?", likeValue).Or("abstract LIKE ?", likeValue))
-		query = query.Where("id IN (?)", subQuery)
-	}
+		var cacheMissIDList []uint
+		cacheHitMap := make(map[uint]ArticleSearchListResponse)
 
-	if req.Tag != "" {
-		query = query.Where("tag_list LIKE ?", "%\""+req.Tag+"\"%")
-	}
+		if cacheErr == nil {
+			for index, cacheData := range res {
+				if cacheData == nil {
+					cacheMissIDList = append(cacheMissIDList, articleIDList[index])
+					continue
+				}
 
-	if req.Type == 1 {
-		likeTags, likeErr := getCurrentUserLikeTags(c)
-		if likeErr != nil {
-			return nil, 0, likeErr
-		}
-		if len(likeTags) > 0 {
-			query = query.Where(buildJSONTagLikeQuery("tag_list", likeTags))
-		}
-	}
+				var cached ArticleDetailResponse
+				err = json.Unmarshal([]byte(cacheData.(string)), &cached)
+				if err != nil {
+					logrus.Warnf("缓存数据解析错误: %s", err)
+					cacheMissIDList = append(cacheMissIDList, articleIDList[index])
+					continue
+				}
 
-	var total int64
-	if err = query.Count(&total).Error; err != nil {
-		return nil, 0, err
-	}
-	if total == 0 {
-		return []ArticleSearchListResponse{}, 0, nil
-	}
-
-	var articleBaseList []ArticleBaseInfo
-	err = query.Select("id", "title", "abstract").
-		Order(sortKey + " DESC").
-		Order("id DESC").
-		Offset(req.GetOffset()).
-		Limit(req.GetLimit()).
-		Find(&articleBaseList).Error
-	if err != nil {
-		return nil, 0, err
-	}
-
-	if len(articleBaseList) == 0 {
-		return []ArticleSearchListResponse{}, int(total), nil
-	}
-
-	var articleIDList []uint
-	searchArticleMap := map[uint]ArticleBaseInfo{}
-	for _, article := range articleBaseList {
-		articleIDList = append(articleIDList, article.ID)
-		searchArticleMap[article.ID] = article
-	}
-
-	list, err = getArticleSearchList(articleIDList, articleTopMap, searchArticleMap)
-	if err != nil {
-		return nil, 0, err
-	}
-	return list, int(total), nil
-}
-
-// getArticleSearchList 获取搜索结果详情
-// 参数:articleIDList - 文章ID列表
-// 参数:articleTopMap - 置顶文章映射
-// 参数:searchArticleMap - 搜索命中的标题摘要映射
-// 返回:list - 搜索结果列表
-// 返回:err - 错误信息
-// 说明:优先从Redis读取文章详情，未命中再查询数据库，并按原始顺序组装
-func getArticleSearchList(articleIDList []uint, articleTopMap map[uint]bool, searchArticleMap map[uint]ArticleBaseInfo) (list []ArticleSearchListResponse, err error) {
-	keyList := []string{}
-	for _, id := range articleIDList {
-		idStr := strconv.FormatUint(uint64(id), 10)
-		keyList = append(keyList, "ArticleID"+idStr)
-	}
-
-	ctx := context.Background()
-	res, cacheErr := global.RedisHotPool.MGet(ctx, keyList...).Result()
-
-	var cacheMissIDList []uint
-	cacheHitMap := make(map[uint]ArticleSearchListResponse)
-
-	if cacheErr == nil {
-		for index, cacheData := range res {
-			if cacheData == nil {
-				cacheMissIDList = append(cacheMissIDList, articleIDList[index])
-				continue
+				item := ArticleSearchListResponse{
+					ArticleModel:  cached.ArticleModel,
+					AdminTop:      articleTopMap[cached.ID],
+					CategoryTitle: cached.CategoryTitle,
+					UserNickname:  cached.NickName,
+					UserAvatar:    cached.UserAvatar,
+				}
+				if article, ok := searchArticleMap[cached.ID]; ok {
+					item.Title = article.Title
+					item.Abstract = article.Abstract
+				}
+				cacheHitMap[cached.ID] = item
 			}
+		} else {
+			cacheMissIDList = articleIDList
+		}
 
-			var cached ArticleDetailResponse
-			err = json.Unmarshal([]byte(cacheData.(string)), &cached)
+		if len(cacheMissIDList) > 0 {
+			where := global.DB.Where("id in ?", cacheMissIDList)
+			modelList, _, err := common.ListQuery(models.ArticleModel{}, common.Options{
+				Where:        where,
+				Preloads:     []string{"CategoryModel", "UserModel"},
+				DefaultOrder: sql.ConvertSliceOrderSql(cacheMissIDList),
+			})
 			if err != nil {
-				logrus.Warnf("缓存数据解析错误: %s", err)
-				cacheMissIDList = append(cacheMissIDList, articleIDList[index])
-				continue
+				logrus.Errorf("查询文章详情失败 %s", err)
+				response.FailWithMsg("查询失败", c)
+				return
 			}
 
-			item := ArticleSearchListResponse{
-				ArticleModel:  cached.ArticleModel,
-				AdminTop:      articleTopMap[cached.ID],
-				CategoryTitle: cached.CategoryTitle,
-				UserNickname:  cached.NickName,
-				UserAvatar:    cached.UserAvatar,
+			for _, model := range modelList {
+				item := ArticleSearchListResponse{
+					ArticleModel: model,
+					AdminTop:     articleTopMap[model.ID],
+					UserNickname: model.UserModel.NickName,
+					UserAvatar:   model.UserModel.Avatar,
+				}
+				if model.CategoryModel != nil {
+					item.CategoryTitle = &model.CategoryModel.Title
+				}
+				if article, ok := searchArticleMap[model.ID]; ok {
+					item.Title = article.Title
+					item.Abstract = article.Abstract
+				}
+				cacheHitMap[model.ID] = item
 			}
-			if article, ok := searchArticleMap[cached.ID]; ok {
-				item.Title = article.Title
-				item.Abstract = article.Abstract
-			}
-			cacheHitMap[cached.ID] = item
 		}
-	} else {
-		cacheMissIDList = articleIDList
+
+		list := make([]ArticleSearchListResponse, 0, len(articleIDList))
+		for _, id := range articleIDList {
+			if item, ok := cacheHitMap[id]; ok {
+				list = append(list, item)
+			}
+		}
+
+		//TODO:以后加入带点赞数和评论数的响应字段
+		// 返回成功响应，包含文章列表和总数
+		response.OkWithList(list, int(count), c)
 	}
-
-	if len(cacheMissIDList) > 0 {
-		where := global.DB.Where("id in ?", cacheMissIDList)
-		modelList, _, err := common.ListQuery(models.ArticleModel{}, common.Options{
-			Where:        where,
-			Preloads:     []string{"CategoryModel", "UserModel"},
-			DefaultOrder: sql.ConvertSliceOrderSql(cacheMissIDList),
-		})
-		if err != nil {
-			return nil, err
-		}
-
-		for _, model := range modelList {
-			item := ArticleSearchListResponse{
-				ArticleModel: model,
-				AdminTop:     articleTopMap[model.ID],
-				UserNickname: model.UserModel.NickName,
-				UserAvatar:   model.UserModel.Avatar,
-			}
-			if model.CategoryModel != nil {
-				item.CategoryTitle = &model.CategoryModel.Title
-			}
-			if article, ok := searchArticleMap[model.ID]; ok {
-				item.Title = article.Title
-				item.Abstract = article.Abstract
-			}
-			cacheHitMap[model.ID] = item
-		}
-	}
-
-	list = make([]ArticleSearchListResponse, 0, len(articleIDList))
-	for _, id := range articleIDList {
-		if item, ok := cacheHitMap[id]; ok {
-			list = append(list, item)
-		}
-	}
-	return list, nil
 }

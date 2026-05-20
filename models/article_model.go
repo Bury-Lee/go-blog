@@ -4,7 +4,6 @@
 package models
 
 import (
-	"StarDreamerCyberNook/utils/MDtransform"
 	"database/sql/driver"
 	_ "embed"
 	"errors"
@@ -129,16 +128,12 @@ func (this *ArticleModel) AfterCreate(tx *gorm.DB) (err error) {
 	if this.Status != StatusPublished {
 		return nil
 	}
-	textList := MDtransform.MdContentTransformation(this.Title, this.Content, this.ID)
-	var list []ArticleSearchModel
-	for _, model := range textList {
-		list = append(list, ArticleSearchModel{
-			ArticleID: this.ID,
-			Title:     truncateText(model.Head, 32),
-			Abstract:  truncateText(model.Body, 256),
-		})
-	}
-	err = tx.Create(&list).Error
+	var Result ArticleSearchModel
+	//内容在创建时已经过滤了
+	Result.Abstract = truncateText(this.Abstract, 256)
+	Result.Title = truncateText(this.Title, 32)
+	Result.ArticleID = this.ID
+	err = tx.Create(&Result).Error
 	if err != nil {
 		logrus.Error(err)
 		return err
@@ -151,14 +146,8 @@ func (this *ArticleModel) AfterCreate(tx *gorm.DB) (err error) {
 // 返回:err - 错误信息
 // 说明:根据文章ID查找并删除相关的全文搜索记录
 func (this *ArticleModel) AfterDelete(tx *gorm.DB) (err error) {
-	var textList []ArticleSearchModel
-	tx.Find(&textList, "article_id = ?", this.ID)
-	if len(textList) > 0 {
-		if err = tx.Delete(&textList).Error; err != nil {
-			logrus.Error("删除全文搜索记录失败: ", err)
-			return err
-		}
-	}
+	var Result ArticleSearchModel
+	tx.Delete(&Result, "article_id = ?", this.ID)
 	return nil
 }
 
